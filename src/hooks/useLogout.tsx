@@ -20,7 +20,7 @@ const useLogout = () => {
       cookies.remove(TOKEN_NAME);
       cookies.remove(USER_DETAILS);
       dispatch(logout());
-      router.push("/auth/sign-in");
+      router.push("/auth/login");
     },
     onError: (error) => {
       console.error("Logout error:", error);

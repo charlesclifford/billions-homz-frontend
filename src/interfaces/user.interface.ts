@@ -12,13 +12,14 @@ export interface IUser {
   lastLogin?: Date;
   isBlocked: boolean;
   isFirstLogin: boolean;
+  phone: string;
   createdAt: string;
   updatedAt: string;
 }
 
 export interface UsersFilterInput {
-  page?: string;
-  limit?: string;
+  page?: number;
+  limit?: number;
   role?: string;
   search?: string;
   startDate?: string;

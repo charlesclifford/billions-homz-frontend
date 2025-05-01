@@ -22,17 +22,26 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
+  Loader2Icon,
 } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  loading: boolean;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  loading,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -42,9 +51,9 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="rounded-md border">
+    <div className="border">
       <Table>
-        <TableHeader>
+        <TableHeader className="bg-sidebar">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
@@ -63,7 +72,16 @@ export function DataTable<TData, TValue>({
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows?.length ? (
+          {loading ? (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="text-center py-10">
+                <div className="flex justify-center items-center flex-col space-y-1">
+                  <Loader2Icon className="animate-spin" />
+                  <span>Loading...</span>
+                </div>
+              </TableCell>
+            </TableRow>
+          ) : table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}

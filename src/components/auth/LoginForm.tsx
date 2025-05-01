@@ -31,7 +31,7 @@ const formSchema = z.object({
     .min(8, { message: "Password must be at least 8 characters." }),
 });
 
-type LoginFormValues = z.infer<typeof formSchema>;
+export type LoginFormValues = z.infer<typeof formSchema>;
 
 const LoginForm = () => {
   const dispatch = useAppDispatch();
@@ -53,16 +53,16 @@ const LoginForm = () => {
     mutationFn: loginUser,
     onSuccess: (data) => {
       toast.success(data?.message);
-      cookies.set(TOKEN_NAME, data?.token);
+      cookies.set(TOKEN_NAME, data?.accessToken);
       cookies.set(USER_DETAILS, JSON.stringify(data?.user));
       dispatch(loginSuccess({ user: data.user, token: data.accessToken }));
       router.push(callbackUrl);
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {
-      console.log("error", error?.response?.data?.error);
-      dispatch(loginFailure(error?.response?.data?.message || "Login failed"));
-      toast.error(error?.response?.data?.message);
+      console.log("error", error);
+      dispatch(loginFailure(error?.message || "Login failed"));
+      toast.error(error?.message);
     },
   });
 
