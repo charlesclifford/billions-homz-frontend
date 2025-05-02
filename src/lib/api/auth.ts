@@ -1,8 +1,8 @@
-import { SignUpFormData } from "@/app/(auth)/components/SignUpForm";
 import { LoginFormValues } from "@/components/auth/LoginForm";
+import { RegisterFormValues } from "@/components/auth/RegisterForm";
 import instance from "@/services/axios";
 
-export const signUpUser = async (data: SignUpFormData) => {
+export const signUpUser = async (data: RegisterFormValues) => {
   const res = await instance.post(`/auth/register`, data);
   return res.data;
 };
@@ -14,5 +14,10 @@ export const loginUser = async (data: LoginFormValues) => {
 
 export const logoutUser = async () => {
   const res = await instance.post(`/auth/logout`);
+  return res.data;
+};
+
+export const getMe = async () => {
+  const res = await instance.post(`/auth/me`);
   return res.data;
 };

@@ -1,26 +1,46 @@
 export interface IProperty {
-  id: string;
-  name: string;
+  _id: string;
+  title: string;
   description: string;
-  images: IImage[];
-  status: "available" | "unavailable";
-  location: string;
-  address?: string;
   price: number;
-  slug: string;
-  rooms?: IRoom[];
-  type?: "rent" | "sell";
-  beds?: number;
-  baths?: number;
-  area?: number;
-  amenities?: string[];
+  type: PropertyType;
+  bedrooms?: number;
+  bathrooms?: number;
+  area: number;
+  images: string[];
+  status: PropertyStatus;
+  realtor: string;
   features: string[];
-  virtualTour?: boolean;
-  createdAt: string;
-  updatedAt: string;
-  draft: boolean;
-  lobbies?: number;
-  propertyCode?: string;
+  views: number;
+  slug: string;
+  propertyCode: string;
+  soldPrice?: number;
+  soldDate?: Date;
+  soldBy?: string;
+  commissionRate?: number;
+}
+
+export type PropertyType =
+  | "apartment"
+  | "house"
+  | "land"
+  | "commercial"
+  | "villa";
+export type PropertyStatus = "available" | "sold" | "under contract" | "rented";
+
+export interface PropertyFilterInput {
+  page?: number;
+  limit?: number;
+  type?: string;
+  minPrice?: string;
+  maxPrice?: string;
+  bedrooms?: string;
+  bathrooms?: string;
+  status?: string;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+  listingType?: string;
 }
 
 export interface IRoom {
@@ -32,21 +52,6 @@ export interface IRoom {
 export interface IImage {
   publicId: string; // Cloudinary public_id
   imageUrl: string; // Cloudinary secure_url
-}
-
-export interface PropertyFilterInput {
-  search?: string;
-  page?: number;
-  limit?: number;
-  status?: string;
-  location?: string;
-  type?: string;
-  rooms?: string;
-  beds?: string;
-  baths?: string;
-  priceRange?: string;
-  area?: string;
-  draft?: boolean;
 }
 
 export interface DeleteImageParams {

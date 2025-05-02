@@ -1,7 +1,7 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import propertyReducer from "./features/property/propertySlice";
 import userReducer from "./features/user/user.slice";
 import authReducer from "./features/auth/auth.slice";
+import propertyReducer from "./features/property/property.slice";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { PERSIST_STORE_NAME } from "@/constants/app.constant";
@@ -10,7 +10,7 @@ import { PERSIST_STORE_NAME } from "@/constants/app.constant";
 const persistConfig = {
   key: PERSIST_STORE_NAME,
   storage,
-  whitelist: ["property", "auth"], // Only persist these slices
+  whitelist: ["auth"], // Only persist these slices
 };
 
 // Combine reducers

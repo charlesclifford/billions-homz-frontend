@@ -8,7 +8,7 @@ import { getAllUsers } from "@/lib/api/users";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
-const useUsers = (params: UsersFilterInput) => {
+const useUsers = (params?: UsersFilterInput) => {
   const { data, isPending, isError, refetch } = useQuery<
     PaginatedResponse<IUser>
   >({

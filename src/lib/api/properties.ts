@@ -1,14 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { PropertyFormData } from "@/app/(dashboard)/components/properties/PropertyDetailsForm";
+// import { PropertyFormData } from "@/app/(dashboard)/components/properties/PropertyDetailsForm";
 import {
   DeleteImageParams,
   DeleteImagesParams,
   PropertyFilterInput,
 } from "@/interfaces/property.interface";
 import instance from "@/services/axios";
-import axios from "axios";
-
-const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || "";
 
 // Handle responses and errors
 const handleResponse = (response: any) => {
@@ -30,7 +27,7 @@ const handleError = (error: any) => {
 
 export const getAllProperties = async (params?: PropertyFilterInput) => {
   try {
-    const response = await axios.get(`${baseUrl}/properties`, { params });
+    const response = await instance.get(`/properties`, { params });
 
     return handleResponse(response);
   } catch (error) {
@@ -49,34 +46,34 @@ export const getPropertyById = async (id: string) => {
 
 export const getPropertyBySlug = async (slug: string) => {
   try {
-    const response = await axios.get(`${baseUrl}/properties/single/${slug}`);
+    const response = await instance.get(`/properties/slug/${slug}`);
     return handleResponse(response);
   } catch (error) {
     handleError(error);
   }
 };
 
-export const createProperty = async (data: PropertyFormData) => {
-  try {
-    const response = await instance.post("/properties/create", data);
-    return handleResponse(response);
-  } catch (error) {
-    handleError(error);
-  }
-};
+// export const createProperty = async (data: PropertyFormData) => {
+//   try {
+//     const response = await instance.post("/properties/create", data);
+//     return handleResponse(response);
+//   } catch (error) {
+//     handleError(error);
+//   }
+// };
 
-export const updateProperty = async (id: string, data: PropertyFormData) => {
-  try {
-    const response = await instance.patch(`/properties/update/${id}`, data);
-    return handleResponse(response);
-  } catch (error) {
-    handleError(error);
-  }
-};
+// export const updateProperty = async (id: string, data: PropertyFormData) => {
+//   try {
+//     const response = await instance.patch(`/properties/${id}/update`, data);
+//     return handleResponse(response);
+//   } catch (error) {
+//     handleError(error);
+//   }
+// };
 
 export const deleteProperty = async (id: string) => {
   try {
-    const response = await instance.delete(`/properties/delete/${id}`);
+    const response = await instance.delete(`/properties/${id}/delete`);
     return handleResponse(response);
   } catch (error) {
     handleError(error);

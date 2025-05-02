@@ -57,7 +57,7 @@ const AdminHeader = () => {
   );
 
   return (
-    <div className="sticky top-0 z-40 w-full bg-background border-b border-gray-200 dark:border-neutral-700">
+    <div className="sticky top-0 z-10 w-full bg-background border-b border-gray-200 dark:border-neutral-700">
       <div className="flex w-full h-[60px] items-center px-3 bg-inherit border-b border-gray-200 dark:border-neutral-700">
         <div>{isTablet && <SidebarTrigger />}</div>
 

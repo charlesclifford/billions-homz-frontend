@@ -3,13 +3,12 @@ import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
 import useUsers from "@/hooks/useUsers";
 import { IUser } from "@/interfaces/user.interface";
+import { setFilter } from "@/store/features/user/user.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { formatText } from "@/utils/helpers";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit2Icon, EyeIcon, Trash2Icon } from "lucide-react";
 import moment from "moment";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect } from "react";
 import { toast } from "sonner";
 
 const ActionsComp = ({
@@ -40,26 +39,12 @@ const ActionsComp = ({
 };
 
 const UsersTable = () => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
   const dispatch = useAppDispatch();
 
   // Get filter state from Redux
   const { filter } = useAppSelector((state) => state.user);
-  const { users, totalPages, totalUsers, isPending } = useUsers(filter);
-
-  // Sync URL with filter state
-  useEffect(() => {
-    const params = new URLSearchParams();
-    if (filter.search) params.set("search", filter.search);
-    if (filter.role !== "all") params.set("role", filter.role);
-    if (filter.page > 1) params.set("page", filter.page.toString());
-    if (filter.sortBy !== "createdAt") params.set("sortBy", filter.sortBy);
-    if (filter.sortOrder !== "desc") params.set("sortOrder", filter.sortOrder);
-
-    router.replace(`${pathname}?${params.toString()}`);
-  }, [filter, pathname, router]);
+  const { users, totalPages, totalUsers, isPending, refetch } =
+    useUsers(filter);
 
   const columns: ColumnDef<IUser>[] = [
     {
@@ -88,7 +73,7 @@ const UsersTable = () => {
     {
       accessorKey: "phone",
       header: "Phone",
-      cell: (info) => info.getValue(),
+      cell: (info) => info.getValue() || "-",
     },
     {
       accessorKey: "role",
@@ -116,10 +101,12 @@ const UsersTable = () => {
       accessorKey: "lastLogin",
       header: "Last Login",
       cell: ({ row }) => {
-        return (
+        return row.original?.lastLogin ? (
           <span>
             {moment(row.original?.lastLogin).format("MMM DD, YYYY HH:mm A")}
           </span>
+        ) : (
+          <span className="text-muted-foreground">Never</span>
         );
       },
     },
@@ -127,14 +114,31 @@ const UsersTable = () => {
       accessorKey: "",
       header: "Actions",
       cell: ({ row }) => {
-        return <ActionsComp user={row.original} refetch={() => {}} />;
+        return <ActionsComp user={row.original} refetch={refetch} />;
       },
     },
   ];
 
   return (
-    <div>
-      <DataTable columns={columns} data={users} loading={isPending} />
+    <div className="w-full">
+      <p className="text-sm mb-4 font-medium text-muted-foreground">
+        Showing{" "}
+        <span className=" text-primary">
+          {Math.min((filter.page - 1) * filter.limit + 1, totalUsers)} -{" "}
+          {Math.min(filter.page * filter.limit, totalUsers)} of {totalUsers}
+        </span>{" "}
+        Users
+      </p>
+      <DataTable
+        columns={columns}
+        data={users}
+        loading={isPending}
+        pageCount={totalPages}
+        pageIndex={filter.page - 1}
+        onPaginationChange={(page) => {
+          dispatch(setFilter({ page: page + 1 }));
+        }}
+      />
     </div>
   );
 };

@@ -1,5 +1,4 @@
 "use client";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -21,68 +20,87 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  resetFilters,
-  setRole,
-  setSearch,
-  setSort,
-} from "@/store/features/user/user.slice";
+import { resetFilter, setFilter } from "@/store/features/user/user.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { SearchIcon } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { SearchIcon, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { HiAdjustmentsVertical } from "react-icons/hi2";
+
+type RoleFilter = "all" | "user" | "realtor";
+type SortOption =
+  | "createdAt:desc"
+  | "createdAt:asc"
+  | "firstName:asc"
+  | "firstName:desc";
 
 const UsersFilter = () => {
   const dispatch = useAppDispatch();
-  const { filter, users } = useAppSelector((state) => state.user);
-  const [localSearch, setLocalSearch] = useState(filter.search);
-  const [debouncedSearchValue, setDebouncedSearchValue] = useState("");
+  const { filter } = useAppSelector((state) => state.user);
+  const [localSearch, setLocalSearch] = useState(filter.search || "");
 
   useEffect(() => {
     const handler = setTimeout(() => {
-      setDebouncedSearchValue(localSearch);
+      dispatch(setFilter({ search: localSearch }));
     }, 500);
 
     return () => {
       clearTimeout(handler);
     };
-  }, [localSearch]);
+  }, [localSearch, dispatch]);
 
-  useEffect(() => {
-    dispatch(setSearch(debouncedSearchValue));
-  }, [debouncedSearchValue, dispatch]);
-
-  const handleRoleChange = (value: "user" | "realtor" | "all") => {
-    dispatch(setRole(value));
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setLocalSearch(value);
   };
 
-  const handleSortChange = (value: string) => {
-    const [sortBy, sortOrder] = value.split(":");
-    dispatch(
-      setSort({ field: sortBy, direction: sortOrder as "asc" | "desc" })
-    );
+  const handleClearSearch = () => {
+    setLocalSearch("");
+    dispatch(setFilter({ search: undefined }));
   };
 
+  // Handle sort changes from select
+  const handleSortChange = (value: SortOption) => {
+    const [sortBy, sortOrder] = value.split(":") as [string, "asc" | "desc"];
+    dispatch(setFilter({ sortBy, sortOrder }));
+  };
+
+  // Handle role changes from tabs
+  const handleRoleChange = (role: RoleFilter) => {
+    const actualRole = role === "all" ? undefined : role;
+    dispatch(setFilter({ role: actualRole }));
+  };
+
+  // Reset all filters
   const handleResetFilters = () => {
-    dispatch(resetFilters());
+    dispatch(resetFilter());
     setLocalSearch("");
   };
 
-  const getRoleCount = (role: string) => {
-    return users.filter((user) => role === "all" || user.role === role).length;
-  };
+  // Sync local search with Redux state on mount
+  useEffect(() => {
+    setLocalSearch(filter.search as string);
+  }, [filter.search]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 items-center">
       <div className="flex items-center w-full">
-        <div className="flex items-center border-b py-2 w-full">
-          <SearchIcon className="mx-2" />
+        <div className="flex items-center w-full relative">
+          <SearchIcon className="mx-2 absolute text-neutral-400 dark:text-neutral-500" />
           <Input
-            className="!bg-transparent border-0 focus:!ring-0 !shadow-none"
+            className=" focus:!ring-0 !shadow-none px-12"
             placeholder="Search by name..."
             value={localSearch}
-            onChange={(e) => setLocalSearch(e.target.value)}
+            onChange={handleSearchChange}
           />
+          {localSearch && (
+            <button
+              onClick={handleClearSearch}
+              className="absolute right-2 text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
+              aria-label="Clear search"
+            >
+              <X size={18} />
+            </button>
+          )}
         </div>
         <Drawer>
           <DrawerTrigger asChild>
@@ -136,41 +154,20 @@ const UsersFilter = () => {
       </div>
 
       {/* tabs */}
-      <div className="w-full flex">
+      <div className="w-full flex ms-auto">
         <Tabs
-          value={filter.role}
-          onValueChange={(value) =>
-            handleRoleChange(value as "user" | "realtor" | "all")
-          }
-          className="w-full border-b "
+          value={filter.role || "all"}
+          onValueChange={(value) => handleRoleChange(value as RoleFilter)}
         >
-          <TabsList className=" bg-transparent rounded-none py-0 !h-full">
-            <TabsTrigger
-              value="all"
-              className="text-base py-2.5 px-8 h-full rounded-none !border-b-2 data-[state=active]:!text-red-500 data-[state=active]:!border-b-red-500 data-[state=active]:!border-b-2 data-[state=active]:!shadow-none data-[state=active]:!bg-transparent data-[state=active]:border-0"
-            >
-              All Users{" "}
-              <Badge className="ml-2 !rounded-xs ">
-                {users.length}
-              </Badge>
+          <TabsList className="grid w-full grid-cols-3 h-full">
+            <TabsTrigger value="all" className="py-1.5 px-2">
+              All Users
             </TabsTrigger>
-            <TabsTrigger
-              value="user"
-              className="text-base py-2.5 px-8 h-full rounded-none !border-b-2 data-[state=active]:!text-red-500 data-[state=active]:!border-b-red-500 data-[state=active]:!border-b-2 data-[state=active]:!shadow-none data-[state=active]:!bg-transparent data-[state=active]:border-0"
-            >
-              Users{" "}
-              <Badge className="ml-2 !rounded-xs ">
-                {getRoleCount("user")}
-              </Badge>
+            <TabsTrigger value="user" className="py-1.5 px-2">
+              Users
             </TabsTrigger>
-            <TabsTrigger
-              value="realtor"
-              className="text-base py-2.5 px-8 h-full rounded-none !border-b-2 data-[state=active]:!text-red-500 data-[state=active]:!border-b-red-500 data-[state=active]:!border-b-2 data-[state=active]:!shadow-none data-[state=active]:!bg-transparent data-[state=active]:border-0"
-            >
-              Realtors{" "}
-              <Badge className="ml-2 !rounded-xs">
-                {getRoleCount("realtor")}
-              </Badge>
+            <TabsTrigger value="realtor" className="py-1.5 px-2">
+              Realtors
             </TabsTrigger>
           </TabsList>
         </Tabs>

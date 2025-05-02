@@ -9,7 +9,7 @@ const UsersPage = () => {
         <div className="border border-primary p-3 rounded-full shrink-0">
           <Users2Icon />
         </div>
-        <h1 className="text-primary text-3xl">Users</h1>
+        <h1 className="text-primary text-3xl font-medium">Users</h1>
       </div>
 
       <div className="space-y-8">
