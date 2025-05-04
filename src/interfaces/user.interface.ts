@@ -1,13 +1,16 @@
 export type UserRole = "user" | "realtor" | "admin" | "super_admin";
 
 export interface IUser {
-  id: string;
+  _id: string;
   firstName: string;
   lastName: string;
   email: string;
   isVerified: boolean;
   avatar: string;
-  role: UserRole;
+  address?: string;
+  city?: string;
+  state?: string;
+  country?: string;
   favorites: [];
   lastLogin?: Date;
   isBlocked: boolean;
@@ -15,12 +18,12 @@ export interface IUser {
   phone: string;
   createdAt: string;
   updatedAt: string;
+  isActive: boolean;
 }
 
 export interface UsersFilterInput {
   page?: number;
   limit?: number;
-  role?: string;
   search?: string;
   startDate?: string;
   endDate?: string;

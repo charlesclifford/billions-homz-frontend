@@ -26,7 +26,7 @@ import { SearchIcon, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { HiAdjustmentsVertical } from "react-icons/hi2";
 
-type RoleFilter = "all" | "user" | "realtor";
+type StatusFilter = "all" | "active" | "blocked";
 type SortOption =
   | "createdAt:desc"
   | "createdAt:asc"
@@ -64,10 +64,10 @@ const UsersFilter = () => {
     dispatch(setFilter({ sortBy, sortOrder }));
   };
 
-  // Handle role changes from tabs
-  const handleRoleChange = (role: RoleFilter) => {
-    const actualRole = role === "all" ? undefined : role;
-    dispatch(setFilter({ role: actualRole }));
+  // Handle status changes from tabs
+  const handleStatusChange = (status: StatusFilter) => {
+    const actualStatus = status === "all" ? undefined : status;
+    dispatch(setFilter({ status: actualStatus }));
   };
 
   // Reset all filters
@@ -87,7 +87,7 @@ const UsersFilter = () => {
         <div className="flex items-center w-full relative">
           <SearchIcon className="mx-2 absolute text-neutral-400 dark:text-neutral-500" />
           <Input
-            className=" focus:!ring-0 !shadow-none px-12"
+            className=" focus:!ring-0 !shadow-none px-12 rounded-sm"
             placeholder="Search by name..."
             value={localSearch}
             onChange={handleSearchChange}
@@ -156,18 +156,18 @@ const UsersFilter = () => {
       {/* tabs */}
       <div className="w-full flex ms-auto">
         <Tabs
-          value={filter.role || "all"}
-          onValueChange={(value) => handleRoleChange(value as RoleFilter)}
+          value={filter.status || "all"}
+          onValueChange={(value) => handleStatusChange(value as StatusFilter)}
         >
           <TabsList className="grid w-full grid-cols-3 h-full">
             <TabsTrigger value="all" className="py-1.5 px-2">
               All Users
             </TabsTrigger>
-            <TabsTrigger value="user" className="py-1.5 px-2">
-              Users
+            <TabsTrigger value="active" className="py-1.5 px-2">
+              Active Users
             </TabsTrigger>
-            <TabsTrigger value="realtor" className="py-1.5 px-2">
-              Realtors
+            <TabsTrigger value="blocked" className="py-1.5 px-2">
+              Blocked Users
             </TabsTrigger>
           </TabsList>
         </Tabs>

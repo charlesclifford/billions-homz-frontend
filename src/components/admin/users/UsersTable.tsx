@@ -1,15 +1,30 @@
 "use client";
 import { DataTable } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import useUsers from "@/hooks/useUsers";
 import { IUser } from "@/interfaces/user.interface";
+import { blockUser } from "@/lib/api/admin";
 import { setFilter } from "@/store/features/user/user.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { formatText } from "@/utils/helpers";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit2Icon, EyeIcon, Trash2Icon } from "lucide-react";
+import { Loader2Icon, Trash2Icon } from "lucide-react";
 import moment from "moment";
 import { toast } from "sonner";
+import UpdateUser from "./UpdateUser";
+import UserDetails from "./UserDetails";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
 
 const ActionsComp = ({
   user,
@@ -25,15 +40,112 @@ const ActionsComp = ({
 
   return (
     <div className="flex items-center gap-2">
-      <Button size={"icon"} variant={"outline"}>
-        <EyeIcon size={16} />
-      </Button>
-      <Button size={"icon"} variant={"outline"}>
-        <Edit2Icon size={16} />
-      </Button>
+      <UserDetails id={user._id} />
+      <UpdateUser user={user} />
       <Button size={"icon"} variant={"destructive"} onClick={handleDelete}>
         <Trash2Icon size={16} />
       </Button>
+    </div>
+  );
+};
+
+const BlockAction = ({ user }: { user: IUser }) => {
+  const queryClient = useQueryClient();
+  const [showDialog, setShowDialog] = useState(false);
+  const [intendedStatus, setIntendedStatus] = useState<boolean | null>(null);
+
+  const blockUserMutation = useMutation({
+    mutationFn: (block: boolean) => blockUser(user._id, block),
+    onSuccess: (data) => {
+      toast.success(
+        data.message ||
+          `User ${data.isActive ? "activated" : "blocked"} successfully`
+      );
+      queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+      queryClient.invalidateQueries({ queryKey: ["getUserById", user._id] });
+
+      setShowDialog(false);
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || "Failed to update user status");
+    },
+  });
+
+  const handleSwitchToggle = (newStatus: boolean) => {
+    setIntendedStatus(newStatus);
+    setShowDialog(true);
+  };
+
+  const confirmStatusChange = () => {
+    if (intendedStatus !== null) {
+      blockUserMutation.mutate(!intendedStatus);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+        <DialogTrigger asChild>
+          <div className="flex items-center gap-2">
+            {blockUserMutation.isPending && (
+              <Loader2Icon className="h-3 w-3 animate-spin" />
+            )}
+            <Switch
+              checked={user.isActive}
+              onCheckedChange={handleSwitchToggle}
+              disabled={blockUserMutation.isPending}
+              className="data-[state=checked]:bg-green-500"
+            />
+          </div>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {intendedStatus ? "Activate User" : "Block User"}
+            </DialogTitle>
+            <DialogDescription>
+              {intendedStatus
+                ? `Are you sure you want to activate ${user.firstName} ${user.lastName}?`
+                : `Are you sure you want to block ${user.firstName} ${user.lastName}? Blocked users won't be able to access the system.`}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDialog(false)}
+              disabled={blockUserMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant={intendedStatus ? "default" : "destructive"}
+              onClick={confirmStatusChange}
+              disabled={blockUserMutation.isPending}
+            >
+              {blockUserMutation.isPending ? (
+                <>
+                  <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                  {intendedStatus ? "Activating..." : "Blocking..."}
+                </>
+              ) : intendedStatus ? (
+                "Activate"
+              ) : (
+                "Block"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Badge variant={user.isActive ? "default" : "destructive"}>
+        {blockUserMutation.isPending
+          ? intendedStatus
+            ? "Activating..."
+            : "Blocking..."
+          : user.isActive
+          ? "Active"
+          : "Blocked"}
+      </Badge>
     </div>
   );
 };
@@ -75,20 +187,10 @@ const UsersTable = () => {
       header: "Phone",
       cell: (info) => info.getValue() || "-",
     },
-    {
-      accessorKey: "role",
-      header: "Role",
-      cell: ({ row }) => {
-        return (
-          <span className="capitalize">
-            {formatText(row.original?.role).toLowerCase()}
-          </span>
-        );
-      },
-    },
+
     {
       accessorKey: "createdAt",
-      header: "Date Created",
+      header: "Date Joined",
       cell: ({ row }) => {
         return (
           <span>
@@ -108,6 +210,14 @@ const UsersTable = () => {
         ) : (
           <span className="text-muted-foreground">Never</span>
         );
+      },
+    },
+    {
+      accessorKey: "isActive",
+      header: "Status",
+      cell: ({ row }) => {
+        const user = row.original;
+        return <BlockAction user={user} />;
       },
     },
     {

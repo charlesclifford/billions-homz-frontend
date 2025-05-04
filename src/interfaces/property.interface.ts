@@ -1,3 +1,5 @@
+import { IRealtor } from "./realtor.interface";
+
 export interface IProperty {
   _id: string;
   title: string;
@@ -14,10 +16,14 @@ export interface IProperty {
   views: number;
   slug: string;
   propertyCode: string;
-  soldPrice?: number;
+  listingType: ListingType;
+  // Sales related fields
+  soldPrice?: number; // Actual sold price might differ from listing price
   soldDate?: Date;
-  soldBy?: string;
-  commissionRate?: number;
+  soldBy?: IRealtor;
+  commissionRate?: number; // Commission rate applied for this sale
+  commissionAmount?: number;
+  commissionPaid: boolean;
 }
 
 export type PropertyType =
@@ -27,6 +33,7 @@ export type PropertyType =
   | "commercial"
   | "villa";
 export type PropertyStatus = "available" | "sold" | "under contract" | "rented";
+export type ListingType = "rent" | "sale" | "lease";
 
 export interface PropertyFilterInput {
   page?: number;
@@ -43,13 +50,8 @@ export interface PropertyFilterInput {
   listingType?: string;
 }
 
-export interface IRoom {
-  name: string;
-  publicId: string; // Cloudinary public_id
-  imageUrl: string; // Cloudinary secure_url
-}
-
 export interface IImage {
+  caption: string;
   publicId: string; // Cloudinary public_id
   imageUrl: string; // Cloudinary secure_url
 }

@@ -1,16 +1,46 @@
-import { IUser } from "./user.interface";
+import { IProperty } from "./property.interface";
 
-export type PartnershipLevel = "basic" | "premium" | "elite";
-
-export interface IRealtor extends IUser {
+export interface IRealtor {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  avatar?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  country?: string;
   licenseNumber: string;
   bio?: string;
   experienceYears: number;
-  partnershipLevel: PartnershipLevel;
   personalCode: string;
-  referralLink: string;
-  propertiesListed: [];
-  commissionRate: number;
+  propertiesSold: [];
   totalEarnings: number;
   pendingCommissions: number;
+  paidCommissions: number;
+  commissionPayments: ICommissionPayment[];
+  createdAt: string;
+  updatedAt: string;
+  isActive: boolean;
+  lastLogin?: Date;
+}
+
+interface ICommissionPayment {
+  amount: number;
+  paymentDate: Date;
+  property: IProperty;
+  // recordedBy: IAdmin
+  note: string;
+}
+
+export interface RealtorsFilterInput {
+  page?: number;
+  limit?: number;
+  search?: string;
+  startDate?: string;
+  endDate?: string;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+  status?: string;
 }

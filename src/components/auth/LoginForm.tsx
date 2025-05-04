@@ -6,7 +6,7 @@ import { useAppDispatch } from "@/store/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import cookies from "js-cookie";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2Icon } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -60,9 +60,9 @@ const LoginForm = () => {
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {
-      console.log("error", error);
+      console.log("error", error?.response?.data?.message );
       dispatch(loginFailure(error?.message || "Login failed"));
-      toast.error(error?.message);
+      toast.error(error?.response?.data?.message || error?.message);
     },
   });
 
@@ -137,6 +137,7 @@ const LoginForm = () => {
           disabled={loginMutation.isPending}
           className="w-full rounded-sm"
         >
+          {loginMutation.isPending && <Loader2Icon className="animate-spin" />}
           {loginMutation.isPending ? "Logging in..." : "Login"}
         </Button>
       </form>

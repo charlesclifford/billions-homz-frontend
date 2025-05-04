@@ -3,7 +3,7 @@ import { useIsTablet } from "@/hooks/useMobile";
 import { useAppSelector } from "@/store/hooks";
 import { formatText } from "@/utils/helpers";
 import { Calendar, MoonIcon, SunIcon } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { WiSunrise } from "react-icons/wi";
 import { ThemeToggler } from "../shared/ThemeToggler";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
@@ -12,6 +12,16 @@ import { SidebarTrigger } from "../ui/sidebar";
 const AdminHeader = () => {
   const isTablet = useIsTablet();
   const { user } = useAppSelector((state) => state.auth);
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Update time every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   const getGreetingTime = () => {
     const currentTime = new Date();
@@ -41,9 +51,18 @@ const AdminHeader = () => {
     }
   };
 
-  const today = new Date().toLocaleDateString("en-US", {
+  const formattedDate = currentTime.toLocaleDateString("en-US", {
+    weekday: "long",
     day: "numeric",
     month: "long",
+    year: "numeric",
+  });
+
+  const formattedTime = currentTime.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
   });
 
   const userName = useMemo(
@@ -90,7 +109,8 @@ const AdminHeader = () => {
         </div>
         <div className="flex items-center gap-2">
           <Calendar size={18} aria-label="Current date" />
-          <p>{today}</p>
+          <p>{formattedDate}</p> |
+          <span className="">{formattedTime}</span>
         </div>
       </div>
     </div>

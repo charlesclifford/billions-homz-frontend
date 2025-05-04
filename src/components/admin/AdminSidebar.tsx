@@ -40,6 +40,11 @@ const items: ISidebarMenu[] = [
     icon: HomeIcon,
   },
   {
+    title: "Realtors",
+    url: "/admin/realtors",
+    icon: Users2Icon,
+  },
+  {
     title: "Users",
     url: "/admin/users",
     icon: Users2Icon,

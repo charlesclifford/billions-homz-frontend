@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { PropertyFormData } from "@/app/(dashboard)/components/properties/PropertyDetailsForm";
+import { PropertyFormData } from "@/components/admin/properties/NewPropertyForm";
 import {
   DeleteImageParams,
   DeleteImagesParams,
@@ -53,23 +54,23 @@ export const getPropertyBySlug = async (slug: string) => {
   }
 };
 
-// export const createProperty = async (data: PropertyFormData) => {
-//   try {
-//     const response = await instance.post("/properties/create", data);
-//     return handleResponse(response);
-//   } catch (error) {
-//     handleError(error);
-//   }
-// };
+export const createProperty = async (data: PropertyFormData) => {
+  try {
+    const response = await instance.post("/properties/create", data);
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
 
-// export const updateProperty = async (id: string, data: PropertyFormData) => {
-//   try {
-//     const response = await instance.patch(`/properties/${id}/update`, data);
-//     return handleResponse(response);
-//   } catch (error) {
-//     handleError(error);
-//   }
-// };
+export const updateProperty = async (id: string, data: PropertyFormData) => {
+  try {
+    const response = await instance.patch(`/properties/${id}/update`, data);
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
 
 export const deleteProperty = async (id: string) => {
   try {

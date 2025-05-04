@@ -5,7 +5,7 @@ interface UsersFilterState {
   page: number;
   limit: number;
   search?: string;
-  role?: string;
+  status?: string;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
 }
@@ -53,7 +53,7 @@ const userSlice = createSlice({
       // Reset to first page when filters change (except page/limit)
       if (
         action.payload.search !== undefined ||
-        action.payload.role !== undefined
+        action.payload.status !== undefined
       ) {
         state.filter.page = 1;
       }

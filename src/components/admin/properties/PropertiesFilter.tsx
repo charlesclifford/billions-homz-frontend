@@ -95,7 +95,7 @@ const PropertiesFilter = () => {
         <div className="flex items-center w-full relative">
           <SearchIcon className="mx-2 absolute text-neutral-400 dark:text-neutral-500" />
           <Input
-            className=" focus:!ring-0 !shadow-none px-12"
+            className=" focus:!ring-0 !shadow-none px-10 rounded-sm"
             placeholder="Search properties..."
             aria-label="Search properties"
             value={localSearch}
@@ -122,7 +122,7 @@ const PropertiesFilter = () => {
               <HiAdjustmentsVertical size={16} />
             </Button>
           </DrawerTrigger>
-          <DrawerContent className="max-h-[80vh] overflow-y-auto">
+          <DrawerContent className="">
             <DrawerHeader>
               <DrawerTitle>Advanced Filters</DrawerTitle>
               <DrawerDescription>Refine your property search</DrawerDescription>
@@ -162,7 +162,7 @@ const PropertiesFilter = () => {
                       <SelectValue placeholder="Any" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Any</SelectItem>
+                      <SelectItem value="any">Any</SelectItem>
                       <SelectItem value="1">1+</SelectItem>
                       <SelectItem value="2">2+</SelectItem>
                       <SelectItem value="3">3+</SelectItem>
@@ -183,7 +183,7 @@ const PropertiesFilter = () => {
                       <SelectValue placeholder="Any" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">Any</SelectItem>
+                      <SelectItem value="any">Any</SelectItem>
                       <SelectItem value="1">1+</SelectItem>
                       <SelectItem value="2">2+</SelectItem>
                       <SelectItem value="3">3+</SelectItem>
@@ -256,10 +256,10 @@ const PropertiesFilter = () => {
       {/* tabs */}
       <div className="w-full flex ms-auto">
         <Tabs
-          value={filter.listingType}
+          value={filter.listingType || "all"}
           onValueChange={handleListingTypeChange}
         >
-          <TabsList className="grid w-full grid-cols-3 h-full">
+          <TabsList className="grid w-full grid-cols-4 h-full">
             <TabsTrigger value="all" className="py-1.5 px-2">
               All
             </TabsTrigger>
@@ -268,6 +268,9 @@ const PropertiesFilter = () => {
             </TabsTrigger>
             <TabsTrigger value="rent" className="py-1.5 px-2">
               For Rent
+            </TabsTrigger>
+            <TabsTrigger value="lease" className="py-1.5 px-2">
+              For Lease
             </TabsTrigger>
           </TabsList>
         </Tabs>
