@@ -10,7 +10,6 @@ import {
   UserCogIcon,
   Users2Icon,
 } from "lucide-react";
-// import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -59,6 +58,18 @@ const navMain: ISidebarMenu[] = [
     icon: KeyRoundIcon,
     roles: ["super_admin"],
   },
+  // {
+  //   title: "Gallery",
+  //   url: "/admin/gallery",
+  //   icon: ImageIcon,
+  //   roles: ["super_admin"],
+  // },
+  // {
+  //   title: "Blogs",
+  //   url: "/admin/blogs",
+  //   // icon: ,
+  //   roles: ["super_admin"],
+  // },
 ];
 
 const navSecondary: ISidebarMenu[] = [
