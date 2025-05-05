@@ -34,5 +34,5 @@ export const formatText = (status: string) => status.replace(/_/g, " ");
 
 // Utility function to check user roles
 export const isAdminUser = (user: IUser | null): boolean => {
-  return user?.role ? ["ADMIN", "SUPER_ADMIN"].includes(user.role) : false;
+  return user?.role ? ["admin", "super_admin"].includes(user.role) : false;
 };

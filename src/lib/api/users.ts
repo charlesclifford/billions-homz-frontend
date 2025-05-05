@@ -1,4 +1,4 @@
-import { RealtorsFilterInput } from "@/interfaces/realtor.interface";
+import { IRealtor, RealtorsFilterInput } from "@/interfaces/realtor.interface";
 import { IUser, UsersFilterInput } from "@/interfaces/user.interface";
 import instance from "@/services/axios";
 
@@ -24,5 +24,15 @@ export const deleteUser = async (id: string) => {
 
 export const getAllRealtors = async (params?: RealtorsFilterInput) => {
   const res = await instance.get("/realtors", { params });
+  return res.data;
+};
+
+export const getRealtorById = async (id: string) => {
+  const res = await instance.get(`/realtors/${id}`);
+  return res.data;
+};
+
+export const updateRealtor = async (id: string, data: Partial<IRealtor>) => {
+  const res = await instance.put(`/realtors/${id}/update`, data);
   return res.data;
 };

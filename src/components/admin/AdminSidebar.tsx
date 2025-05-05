@@ -1,15 +1,19 @@
 "use client";
+import useLogout from "@/hooks/useLogout";
+import { useAppSelector } from "@/store/hooks";
 import {
   CircleGaugeIcon,
   HomeIcon,
-  LucideIcon,
+  KeyRoundIcon,
+  LogOutIcon,
+  SettingsIcon,
+  UserCogIcon,
   Users2Icon,
 } from "lucide-react";
-import Image from "next/image";
+// import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import useLogout from "@/hooks/useLogout";
-import { useAppSelector } from "@/store/hooks";
+import { Button } from "../ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -19,13 +23,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "../ui/sidebar";
-import { Button } from "../ui/button";
 
 interface ISidebarMenu {
   title: string;
   url: string;
   roles?: string[];
-  icon?: LucideIcon;
+  icon?: React.ComponentType<{ size?: number; className?: string }>;
 }
 
 const items: ISidebarMenu[] = [
@@ -42,19 +45,24 @@ const items: ISidebarMenu[] = [
   {
     title: "Realtors",
     url: "/admin/realtors",
-    icon: Users2Icon,
+    icon: UserCogIcon,
   },
   {
     title: "Users",
     url: "/admin/users",
     icon: Users2Icon,
-    // roles: ["SUPER_ADMIN"],
+    roles: ["admin", "super_admin"],
   },
   {
     title: "Admins",
-    url: "/admin/admin-users",
-    icon: Users2Icon,
-    roles: ["SUPER_ADMIN"],
+    url: "/admin/members",
+    icon: KeyRoundIcon,
+    roles: ["super_admin"],
+  },
+  {
+    title: "Settings",
+    url: "/admin/settings",
+    icon: SettingsIcon,
   },
 ];
 
@@ -74,15 +82,15 @@ const AdminSidebar = () => {
   const userRole = user?.role;
 
   const filteredMenu = items.filter(
-    (nav) => !nav.roles || nav.roles.includes(userRole!)
+    (nav) => !nav.roles || (userRole && nav.roles.includes(userRole))
   );
 
   return (
     <Sidebar className="">
-      <SidebarHeader>
+      <SidebarHeader className="p-4 border-b">
         <div className="flex items-center py-2">
-          <Link href="/" className="text-xl">
-            <div className="lg:h-[35px] h-[30px] px-2 ">
+          <Link href="/" className="text-xl flex items-center">
+            {/* <div className="lg:h-[35px] h-[30px] px-2 ">
               <Image
                 src="/images/logos/gph-logo-full-black.png"
                 alt="logo"
@@ -90,19 +98,20 @@ const AdminSidebar = () => {
                 height={200}
                 className="w-full h-full object-contain"
               />
-            </div>
+            </div> */}
+            Billions Homz
           </Link>
         </div>
       </SidebarHeader>
-      <SidebarContent>
-        <SidebarMenu className="py-4 px-2">
+      <SidebarContent className="flex-1 overflow-y-auto">
+        <SidebarMenu className="space-y-1 p-2">
           {filteredMenu.map((item, i) => {
             const Icon = item.icon;
             return (
               <SidebarMenuItem key={i}>
                 <SidebarMenuButton
                   isActive={isItemActive(item.url)}
-                  className="p-0"
+                  className="w-full justify-start"
                 >
                   <Link
                     href={item.url}
@@ -117,16 +126,41 @@ const AdminSidebar = () => {
           })}
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="p-2 border-t">
         <SidebarMenu>
           <SidebarMenuItem>
             <Button
-              variant={"destructive"}
-              className="px-4 py-2 bg-red-500 text-white"
+              variant={"ghost"}
+              className="w-full justify-start gap-2 text-destructive hover:text-destructive cursor-pointer"
               disabled={isLoggingOut}
               onClick={signOut}
             >
-              Sign out
+              <LogOutIcon size={16} />
+              <span>Sign Out</span>
+              {isLoggingOut && (
+                <span className="ml-auto">
+                  <svg
+                    className="animate-spin h-4 w-4 text-destructive"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                </span>
+              )}
             </Button>
           </SidebarMenuItem>
         </SidebarMenu>

@@ -19,6 +19,7 @@ export interface IUser {
   createdAt: string;
   updatedAt: string;
   isActive: boolean;
+  role?: UserRole;
 }
 
 export interface UsersFilterInput {

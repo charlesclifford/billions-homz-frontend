@@ -1,5 +1,5 @@
 "use client";
-import { TOKEN_NAME, USER_DETAILS } from "@/constants/app.constant";
+import { TOKEN_NAME } from "@/constants/app.constant";
 import { loginUser } from "@/lib/api/auth";
 import { loginFailure, loginSuccess } from "@/store/features/auth/auth.slice";
 import { useAppDispatch } from "@/store/hooks";
@@ -23,6 +23,7 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
+import { useUser } from "@/hooks/use-user";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -38,8 +39,9 @@ const LoginForm = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
+  const { refetch } = useUser();
 
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const callbackUrl = searchParams.get("redirect") || "/";
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(formSchema),
@@ -51,16 +53,27 @@ const LoginForm = () => {
 
   const loginMutation = useMutation({
     mutationFn: loginUser,
-    onSuccess: (data) => {
-      toast.success(data?.message);
-      cookies.set(TOKEN_NAME, data?.accessToken);
-      cookies.set(USER_DETAILS, JSON.stringify(data?.user));
-      dispatch(loginSuccess({ user: data.user, token: data.accessToken }));
-      router.push(callbackUrl);
+    onSuccess: async (data) => {
+      if (data?.requiresPasswordChange) {
+        router.push("/auth/update-password");
+      } else {
+        toast.success(data?.message);
+        cookies.set(TOKEN_NAME, data?.accessToken);
+        // Fetch user data after successful login
+        try {
+          const { data } = await refetch();
+          dispatch(loginSuccess({ user: data?.data || data.user }));
+        } catch (error) {
+          console.log(error);
+          // Fallback to the user data from login response if user fetch fails
+          dispatch(loginSuccess({ user: data.user }));
+        }
+        router.push(callbackUrl);
+      }
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {
-      console.log("error", error?.response?.data?.message );
+      console.log("error", error?.response?.data?.message);
       dispatch(loginFailure(error?.message || "Login failed"));
       toast.error(error?.response?.data?.message || error?.message);
     },
@@ -100,7 +113,7 @@ const LoginForm = () => {
               <div className="flex justify-between items-center">
                 <FormLabel>Password</FormLabel>
                 <Link
-                  href="/forgot-password"
+                  href="/auth/forgot-password"
                   className="text-sm font-medium text-primary hover:underline"
                 >
                   Forgot password?
@@ -137,8 +150,14 @@ const LoginForm = () => {
           disabled={loginMutation.isPending}
           className="w-full rounded-sm"
         >
-          {loginMutation.isPending && <Loader2Icon className="animate-spin" />}
-          {loginMutation.isPending ? "Logging in..." : "Login"}
+          {loginMutation.isPending ? (
+            <>
+              <Loader2Icon className="animate-spin" />
+              Logging in...
+            </>
+          ) : (
+            "Login"
+          )}
         </Button>
       </form>
     </Form>

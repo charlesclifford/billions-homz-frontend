@@ -16,7 +16,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { Loader2Icon } from "lucide-react";
 import {
   Pagination,
   PaginationContent,
@@ -25,6 +24,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "../ui/pagination";
+import { Skeleton } from "../ui/skeleton";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -84,7 +84,7 @@ export function DataTable<TData, TValue>({
   const totalPages = pageCount;
 
   return (
-    <div className="space-y-8" >
+    <div className="space-y-8">
       <Table className="border rounded-md">
         <TableHeader className="bg-sidebar">
           {table.getHeaderGroups().map((headerGroup) => (
@@ -106,14 +106,16 @@ export function DataTable<TData, TValue>({
         </TableHeader>
         <TableBody>
           {loading ? (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="text-center py-10">
-                <div className="flex justify-center items-center flex-col space-y-1">
-                  <Loader2Icon className="animate-spin" />
-                  <span>Loading...</span>
-                </div>
-              </TableCell>
-            </TableRow>
+            // Skeleton loading state
+            [...Array(5)].map((_, rowIndex) => (
+              <TableRow key={`skeleton-${rowIndex}`}>
+                {columns.map((column, colIndex) => (
+                  <TableCell key={`skeleton-${rowIndex}-${colIndex}`}>
+                    <Skeleton className="h-6 w-full" />
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
           ) : table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
