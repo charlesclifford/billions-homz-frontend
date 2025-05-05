@@ -35,7 +35,7 @@ type SortOption =
 
 const RealtorsFilter = () => {
   const dispatch = useAppDispatch();
-  const { filter } = useAppSelector((state) => state.user);
+  const { filter } = useAppSelector((state) => state.realtor);
   const [localSearch, setLocalSearch] = useState(filter.search || "");
 
   useEffect(() => {
@@ -65,10 +65,10 @@ const RealtorsFilter = () => {
   };
 
   // Handle status changes from tabs
-    const handleStatusChange = (status: StatusFilter) => {
-      const actualStatus = status === "all" ? undefined : status;
-      dispatch(setFilter({ status: actualStatus }));
-    };
+  const handleStatusChange = (status: StatusFilter) => {
+    const actualStatus = status === "all" ? undefined : status;
+    dispatch(setFilter({ status: actualStatus }));
+  };
 
   // Reset all filters
   const handleResetFilters = () => {

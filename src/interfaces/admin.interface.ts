@@ -16,6 +16,7 @@ export interface CreateAdminInput {
 }
 
 export interface IAdmin {
+  _id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -28,4 +29,9 @@ export interface IAdmin {
   state?: string;
   country?: string;
   propertiesListed: [];
+  createdAt: string;
+  updatedAt: string;
+  lastLogin?: Date;
+  isBlocked: boolean;
+  isActive: boolean;
 }

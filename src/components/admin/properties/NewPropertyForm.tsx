@@ -90,7 +90,7 @@ const NewPropertyForm = () => {
     createPropertyMutation.mutate(values);
   }
 
-  const NairaIcon = () => <span className="text-gray-500 font-medium">₦</span>;
+  // const NairaIcon = () => <span className="text-gray-500 font-medium">₦</span>;
 
   return (
     <Form {...form}>

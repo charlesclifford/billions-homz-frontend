@@ -55,7 +55,9 @@ const LoginForm = () => {
     mutationFn: loginUser,
     onSuccess: async (data) => {
       if (data?.requiresPasswordChange) {
-        router.push("/auth/update-password");
+        router.push(
+          `/auth/update-password?token=${data?.tempToken}&userId=${data?.userId}`
+        );
       } else {
         toast.success(data?.message);
         cookies.set(TOKEN_NAME, data?.accessToken);

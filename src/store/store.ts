@@ -2,6 +2,8 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import userReducer from "./features/user/user.slice";
 import authReducer from "./features/auth/auth.slice";
 import propertyReducer from "./features/property/property.slice";
+import adminReducer from "./features/admin/admin.slice";
+import realtorReducer from "./features/realtor/realtor.slice";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { PERSIST_STORE_NAME } from "@/constants/app.constant";
@@ -18,6 +20,8 @@ const rootReducer = combineReducers({
   auth: authReducer,
   property: propertyReducer,
   user: userReducer,
+  admin: adminReducer,
+  realtor: realtorReducer,
 });
 
 // Wrap reducers with persistReducer

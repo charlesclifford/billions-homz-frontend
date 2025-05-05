@@ -14,7 +14,7 @@ const UnauthorizedPage = () => {
     <div className="flex flex-col items-center justify-center px-6">
       <div className="p-8 max-w-md text-center">
         <h1 className="text-2xl font-bold text-red-600">Access Denied</h1>
-        <p className="mt-2 text-gray-600">
+        <p className="mt-2 text-neutral-500">
           You don&apos;t have permission to view this page.
         </p>
         <Link href="/admin" className="mt-6 inline-block">
