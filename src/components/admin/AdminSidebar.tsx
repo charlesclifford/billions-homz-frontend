@@ -13,7 +13,6 @@ import {
 // import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Button } from "../ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -23,6 +22,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "../ui/sidebar";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 
 interface ISidebarMenu {
   title: string;
@@ -31,7 +31,7 @@ interface ISidebarMenu {
   icon?: React.ComponentType<{ size?: number; className?: string }>;
 }
 
-const items: ISidebarMenu[] = [
+const navMain: ISidebarMenu[] = [
   {
     title: "Dashboard",
     url: "/admin",
@@ -59,6 +59,9 @@ const items: ISidebarMenu[] = [
     icon: KeyRoundIcon,
     roles: ["super_admin"],
   },
+];
+
+const navSecondary: ISidebarMenu[] = [
   {
     title: "Settings",
     url: "/admin/settings",
@@ -81,25 +84,22 @@ const AdminSidebar = () => {
 
   const userRole = user?.role;
 
-  const filteredMenu = items.filter(
+  const filteredMenu = navMain.filter(
     (nav) => !nav.roles || (userRole && nav.roles.includes(userRole))
   );
 
   return (
-    <Sidebar className="">
-      <SidebarHeader className="p-4 border-b">
-        <div className="flex items-center py-2">
+    <Sidebar className="" collapsible="icon">
+      <SidebarHeader className="px-4 py-2 border-b">
+        <div className="flex items-center py-2 ">
           <Link href="/" className="text-xl flex items-center">
-            {/* <div className="lg:h-[35px] h-[30px] px-2 ">
-              <Image
-                src="/images/logos/gph-logo-full-black.png"
-                alt="logo"
-                width={300}
-                height={200}
-                className="w-full h-full object-contain"
-              />
-            </div> */}
-            Billions Homz
+            <Avatar className="size-12 mr-2">
+              <AvatarFallback className="bg-primary/10 text-primary">
+                BH
+              </AvatarFallback>
+            </Avatar>
+
+            <span>Billions Homz</span>
           </Link>
         </div>
       </SidebarHeader>
@@ -110,15 +110,45 @@ const AdminSidebar = () => {
             return (
               <SidebarMenuItem key={i}>
                 <SidebarMenuButton
+                  asChild
                   isActive={isItemActive(item.url)}
                   className="w-full justify-start"
+                  tooltip={item.title}
                 >
                   <Link
                     href={item.url}
                     className="h-full w-full flex items-center px-4 py-2"
                   >
                     {Icon && <Icon size={18} className="mr-2" />}
-                    <span>{item.title}</span>
+                    <span className="sidebar-collapsed:hidden">
+                      {item.title}
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            );
+          })}
+        </SidebarMenu>
+
+        <SidebarMenu className="space-y-1 p-2 mt-auto">
+          {navSecondary.map((item, i) => {
+            const Icon = item.icon;
+            return (
+              <SidebarMenuItem key={i}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isItemActive(item.url)}
+                  className="w-full justify-start"
+                  tooltip={item.title}
+                >
+                  <Link
+                    href={item.url}
+                    className="h-full w-full flex items-center px-4 py-2"
+                  >
+                    {Icon && <Icon size={18} className="mr-2" />}
+                    <span className="sidebar-collapsed:hidden">
+                      {item.title}
+                    </span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -127,16 +157,16 @@ const AdminSidebar = () => {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter className="p-2 border-t">
-        <SidebarMenu>
+        <SidebarMenu className="">
           <SidebarMenuItem>
-            <Button
-              variant={"ghost"}
-              className="w-full justify-start gap-2 text-destructive hover:text-destructive cursor-pointer"
+            <SidebarMenuButton
+              className="w-full justify-start text-destructive hover:text-destructive px-4 py-2 cursor-pointer"
               disabled={isLoggingOut}
+              tooltip={"Sign Out"}
               onClick={signOut}
             >
-              <LogOutIcon size={16} />
-              <span>Sign Out</span>
+              <LogOutIcon size={18} className="mr-2" />
+              <span className="sidebar-collapsed:hidden">Sign Out</span>
               {isLoggingOut && (
                 <span className="ml-auto">
                   <svg
@@ -161,7 +191,7 @@ const AdminSidebar = () => {
                   </svg>
                 </span>
               )}
-            </Button>
+            </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>

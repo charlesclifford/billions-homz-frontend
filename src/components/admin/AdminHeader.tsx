@@ -1,5 +1,5 @@
 "use client";
-import { useIsTablet } from "@/hooks/useMobile";
+// import { useIsTablet } from "@/hooks/useMobile";
 import { useAppSelector } from "@/store/hooks";
 import { formatText } from "@/utils/helpers";
 import { BellIcon, Calendar, MoonIcon, SunIcon } from "lucide-react";
@@ -23,7 +23,7 @@ import {
 import { Badge } from "../ui/badge";
 
 const AdminHeader = () => {
-  const isTablet = useIsTablet();
+  // const isTablet = useIsTablet();
   const { user } = useAppSelector((state) => state.auth);
   const [currentTime, setCurrentTime] = useState(new Date());
   const unreadCount = 3; // Mock unread notifications count
@@ -115,11 +115,11 @@ const AdminHeader = () => {
   return (
     <header className="sticky top-0 z-40 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
       <div className="w-full flex h-16 items-center px-4">
-        {isTablet && (
+        {/* {isTablet && ( */}
           <div className="mr-2">
             <SidebarTrigger />
           </div>
-        )}
+        {/* )} */}
 
         <div className="flex flex-1 items-center justify-end space-x-4">
           <nav className="flex items-center space-x-2">

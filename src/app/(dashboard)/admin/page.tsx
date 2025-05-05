@@ -1,9 +1,12 @@
-import React from 'react'
+import { ChartAreaInteractive } from "@/components/admin/dashboard/chart-area-interactive";
+import React from "react";
 
 const OverviewPage = () => {
   return (
-    <div>OverviewPage</div>
-  )
-}
+    <div>
+      <ChartAreaInteractive />
+    </div>
+  );
+};
 
-export default OverviewPage
+export default OverviewPage;
