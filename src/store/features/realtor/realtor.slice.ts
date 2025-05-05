@@ -8,6 +8,8 @@ interface RealtorsFilterState {
   status?: string;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
+  startDate?: string;
+  endDate?: string;
 }
 
 interface Realtorstate {
