@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/dialog";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { AxiosError } from "axios";
 
 const ActionsComp = ({
   user,
@@ -66,8 +67,9 @@ const BlockAction = ({ user }: { user: IUser }) => {
 
       setShowDialog(false);
     },
-    onError: (error: Error) => {
-      toast.error(error.message || "Failed to update user status");
+    onError: (error: AxiosError<{ message: string }>) => {
+      console.log("error", error?.response?.data?.message);
+      toast.error(error?.response?.data?.message || error?.message);
     },
   });
 

@@ -26,7 +26,7 @@ interface PropertyState {
 
 export const SLICE_NAME = "property";
 
-const initialFilterState: PropertyFilterState = {
+export const initialFilterState: PropertyFilterState = {
   page: 1,
   limit: 10,
 };

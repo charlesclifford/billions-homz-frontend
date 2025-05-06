@@ -25,6 +25,7 @@ import React, { useState } from "react";
 import { toast } from "sonner";
 import AdminDetails from "./AdminDetails";
 import UpdateAdmin from "./UpdateAdmin";
+import { AxiosError } from "axios";
 
 const ActionsComp = ({
   user,
@@ -66,8 +67,9 @@ const BlockAction = ({ user }: { user: IAdmin }) => {
 
       setShowDialog(false);
     },
-    onError: (error: Error) => {
-      toast.error(error.message || "Failed to update user status");
+    onError: (error: AxiosError<{ message: string }>) => {
+      console.log("error", error?.response?.data?.message);
+      toast.error(error?.response?.data?.message || error?.message);
     },
   });
 

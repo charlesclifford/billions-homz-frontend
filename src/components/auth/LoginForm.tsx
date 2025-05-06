@@ -150,7 +150,7 @@ const LoginForm = () => {
         <Button
           type="submit"
           disabled={loginMutation.isPending}
-          className="w-full rounded-sm"
+          className="w-full rounded-sm cursor-pointer"
         >
           {loginMutation.isPending ? (
             <>

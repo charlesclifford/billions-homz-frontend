@@ -20,6 +20,7 @@ import {
 import { Input } from "../ui/input";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import { AxiosError } from "axios";
+import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 
 // Base schema for all users
 const formSchema = z.object({
@@ -178,6 +179,29 @@ const RegisterForm = () => {
 
           <FormField
             control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <PhoneInput
+                international
+                countryCallingCodeEditable={false}
+                defaultCountry="NG"
+                placeholder="Enter phone number"
+                value={field.value}
+                onChange={() => {}}
+                error={
+                  field.value
+                    ? isValidPhoneNumber(field.value)
+                      ? undefined
+                      : "Invalid phone number"
+                    : "Phone number required"
+                }
+                className="focus-visible:ring-0 shadow-none rounded-sm file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0  border bg-transparent px-3 py-1 text-base  transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus:outline-none [&>input]:bg-transparent group [&>input]:outline-0 [&>input]:group-focus-visible:border-red-500"
+              />
+            )}
+          />
+
+          <FormField
+            control={form.control}
             name="password"
             render={({ field }) => (
               <FormItem>
@@ -253,7 +277,7 @@ const RegisterForm = () => {
 
           <Button
             type="submit"
-            className="w-full rounded-sm"
+            className="w-full rounded-sm cursor-pointer"
             disabled={registerMutation.isPending}
           >
             {registerMutation.isPending

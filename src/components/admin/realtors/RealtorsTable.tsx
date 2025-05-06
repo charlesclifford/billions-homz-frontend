@@ -25,6 +25,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import RealtorDetails from "./RealtorDetails";
 import UpdateRealtor from "./UpdateRealtor";
+import { AxiosError } from "axios";
 
 const ActionsComp = ({
   user,
@@ -66,8 +67,9 @@ const BlockAction = ({ user }: { user: IRealtor }) => {
 
       setShowDialog(false);
     },
-    onError: (error: Error) => {
-      toast.error(error.message || "Failed to update realtor status");
+    onError: (error: AxiosError<{ message: string }>) => {
+      console.log("error", error?.response?.data?.message);
+      toast.error(error?.response?.data?.message || error?.message);
     },
   });
 

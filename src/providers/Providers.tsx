@@ -3,6 +3,7 @@ import StoreProvider from "./StoreProvider";
 import QueryProvider from "./QueryProvider";
 import { ThemeProvider } from "./ThemeProvider";
 import AuthGuard from "@/guards/AuthGuard";
+import 'react-phone-number-input/style.css'
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
