@@ -1,5 +1,4 @@
 "use client";
-// import { useIsTablet } from "@/hooks/useMobile";
 import { useAppSelector } from "@/store/hooks";
 import { formatText } from "@/utils/helpers";
 import { BellIcon, Calendar, MoonIcon, SunIcon } from "lucide-react";
@@ -21,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "../ui/badge";
+import { Separator } from "../ui/separator";
 
 const AdminHeader = () => {
   // const isTablet = useIsTablet();
@@ -113,15 +113,13 @@ const AdminHeader = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-      <div className="w-full flex h-16 items-center px-4">
-        {/* {isTablet && ( */}
-          <div className="mr-2">
-            <SidebarTrigger />
-          </div>
-        {/* )} */}
+    <header className="sticky w-full top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b box-border">
+      <div className="w-full container flex h-16 items-center justify-between px-4">
+        <div className="mr-2">
+          <SidebarTrigger />
+        </div>
 
-        <div className="flex flex-1 items-center justify-end space-x-4">
+        <div className="flex items-center space-x-4">
           <nav className="flex items-center space-x-2">
             {/* Date/Time Info - Hidden on mobile */}
             <div className="hidden lg:flex items-center gap-4 text-sm">
@@ -220,6 +218,7 @@ const AdminHeader = () => {
                     {userRole}
                   </p>
                 </div>
+                <Separator />
                 <DropdownMenuItem>Profile</DropdownMenuItem>
                 <DropdownMenuItem>Settings</DropdownMenuItem>
                 <DropdownMenuItem className="text-destructive">

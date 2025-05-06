@@ -109,7 +109,7 @@ const AdminSidebar = () => {
   );
 
   return (
-    <Sidebar className="" collapsible="icon">
+    <Sidebar collapsible="icon">
       <SidebarHeader className="px-2 py-2 border-b">
         <div className="flex items-center py-1">
           <Link href="/" className="text-xl flex items-center gap-1 ">

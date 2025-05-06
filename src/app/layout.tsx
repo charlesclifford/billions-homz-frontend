@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
+import { Suspense } from "react";
+import Loading from "./loading";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +33,9 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NextTopLoader color="#EE6C0E" showSpinner={false} />
-        <Providers>{children}</Providers>
+        <Providers>
+          <Suspense fallback={<Loading />}>{children}</Suspense>
+        </Providers>
         <Toaster position="top-right" richColors expand={true} closeButton />
       </body>
     </html>
