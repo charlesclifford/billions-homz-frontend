@@ -10,10 +10,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { resetFilter, setFilter } from "@/store/features/admin/admin.slice";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import useAdmins from "@/hooks/useAdmins";
+import {
+  initialFilterState,
+  resetFilter,
+  setFilter,
+} from "@/store/features/admin/admin.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { endOfDay, startOfDay } from "date-fns";
-import { SearchIcon, X } from "lucide-react";
+import { RefreshCcw, SearchIcon, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 
@@ -27,6 +37,7 @@ type SortOption =
 const MembersFilter = () => {
   const dispatch = useAppDispatch();
   const { filter } = useAppSelector((state) => state.admin);
+  const { refetch } = useAdmins(initialFilterState);
   const [localSearch, setLocalSearch] = useState(filter.search || "");
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
     from: filter.startDate ? new Date(filter.startDate) : undefined,
@@ -112,7 +123,19 @@ const MembersFilter = () => {
       {/* Search and Filters Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Search Input */}
-        <div className="relative col-span-1">
+        <div className="relative col-span-1 flex gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size={"icon"}
+                className="cursor-pointer"
+                onClick={() => refetch()}
+              >
+                <RefreshCcw />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Refresh</TooltipContent>
+          </Tooltip>
           <div className="flex items-center w-full relative">
             <SearchIcon className="mx-2 absolute text-neutral-400 dark:text-neutral-500" />
             <Input

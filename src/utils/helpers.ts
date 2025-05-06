@@ -36,3 +36,11 @@ export const formatText = (status: string) => status.replace(/_/g, " ");
 export const isAdminUser = (user: IUser | null): boolean => {
   return user?.role ? ["admin", "super_admin"].includes(user.role) : false;
 };
+
+export const formatUnderscoreText = (text: string) => {
+  // Replace underscores with spaces and capitalize each word
+  return text
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};

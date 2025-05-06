@@ -1,17 +1,7 @@
 "use client";
+import DateRangePicker from "@/components/shared/DateRangePicker";
 import { Button } from "@/components/ui/button";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -20,11 +10,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { resetFilter, setFilter } from "@/store/features/realtor/realtor.slice";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import useRealtors from "@/hooks/useRealtors";
+import {
+  initialFilterState,
+  resetFilter,
+  setFilter,
+} from "@/store/features/realtor/realtor.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { SearchIcon, X } from "lucide-react";
+import { endOfDay, startOfDay } from "date-fns";
+import { RefreshCcw, SearchIcon, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { HiAdjustmentsVertical } from "react-icons/hi2";
+import { DateRange } from "react-day-picker";
 
 type StatusFilter = "all" | "active" | "blocked";
 type SortOption =
@@ -36,7 +37,12 @@ type SortOption =
 const RealtorsFilter = () => {
   const dispatch = useAppDispatch();
   const { filter } = useAppSelector((state) => state.realtor);
+  const { refetch } = useRealtors(initialFilterState);
   const [localSearch, setLocalSearch] = useState(filter.search || "");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: filter.startDate ? new Date(filter.startDate) : undefined,
+    to: filter.endDate ? new Date(filter.endDate) : undefined,
+  });
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -70,91 +76,123 @@ const RealtorsFilter = () => {
     dispatch(setFilter({ status: actualStatus }));
   };
 
+  // Handle date range changes
+  const handleDateRangeChange = (range: DateRange | undefined) => {
+    setDateRange(range);
+    dispatch(
+      setFilter({
+        startDate: range?.from
+          ? startOfDay(range.from).toISOString()
+          : undefined,
+        endDate: range?.to ? endOfDay(range.to).toISOString() : undefined,
+      })
+    );
+  };
+
   // Reset all filters
   const handleResetFilters = () => {
     dispatch(resetFilter());
     setLocalSearch("");
+    setDateRange(undefined);
   };
 
   // Sync local search with Redux state on mount
   useEffect(() => {
     setLocalSearch(filter.search as string);
-  }, [filter.search]);
+    setDateRange({
+      from: filter.startDate ? new Date(filter.startDate) : undefined,
+      to: filter.endDate ? new Date(filter.endDate) : undefined,
+    });
+  }, [filter.search, filter.startDate, filter.endDate]);
+
+  // Get current sort display text
+  const getSortDisplayText = () => {
+    if (filter.sortBy === "createdAt" && filter.sortOrder === "desc")
+      return "Newest First";
+    if (filter.sortBy === "createdAt" && filter.sortOrder === "asc")
+      return "Oldest First";
+    if (filter.sortBy === "firstName" && filter.sortOrder === "asc")
+      return "Name (A-Z)";
+    if (filter.sortBy === "firstName" && filter.sortOrder === "desc")
+      return "Name (Z-A)";
+    return "Sort by";
+  };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 items-center">
-      <div className="flex items-center w-full">
-        <div className="flex items-center w-full relative">
-          <SearchIcon className="mx-2 absolute text-neutral-400 dark:text-neutral-500" />
-          <Input
-            className=" focus:!ring-0 !shadow-none px-12 rounded-sm"
-            placeholder="Search by name..."
-            value={localSearch}
-            onChange={handleSearchChange}
-          />
-          {localSearch && (
-            <button
-              onClick={handleClearSearch}
-              className="absolute right-2 text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
-              aria-label="Clear search"
-            >
-              <X size={18} />
-            </button>
-          )}
-        </div>
-        <Drawer>
-          <DrawerTrigger asChild>
-            <Button
-              size={"icon"}
-              asChild
-              className="!p-1.5 cursor-pointer ml-2 rounded-sm"
-            >
-              <HiAdjustmentsVertical size={16} />
-            </Button>
-          </DrawerTrigger>
-          <DrawerContent>
-            <DrawerHeader>
-              <DrawerTitle>Advanced Filters</DrawerTitle>
-              <DrawerDescription>
-                Refine your user search with additional filters
-              </DrawerDescription>
-            </DrawerHeader>
-            <div className="px-4 space-y-4">
-              <div className="space-y-2">
-                <Label>Sort By</Label>
-                <Select
-                  value={`${filter.sortBy}:${filter.sortOrder}`}
-                  onValueChange={handleSortChange}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select sort option" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="createdAt:desc">Newest First</SelectItem>
-                    <SelectItem value="createdAt:asc">Oldest First</SelectItem>
-                    <SelectItem value="firstName:asc">Name (A-Z)</SelectItem>
-                    <SelectItem value="firstName:desc">Name (Z-A)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            <DrawerFooter className="flex-row gap-3 justify-end">
-              <DrawerClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DrawerClose>
-              <Button onClick={handleResetFilters} variant="secondary">
-                Reset Filters
+    <div className="space-y-4">
+      {/* Search and Filters Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Search Input */}
+        <div className="relative col-span-1 flex gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size={"icon"}
+                className="cursor-pointer"
+                onClick={() => refetch()}
+              >
+                <RefreshCcw />
               </Button>
-              <DrawerClose asChild>
-                <Button>Apply Filters</Button>
-              </DrawerClose>
-            </DrawerFooter>
-          </DrawerContent>
-        </Drawer>
+            </TooltipTrigger>
+            <TooltipContent>Refresh</TooltipContent>
+          </Tooltip>
+          <div className="flex items-center w-full relative">
+            <SearchIcon className="mx-2 absolute text-neutral-400 dark:text-neutral-500" />
+            <Input
+              className="focus:!ring-0  px-12 rounded-sm"
+              placeholder="Search by name..."
+              value={localSearch}
+              onChange={handleSearchChange}
+            />
+            {localSearch && (
+              <button
+                onClick={handleClearSearch}
+                className="absolute right-2 text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
+                aria-label="Clear search"
+              >
+                <X size={18} />
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="col-span-1 flex gap-4 items-center">
+          <div className="w-full">
+            <DateRangePicker
+              dateRange={dateRange}
+              onDateRangeChange={handleDateRangeChange}
+              placeholder="Filter by date range"
+              className=" rounded-sm"
+            />
+          </div>
+
+          <Select
+            value={`${filter.sortBy}:${filter.sortOrder}`}
+            onValueChange={handleSortChange}
+          >
+            <SelectTrigger className="w-[180px] rounded-sm">
+              <SelectValue>{getSortDisplayText()}</SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="createdAt:desc">Newest First</SelectItem>
+              <SelectItem value="createdAt:asc">Oldest First</SelectItem>
+              <SelectItem value="firstName:asc">Name (A-Z)</SelectItem>
+              <SelectItem value="firstName:desc">Name (Z-A)</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Button
+            variant="secondary"
+            className="rounded-sm"
+            onClick={handleResetFilters}
+          >
+            Reset Filters
+          </Button>
+        </div>
       </div>
 
-      {/* tabs */}
-      <div className="w-full flex ms-auto">
+      {/* Status Tabs */}
+      <div className="w-full">
         <Tabs
           value={filter.status || "all"}
           onValueChange={(value) => handleStatusChange(value as StatusFilter)}

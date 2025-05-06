@@ -24,6 +24,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { useUser } from "@/hooks/use-user";
+import { AxiosError } from "axios";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -73,10 +74,9 @@ const LoginForm = () => {
         router.push(callbackUrl);
       }
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message: string }>) => {
       console.log("error", error?.response?.data?.message);
-      dispatch(loginFailure(error?.message || "Login failed"));
+      dispatch(loginFailure(error?.response?.data?.message || "Login failed"));
       toast.error(error?.response?.data?.message || error?.message);
     },
   });

@@ -34,4 +34,6 @@ export interface IAdmin {
   lastLogin?: Date;
   isBlocked: boolean;
   isActive: boolean;
+  isVerified: boolean;
+  role: "admin" | "super_admin";
 }

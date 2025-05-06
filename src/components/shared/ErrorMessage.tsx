@@ -16,7 +16,7 @@ const ErrorMessage = ({ message, onRetry }: ErrorMessageProps) => {
         <p className="text-lg font-semibold text-gray-800 ">{message}</p>
 
         {onRetry && (
-          <Button onClick={onRetry} className="mt-4">
+          <Button onClick={onRetry} className="mt-4 rounded-sm cursor-pointer">
             Try Again
           </Button>
         )}

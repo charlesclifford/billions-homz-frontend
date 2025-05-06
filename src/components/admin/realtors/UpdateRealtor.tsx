@@ -21,6 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { IRealtor } from "@/interfaces/realtor.interface";
 import { updateRealtor } from "@/lib/api/users";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { Edit2Icon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -46,9 +47,9 @@ const UpdateRealtor = ({ user }: FormProps) => {
       queryClient.invalidateQueries({ queryKey: ["allRealtors"] });
       queryClient.invalidateQueries({ queryKey: ["getRealtorById", user._id] });
     },
-    onError: (error: Error) => {
+    onError: (error: AxiosError<{ message: string }>) => {
       console.log("error", error);
-      toast.error(error?.message || "Failed to update user");
+      toast.error(error?.response?.data?.message || error?.message);
     },
   });
 

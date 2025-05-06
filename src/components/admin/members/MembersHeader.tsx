@@ -7,7 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Users2Icon } from "lucide-react";
+import { KeyRoundIcon } from "lucide-react";
 import InviteAdmin from "./InviteAdmin";
 
 const MembersHeader = () => {
@@ -31,7 +31,7 @@ const MembersHeader = () => {
         <div className="flex items-center gap-4">
           {/* Icon with better styling */}
           <div className="border border-primary/20 bg-primary/10 p-3 rounded-full">
-            <Users2Icon className="w-5 h-5 text-primary" />
+            <KeyRoundIcon className="w-5 h-5 text-primary" />
           </div>
 
           {/* Title with responsive sizing */}

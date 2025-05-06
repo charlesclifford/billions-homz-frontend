@@ -1,8 +1,10 @@
+"use client"
 import ErrorMessage from "@/components/shared/ErrorMessage";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
   SheetContent,
@@ -17,6 +19,7 @@ import { Edit2Icon, EyeIcon } from "lucide-react";
 import moment from "moment";
 import { useMemo, useState } from "react";
 import UserDetailSkeleton from "../users/UserDetailSkeleton";
+import { AxiosError } from "axios";
 
 const RealtorDetails = ({ id }: { id: string }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,7 +50,7 @@ const RealtorDetails = ({ id }: { id: string }) => {
         </Button>
       </SheetTrigger>
       <SheetContent className="w-full sm:max-w-md overflow-y-auto gap-0">
-        <SheetHeader className="border-b">
+        <SheetHeader className="border-b pb-4">
           <SheetTitle className="text-xl font-semibold">
             Realtor Details
           </SheetTitle>
@@ -57,7 +60,10 @@ const RealtorDetails = ({ id }: { id: string }) => {
           <UserDetailSkeleton />
         ) : isError ? (
           <ErrorMessage
-            message={error?.message || "Failed to load user details"}
+            message={
+              (error as AxiosError<{ message: string }>)?.response?.data
+                .message || "Failed to load user details"
+            }
             onRetry={refetch}
           />
         ) : !user ? (
@@ -85,16 +91,18 @@ const RealtorDetails = ({ id }: { id: string }) => {
                     <Edit2Icon size={16} />
                   </Button>
                 </div>
-                <div className="text-center">
+                <div className="text-center space-y-2">
                   <h2 className="text-xl font-bold">{userName}</h2>
                   <p className="text-muted-foreground">{user?.email}</p>
                 </div>
               </div>
 
+              <Separator />
+
               {/* Information Sections */}
               <div className="space-y-6">
                 {/* Basic Information */}
-                <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+                <div className="space-y-3">
                   <h3 className="font-medium text-lg">Basic Information</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
@@ -114,8 +122,10 @@ const RealtorDetails = ({ id }: { id: string }) => {
                   </div>
                 </div>
 
+                <Separator />
+
                 {/* Account Status */}
-                <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+                <div className="space-y-3">
                   <h3 className="font-medium text-lg">Account Status</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
@@ -143,8 +153,10 @@ const RealtorDetails = ({ id }: { id: string }) => {
                   </div>
                 </div>
 
+                <Separator />
+
                 {/* System Information */}
-                <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+                <div className="space-y-3">
                   <h3 className="font-medium text-lg">System Information</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-1">
@@ -175,45 +187,50 @@ const RealtorDetails = ({ id }: { id: string }) => {
                   user?.city ||
                   user?.state ||
                   user?.country) && (
-                  <div className="bg-muted/50 rounded-lg p-4 space-y-3">
-                    <h3 className="font-medium text-lg">Address Information</h3>
-                    <div className="space-y-2">
-                      {user?.address && (
-                        <div className="space-y-1">
-                          <p className="text-sm text-muted-foreground">
-                            Address
-                          </p>
-                          <p className="font-medium">{user.address}</p>
+                  <>
+                    <Separator />
+                    <div className="space-y-3">
+                      <h3 className="font-medium text-lg">
+                        Address Information
+                      </h3>
+                      <div className="space-y-2">
+                        {user?.address && (
+                          <div className="space-y-1">
+                            <p className="text-sm text-muted-foreground">
+                              Address
+                            </p>
+                            <p className="font-medium">{user.address}</p>
+                          </div>
+                        )}
+                        <div className="grid grid-cols-3 gap-4">
+                          {user?.city && (
+                            <div className="space-y-1">
+                              <p className="text-sm text-muted-foreground">
+                                City
+                              </p>
+                              <p className="font-medium">{user.city}</p>
+                            </div>
+                          )}
+                          {user?.state && (
+                            <div className="space-y-1">
+                              <p className="text-sm text-muted-foreground">
+                                State
+                              </p>
+                              <p className="font-medium">{user.state}</p>
+                            </div>
+                          )}
+                          {user?.country && (
+                            <div className="space-y-1">
+                              <p className="text-sm text-muted-foreground">
+                                Country
+                              </p>
+                              <p className="font-medium">{user.country}</p>
+                            </div>
+                          )}
                         </div>
-                      )}
-                      <div className="grid grid-cols-3 gap-4">
-                        {user?.city && (
-                          <div className="space-y-1">
-                            <p className="text-sm text-muted-foreground">
-                              City
-                            </p>
-                            <p className="font-medium">{user.city}</p>
-                          </div>
-                        )}
-                        {user?.state && (
-                          <div className="space-y-1">
-                            <p className="text-sm text-muted-foreground">
-                              State
-                            </p>
-                            <p className="font-medium">{user.state}</p>
-                          </div>
-                        )}
-                        {user?.country && (
-                          <div className="space-y-1">
-                            <p className="text-sm text-muted-foreground">
-                              Country
-                            </p>
-                            <p className="font-medium">{user.country}</p>
-                          </div>
-                        )}
                       </div>
                     </div>
-                  </div>
+                  </>
                 )}
               </div>
             </div>

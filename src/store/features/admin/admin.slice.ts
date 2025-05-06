@@ -22,7 +22,7 @@ interface AdminState {
 
 export const SLICE_NAME = "admin";
 
-const initialFilterState: AdminFilterState = {
+export const initialFilterState: AdminFilterState = {
   page: 1,
   limit: 10,
 };

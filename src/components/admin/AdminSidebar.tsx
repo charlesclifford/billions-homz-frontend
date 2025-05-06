@@ -2,13 +2,16 @@
 import useLogout from "@/hooks/useLogout";
 import { useAppSelector } from "@/store/hooks";
 import {
+  BellIcon,
   CircleGaugeIcon,
   HomeIcon,
   KeyRoundIcon,
   LogOutIcon,
+  NewspaperIcon,
   SettingsIcon,
-  UserCogIcon,
+  UserCog2Icon,
   Users2Icon,
+  ImageIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -22,6 +25,7 @@ import {
   SidebarMenuItem,
 } from "../ui/sidebar";
 import { Avatar, AvatarFallback } from "../ui/avatar";
+import { cn } from "@/lib/utils";
 
 interface ISidebarMenu {
   title: string;
@@ -44,7 +48,7 @@ const navMain: ISidebarMenu[] = [
   {
     title: "Realtors",
     url: "/admin/realtors",
-    icon: UserCogIcon,
+    icon: UserCog2Icon,
   },
   {
     title: "Users",
@@ -58,18 +62,23 @@ const navMain: ISidebarMenu[] = [
     icon: KeyRoundIcon,
     roles: ["super_admin"],
   },
-  // {
-  //   title: "Gallery",
-  //   url: "/admin/gallery",
-  //   icon: ImageIcon,
-  //   roles: ["super_admin"],
-  // },
-  // {
-  //   title: "Blogs",
-  //   url: "/admin/blogs",
-  //   // icon: ,
-  //   roles: ["super_admin"],
-  // },
+  {
+    title: "Gallery",
+    url: "/admin/gallery",
+    icon: ImageIcon,
+    roles: ["super_admin"],
+  },
+  {
+    title: "Blogs",
+    url: "/admin/blogs",
+    icon: NewspaperIcon,
+    roles: ["super_admin"],
+  },
+  {
+    title: "Notifications",
+    url: "/admin/notifications",
+    icon: BellIcon,
+  },
 ];
 
 const navSecondary: ISidebarMenu[] = [
@@ -101,16 +110,29 @@ const AdminSidebar = () => {
 
   return (
     <Sidebar className="" collapsible="icon">
-      <SidebarHeader className="px-4 py-2 border-b">
-        <div className="flex items-center py-2 ">
-          <Link href="/" className="text-xl flex items-center">
-            <Avatar className="size-12 mr-2">
-              <AvatarFallback className="bg-primary/10 text-primary">
+      <SidebarHeader className="px-2 py-2 border-b">
+        <div className="flex items-center py-1">
+          <Link href="/" className="text-xl flex items-center gap-1 ">
+            <Avatar
+              className={cn(
+                "size-10 transition-all duration-200",
+                "group-data-[collapsible=icon]:size-8", // Smaller when collapsed
+                "group-data-[collapsible=icon]:mx-auto" // Center when collapsed
+              )}
+            >
+              <AvatarFallback className="bg-primary/10 text-primary text-sm">
                 BH
               </AvatarFallback>
             </Avatar>
 
-            <span>Billions Homz</span>
+            <span
+              className={cn(
+                "text-lg font-semibold whitespace-nowrap transition-opacity duration-200",
+                "group-data-[collapsible=icon]:hidden" // Hide text when collapsed
+              )}
+            >
+              Billions Homz
+            </span>
           </Link>
         </div>
       </SidebarHeader>

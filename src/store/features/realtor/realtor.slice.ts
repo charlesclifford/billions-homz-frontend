@@ -22,7 +22,7 @@ interface Realtorstate {
 
 export const SLICE_NAME = "user";
 
-const initialFilterState: RealtorsFilterState = {
+export const initialFilterState: RealtorsFilterState = {
   page: 1,
   limit: 10,
 };

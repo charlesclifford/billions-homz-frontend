@@ -22,7 +22,7 @@ interface UserState {
 
 export const SLICE_NAME = "user";
 
-const initialFilterState: UsersFilterState = {
+export const initialFilterState: UsersFilterState = {
   page: 1,
   limit: 10,
 };

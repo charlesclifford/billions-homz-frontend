@@ -1,5 +1,3 @@
-import { Users2 } from "lucide-react";
-import React from "react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,6 +6,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { UserCog2Icon } from "lucide-react";
 
 const RealtorHeader = () => {
   return (
@@ -30,7 +29,7 @@ const RealtorHeader = () => {
         <div className="flex items-center gap-4">
           {/* Icon with better styling */}
           <div className="border border-primary/20 bg-primary/10 p-3 rounded-full">
-            <Users2 className="w-5 h-5 text-primary" />
+            <UserCog2Icon className="w-5 h-5 text-primary" />
           </div>
 
           {/* Title with responsive sizing */}

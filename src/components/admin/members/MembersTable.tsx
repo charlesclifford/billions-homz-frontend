@@ -2,7 +2,15 @@
 import { DataTable } from "@/components/shared/DataTable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import useAdmins from "@/hooks/useAdmins";
 import { IAdmin } from "@/interfaces/admin.interface";
@@ -15,6 +23,8 @@ import { Loader2Icon, Trash2Icon } from "lucide-react";
 import moment from "moment";
 import React, { useState } from "react";
 import { toast } from "sonner";
+import AdminDetails from "./AdminDetails";
+import UpdateAdmin from "./UpdateAdmin";
 
 const ActionsComp = ({
   user,
@@ -30,8 +40,8 @@ const ActionsComp = ({
 
   return (
     <div className="flex items-center gap-2">
-      {/* <AdminDetails id={user._id} /> */}
-      {/* <UpdateAdmin user={user} /> */}
+      <AdminDetails id={user._id} />
+      <UpdateAdmin user={user} />
       <Button size={"icon"} variant={"destructive"} onClick={handleDelete}>
         <Trash2Icon size={16} />
       </Button>
@@ -176,7 +186,20 @@ const MembersTable = () => {
       header: "Phone",
       cell: (info) => info.getValue() || "-",
     },
+    {
+      accessorKey: "role",
+      header: "Role",
+      cell: ({ row }) => {
+        const role = row.original.role;
+        const variant = role === "super_admin" ? "default" : "secondary";
 
+        return (
+          <Badge variant={variant} color="blue">
+            {role === "super_admin" ? "Super Admin" : "Admin"}
+          </Badge>
+        );
+      },
+    },
     {
       accessorKey: "createdAt",
       header: "Date Joined",

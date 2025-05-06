@@ -23,6 +23,7 @@ import { TOKEN_NAME } from "@/constants/app.constant";
 import { useUser } from "@/hooks/use-user";
 import cookies from "js-cookie";
 import { loginFailure, loginSuccess } from "@/store/features/auth/auth.slice";
+import { AxiosError } from "axios";
 
 const formSchema = z
   .object({
@@ -86,10 +87,9 @@ const UpdatePasswordForm = () => {
       }
       router.push(callbackUrl);
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message: string }>) => {
       console.log("error", error?.response?.data?.message);
-      dispatch(loginFailure(error?.message || "Login failed"));
+      dispatch(loginFailure(error?.response?.data?.message || "Login failed"));
       toast.error(error?.response?.data?.message || error?.message);
     },
   });

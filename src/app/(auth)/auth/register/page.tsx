@@ -7,13 +7,13 @@ const RegisterPage = () => {
       <div className="w-full flex items-center justify-center">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center space-y-2">
-            <h2 className="text-3xl font-bold text-gray-900">Billions Homz</h2>
-            <p className="text-gray-600">Create your account</p>
+            <h2 className="text-3xl font-bold ">Billions Homz</h2>
+            <p className="text-neutral-500">Create your account</p>
           </div>
 
           <RegisterForm />
 
-          <div className="text-center text-sm text-gray-600">
+          <div className="text-center text-sm text-neutral-500">
             Already have an account?{" "}
             <Link
               href="/auth/login"

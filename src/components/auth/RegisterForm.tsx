@@ -19,6 +19,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
+import { AxiosError } from "axios";
 
 // Base schema for all users
 const formSchema = z.object({
@@ -42,7 +43,7 @@ const RegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [accountType, setAccountType] = useState<"user" | "realtor">("user");
 
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const callbackUrl = searchParams.get("callbackUrl") || "/auth/login";
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(formSchema),
@@ -67,8 +68,7 @@ const RegisterForm = () => {
       toast.success(data?.message);
       router.push(callbackUrl);
     },
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message: string }>) => {
       console.log("error", error);
       toast.error(error?.response?.data?.message || error?.message);
     },
