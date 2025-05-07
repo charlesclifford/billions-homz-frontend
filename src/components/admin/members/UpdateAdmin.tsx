@@ -1,0 +1,317 @@
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { AdminPermission, IAdmin } from "@/interfaces/admin.interface";
+import { updateAdmin } from "@/lib/api/admin";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import { Edit2Icon, Loader2Icon } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+
+const formSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+  email: z.string().email("Invalid email address"),
+  phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  role: z.enum(["admin", "super_admin"]).optional(),
+  permissions: z.array(z.string()).optional(),
+});
+
+export type InviteAdminFormValues = z.infer<typeof formSchema>;
+
+const permissionLabels: Record<AdminPermission, string> = {
+  manage_users: "Manage Users",
+  manage_properties: "Manage Properties",
+  manage_content: "Manage Content",
+  manage_settings: "Manage Settings",
+  view_analytics: "View Analytics",
+  manage_admins: "Manage Admins",
+};
+
+const UpdateAdmin = ({ user }: { user: IAdmin }) => {
+  const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
+
+  const form = useForm<InviteAdminFormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone,
+      role: user.role,
+      permissions: user.permissions || [],
+    },
+  });
+
+  const updateAdminMutation = useMutation({
+    mutationFn: (data: InviteAdminFormValues) => updateAdmin(user._id, data),
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["allAdmins"] });
+      queryClient.invalidateQueries({ queryKey: ["getAdminById", user._id] });
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      console.log("error", error);
+      toast.error(error?.response?.data?.message || error?.message);
+    },
+  });
+
+  const onSubmit = async (data: InviteAdminFormValues) => {
+    updateAdminMutation.mutate(data);
+  };
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      form.reset(); // Reset form when sheet closes
+    }
+    setOpen(isOpen);
+  };
+
+  return (
+    <Sheet open={open} onOpenChange={handleOpenChange}>
+      <SheetTrigger asChild>
+        <Button size={"icon"} variant={"outline"}>
+          <Edit2Icon size={16} />
+        </Button>
+      </SheetTrigger>
+      <SheetContent
+        className="w-full sm:max-w-md"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        <SheetHeader className="border-b">
+          <SheetTitle className="text-xl">Edit Admin</SheetTitle>
+        </SheetHeader>
+
+        <ScrollArea className="overflow-x-hidden overflow-y-auto">
+          <Form {...form}>
+            <form
+              id="admin-update-form"
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4 py-4 px-4"
+            >
+              <div className="space-y-4">
+                <div className="bg-sidebar py-1 px-1">
+                  <h3 className="font-medium">Basic Information</h3>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="firstName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>First Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter first name"
+                            className="focus-visible:ring-0 shadow-none rounded-sm"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Last Name</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder="Enter last name"
+                            className="focus-visible:ring-0 shadow-none rounded-sm"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter email address"
+                          className="focus-visible:ring-0 shadow-none rounded-sm"
+                          {...field}
+                          disabled
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Enter phone number"
+                          className="focus-visible:ring-0 shadow-none rounded-sm"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Role</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="focus-visible:ring-0 shadow-none rounded-sm w-full">
+                            <SelectValue placeholder="Select role" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="admin">Admin</SelectItem>
+                          <SelectItem value="super_admin">
+                            Super Admin
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="space-y-4">
+                  <div className="bg-sidebar py-1 px-1">
+                    <h3 className="font-medium">Permissions</h3>
+                  </div>
+                  <FormField
+                    control={form.control}
+                    name="permissions"
+                    render={() => (
+                      <FormItem>
+                        <div className="space-y-3">
+                          {(
+                            Object.keys(permissionLabels) as AdminPermission[]
+                          ).map((permission) => (
+                            <FormField
+                              key={permission}
+                              control={form.control}
+                              name="permissions"
+                              render={({ field }) => {
+                                return (
+                                  <FormItem
+                                    key={permission}
+                                    className="flex flex-row items-start space-x-3 space-y-0"
+                                  >
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes(
+                                          permission
+                                        )}
+                                        onCheckedChange={(checked) => {
+                                          return checked
+                                            ? field.onChange([
+                                                ...(field.value || []),
+                                                permission,
+                                              ])
+                                            : field.onChange(
+                                                field.value?.filter(
+                                                  (value) =>
+                                                    value !== permission
+                                                ) || []
+                                              );
+                                        }}
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="font-normal">
+                                      {permissionLabels[permission]}
+                                    </FormLabel>
+                                  </FormItem>
+                                );
+                              }}
+                            />
+                          ))}
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </form>
+          </Form>
+        </ScrollArea>
+        <SheetFooter className="flex flex-row justify-end gap-2 pt-4">
+          <Button
+            type="button"
+            variant="outline"
+            className="rounded-sm cursor-pointer"
+            onClick={() => {
+              form.reset();
+              setOpen(false);
+            }}
+          >
+            Cancel
+          </Button>
+
+          <Button
+            type="submit"
+            form="admin-update-form"
+            className="rounded-sm cursor-pointer"
+            disabled={updateAdminMutation.isPending}
+          >
+            {updateAdminMutation.isPending && (
+              <Loader2Icon className="animate-spin" />
+            )}
+            {updateAdminMutation.isPending ? "Saving..." : "Save Changes"}
+          </Button>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+  );
+};
+
+export default UpdateAdmin;
