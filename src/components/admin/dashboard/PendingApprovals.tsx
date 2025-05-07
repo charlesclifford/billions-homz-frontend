@@ -42,12 +42,12 @@ const pendingApprovals = [
   },
 ];
 
-const typeVariantMap = {
-  property: "default",
-  realtor: "outline",
-  document: "destructive",
-  user: "secondary",
-} as const;
+// const typeVariantMap = {
+//   property: "default",
+//   realtor: "outline",
+//   document: "destructive",
+//   user: "secondary",
+// } as const;
 
 export function PendingApprovals() {
   return (
@@ -70,7 +70,7 @@ export function PendingApprovals() {
             {pendingApprovals.map((approval) => (
               <TableRow key={approval.id}>
                 <TableCell>
-                  <Badge variant={typeVariantMap[approval.type]}>
+                  <Badge >
                     {approval.type}
                   </Badge>
                 </TableCell>
