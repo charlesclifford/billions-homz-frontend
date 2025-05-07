@@ -23,6 +23,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "../ui/sidebar";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 import { cn } from "@/lib/utils";
@@ -93,6 +94,7 @@ const AdminSidebar = () => {
   const pathname = usePathname();
   const { signOut, isLoggingOut } = useLogout();
   const { user } = useAppSelector((state) => state.auth);
+  const { setOpenMobile } = useSidebar();
 
   const isItemActive = (itemUrl: string) => {
     if (pathname === itemUrl) return true; // Exact match first
@@ -147,6 +149,7 @@ const AdminSidebar = () => {
                   isActive={isItemActive(item.url)}
                   className="w-full justify-start"
                   tooltip={item.title}
+                  onClick={() => setOpenMobile(false)}
                 >
                   <Link
                     href={item.url}
@@ -173,6 +176,7 @@ const AdminSidebar = () => {
                   isActive={isItemActive(item.url)}
                   className="w-full justify-start"
                   tooltip={item.title}
+                  onClick={() => setOpenMobile(false)}
                 >
                   <Link
                     href={item.url}

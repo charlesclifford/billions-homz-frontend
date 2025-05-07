@@ -8,7 +8,7 @@ export default function SettingsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen">
+    <div className="w-full">
       <div className="flex items-center gap-4">
         <div className="border border-primary/20 bg-primary/10 p-3 rounded-full">
           <SettingsIcon className="w-5 h-5 text-primary" />

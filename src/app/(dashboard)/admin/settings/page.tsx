@@ -18,6 +18,8 @@ import { Loader2Icon } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -68,98 +70,115 @@ const ProfilePage = () => {
         <p className="text-sm text-muted-foreground">
           This is how others will see you on the site.
         </p>
-
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="firstName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>First Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter first name"
-                      className="focus-visible:ring-0 shadow-none rounded-sm"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="lastName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Last Name</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter last name"
-                      className="focus-visible:ring-0 shadow-none rounded-sm"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter email address"
-                      className="focus-visible:ring-0 shadow-none rounded-sm"
-                      {...field}
-                      disabled
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Phone</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter phone number"
-                      className="focus-visible:ring-0 shadow-none rounded-sm"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="pt-2">
-              <Button
-                type="submit"
-                className="rounded-sm cursor-pointer"
-                disabled={updateAdminMutation.isPending}
-              >
-                {updateAdminMutation.isPending && (
-                  <Loader2Icon className="animate-spin" />
-                )}
-                {updateAdminMutation.isPending
-                  ? "Saving Changes..."
-                  : "Save Changes"}
-              </Button>
-            </div>
-          </form>
-        </Form>
       </div>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>First Name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter first name"
+                    className="focus-visible:ring-0 shadow-none rounded-sm"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last Name</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter last name"
+                    className="focus-visible:ring-0 shadow-none rounded-sm"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder="Enter email address"
+                    className="focus-visible:ring-0 shadow-none rounded-sm"
+                    {...field}
+                    disabled
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Phone Number</FormLabel>
+                <FormControl>
+                  <PhoneInput
+                    international
+                    countryCallingCodeEditable={false}
+                    defaultCountry="NG"
+                    placeholder="Enter phone number"
+                    value={field.value}
+                    onChange={field.onChange}
+                    className={cn(
+                      "placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-sm border bg-transparent px-3 py-1 text-base shadow-none transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+                      "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+                      "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+                      "[&>input]:h-full [&>input]:outline-none",
+                      "[&>div>select]:text-popover-foreground [&>div>select]:bg-popover [&>div>select]:focus:bg-accent [&>div>select]:focus:text-accent-foreground"
+                    )}
+                    error={
+                      field.value
+                        ? isValidPhoneNumber(field.value)
+                          ? undefined
+                          : "Invalid phone number"
+                        : "Phone number required"
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="pt-2">
+            <Button
+              type="submit"
+              className="rounded-sm cursor-pointer"
+              disabled={updateAdminMutation.isPending}
+            >
+              {updateAdminMutation.isPending && (
+                <Loader2Icon className="animate-spin" />
+              )}
+              {updateAdminMutation.isPending
+                ? "Saving Changes..."
+                : "Save Changes"}
+            </Button>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 };
