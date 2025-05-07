@@ -35,3 +35,8 @@ export const changePassword = async (data: changePasswordInput) => {
   const res = await instance.post("/auth/change-password", data);
   return res.data;
 };
+
+export const forgotPassword = async (email: string) => {
+  const res = await instance.post("/auth/forgot-password", { email });
+  return res.data;
+};
