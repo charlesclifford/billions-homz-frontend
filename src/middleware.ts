@@ -2,11 +2,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { TOKEN_NAME, USER_DETAILS } from "./constants/app.constant";
 import { IUser } from "./interfaces/user.interface";
-import { isAdminUser } from "./utils/helpers";
 
 const adminRoutes = ["/admin"];
 const privateRoutes = ["/profile"];
-const authRoutes = ["/auth/login", "/auth/sign-up"];
+const authRoutes = ["/auth/login", "/auth/register"];
 
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -50,9 +49,9 @@ export default async function middleware(req: NextRequest) {
       return NextResponse.redirect(loginUrl);
     }
 
-    if (!isAdminUser(user)) {
+    if (user?.role !== "super_admin" && user?.role !== "admin") {
       // If user is not an admin, redirect to unauthorized page
-      return NextResponse.redirect(new URL("/unauthorized", req.url));
+      return NextResponse.redirect(new URL("/admin/unauthorized", req.url));
     }
   }
 

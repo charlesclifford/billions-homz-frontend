@@ -156,7 +156,7 @@ const MembersFilter = () => {
           </div>
         </div>
 
-        <div className="col-span-1 flex gap-4 items-center">
+        <div className="col-span-1 lg:flex gap-4 items-center grid grid-cols-1">
           <div className="w-full">
             <DateRangePicker
               dateRange={dateRange}
@@ -170,7 +170,7 @@ const MembersFilter = () => {
             value={`${filter.sortBy}:${filter.sortOrder}`}
             onValueChange={handleSortChange}
           >
-            <SelectTrigger className="w-[180px] rounded-sm">
+            <SelectTrigger className="lg:w-[180px] w-full rounded-sm">
               <SelectValue>{getSortDisplayText()}</SelectValue>
             </SelectTrigger>
             <SelectContent>

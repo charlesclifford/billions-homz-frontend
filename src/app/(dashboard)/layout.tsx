@@ -3,6 +3,7 @@ import { config } from "@/utils/config";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminHeader from "@/components/admin/AdminHeader";
+import AdminFooter from "@/components/admin/AdminFooter";
 
 const { SITE_NAME } = config;
 
@@ -21,11 +22,12 @@ export default async function DashboardLayout({
   return (
     <SidebarProvider>
       <AdminSidebar />
-      <main className="relative w-full">
+      <main className="relative w-full min-h-screen flex flex-col">
         <AdminHeader />
         <div className="w-full flex-1 px-4 lg:px-8 py-8 container mx-auto">
           {children}
         </div>
+        <AdminFooter />
       </main>
     </SidebarProvider>
   );
