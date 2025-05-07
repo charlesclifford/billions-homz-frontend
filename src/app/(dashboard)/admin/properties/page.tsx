@@ -12,8 +12,6 @@ const PropertiesPage = () => {
 
         <div className="w-full">
           <PropertiesContent />
-          <PropertiesContent />
-          <PropertiesContent />
         </div>
       </div>
     </div>

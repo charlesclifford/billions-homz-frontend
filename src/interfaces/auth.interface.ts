@@ -3,3 +3,8 @@ export interface ChangeTempPassword {
   tempToken: string;
   userId: string;
 }
+
+export interface changePasswordInput {
+  oldPassword: string;
+  newPassword: string;
+}
