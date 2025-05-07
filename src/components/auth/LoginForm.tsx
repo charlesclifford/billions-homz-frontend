@@ -69,7 +69,7 @@ const LoginForm = () => {
         } catch (error) {
           console.log(error);
           // Fallback to the user data from login response if user fetch fails
-          dispatch(loginSuccess({ user: data.user }));
+          dispatch(loginSuccess({ user: data?.data || data.user }));
         }
         router.push(callbackUrl);
       }
