@@ -24,14 +24,16 @@ const Header = () => {
   return (
     <div className="sticky top-0 z-10 w-full bg-background border-b border-gray-200 dark:border-neutral-700">
       <div className="flex w-full h-[60px] items-center px-3 bg-inherit border-b border-gray-200 dark:border-neutral-700">
-        <Button
-          variant={"destructive"}
-          className="px-4 py-2 bg-red-500 text-white"
-          disabled={isLoggingOut}
-          onClick={signOut}
-        >
-          Sign out
-        </Button>
+        {user && (
+          <Button
+            variant={"destructive"}
+            className="px-4 py-2 bg-red-500 text-white"
+            disabled={isLoggingOut}
+            onClick={signOut}
+          >
+            Sign out
+          </Button>
+        )}
         <div className="ml-auto pr-2 flex items-center gap-2">
           <ThemeToggler />
           <div className="flex items-center">
