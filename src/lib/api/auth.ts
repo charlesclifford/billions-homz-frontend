@@ -40,3 +40,8 @@ export const forgotPassword = async (email: string) => {
   const res = await instance.post("/auth/forgot-password", { email });
   return res.data;
 };
+
+export const verifyEmail = async (data: { token: string }) => {
+  const res = await instance.post("/auth/verify", data);
+  return res.data;
+};

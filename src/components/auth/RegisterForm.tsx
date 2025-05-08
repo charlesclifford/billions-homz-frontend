@@ -2,7 +2,7 @@
 import { signUpUser } from "@/lib/api/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2Icon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -322,9 +322,14 @@ const RegisterForm = () => {
             className="w-full rounded-sm cursor-pointer"
             disabled={registerMutation.isPending}
           >
-            {registerMutation.isPending
-              ? "Creating account..."
-              : "Create Account"}
+            {registerMutation.isPending ? (
+              <>
+                <Loader2Icon className="animate-spin" />
+                Creating account...
+              </>
+            ) : (
+              "Create Account"
+            )}
           </Button>
         </form>
       </Form>
