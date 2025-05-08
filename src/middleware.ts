@@ -3,12 +3,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { TOKEN_NAME, USER_DETAILS } from "./constants/app.constant";
 import { IUser } from "./interfaces/user.interface";
 
-const adminRoutes = ["/admin"];
+const adminRoutes = ["/admin", "/admin/*"];
 const privateRoutes = ["/profile"];
-const authRoutes = ["/auth/login", "/auth/register"];
+const authRoutes = ["/auth/login", "/auth/register", "/auth/*"];
 
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+
+  // Skip middleware for unauthorized page to prevent redirect loops
+  if (pathname.startsWith("/admin/unauthorized")) {
+    return NextResponse.next();
+  }
 
   const token = req.cookies.get(TOKEN_NAME)?.value;
   const userCookie = req.cookies.get(USER_DETAILS)?.value;
@@ -19,6 +24,10 @@ export default async function middleware(req: NextRequest) {
       user = JSON.parse(userCookie) as IUser;
     } catch (error) {
       console.error("Failed to parse user details:", error);
+      // Clear invalid user cookie
+      const response = NextResponse.next();
+      response.cookies.delete(USER_DETAILS);
+      return response;
     }
   }
 
@@ -27,8 +36,10 @@ export default async function middleware(req: NextRequest) {
     user,
   });
 
+  console.log(`Middleware check - Path: ${pathname}, Role: ${user?.role}`);
+
   // Redirect authenticated users from auth routes to homepage
-  if (authRoutes.includes(pathname)) {
+  if (authRoutes.some(route => pathname.startsWith(route))) {
     if (token) {
       return NextResponse.redirect(new URL("/", req.url));
     }
@@ -62,7 +73,7 @@ export default async function middleware(req: NextRequest) {
     }
 
     // Check for other admin routes - ADMIN or SUPER_ADMIN
-    if (user?.role !== "super_admin" && user?.role !== "admin") {
+    if (!["super_admin", "admin"].includes(user?.role as string)) {
       return NextResponse.redirect(new URL("/admin/unauthorized", req.url));
     }
 

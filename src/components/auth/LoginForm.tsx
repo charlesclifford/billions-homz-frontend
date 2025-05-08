@@ -1,5 +1,5 @@
 "use client";
-import { TOKEN_NAME } from "@/constants/app.constant";
+import { TOKEN_NAME, USER_DETAILS } from "@/constants/app.constant";
 import { loginUser } from "@/lib/api/auth";
 import { loginFailure, loginSuccess } from "@/store/features/auth/auth.slice";
 import { useAppDispatch } from "@/store/hooks";
@@ -65,6 +65,7 @@ const LoginForm = () => {
         // Fetch user data after successful login
         try {
           const { data } = await refetch();
+          cookies.set(USER_DETAILS, JSON.stringify(data?.data));
           dispatch(loginSuccess({ user: data?.data || data.user }));
         } catch (error) {
           console.log(error);
