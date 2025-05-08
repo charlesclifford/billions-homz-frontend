@@ -22,7 +22,7 @@ export default async function DashboardLayout({
   return (
     <SidebarProvider>
       <AdminSidebar />
-      <main className="relative w-full min-h-screen flex flex-col">
+      <main className="relative w-full min-h-dvh flex flex-col">
         <AdminHeader />
         <div className="w-full flex-1 px-4 lg:px-8 py-8 container mx-auto">
           {children}
