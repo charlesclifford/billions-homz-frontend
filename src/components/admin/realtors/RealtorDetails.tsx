@@ -126,7 +126,7 @@ const RealtorDetails = ({ id }: { id: string }) => {
                   <div className="relative">
                     <Avatar className="size-32 border-4 border-primary/10">
                       <AvatarImage
-                        src={user?.avatar.imageUrl}
+                        src={user?.avatar?.imageUrl}
                         alt={userName}
                         className={uploadMutation.isPending ? "opacity-50" : ""}
                       />
