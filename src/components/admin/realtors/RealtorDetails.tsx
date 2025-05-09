@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import ErrorMessage from "@/components/shared/ErrorMessage";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -13,15 +13,18 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { IUser } from "@/interfaces/user.interface";
-import { getRealtorById } from "@/lib/api/users";
-import { useQuery } from "@tanstack/react-query";
-import { Edit2Icon, EyeIcon } from "lucide-react";
-import moment from "moment";
-import { useMemo, useState } from "react";
-import UserDetailSkeleton from "../users/UserDetailSkeleton";
+import { getRealtorById, uploadRealtorAvatar } from "@/lib/api/users";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { Edit2Icon, EyeIcon, Loader2 } from "lucide-react";
+import moment from "moment";
+import { useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
+import UserDetailSkeleton from "../users/UserDetailSkeleton";
 
 const RealtorDetails = ({ id }: { id: string }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
 
   const {
@@ -36,6 +39,52 @@ const RealtorDetails = ({ id }: { id: string }) => {
     select: (data) => data.data as IUser,
     enabled: isOpen,
   });
+
+  const uploadMutation = useMutation({
+    mutationFn: (formData: FormData) =>
+      uploadRealtorAvatar(id, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }),
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["allRealtors"] });
+      queryClient.invalidateQueries({ queryKey: ["getRealtorById", id] });
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      console.log("error", error?.response?.data?.message);
+      toast.error(error?.response?.data?.message || error?.message);
+    },
+  });
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.match(/image\/(jpeg|png|webp)/)) {
+      toast.error("Only JPG, PNG, or WEBP images are allowed");
+      return;
+    }
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File size must be less than 5MB");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("avatar", file);
+    uploadMutation.mutate(formData);
+
+    // Reset input to allow selecting same file again
+    e.target.value = "";
+  };
 
   const userName = useMemo(
     () => (user ? `${user.firstName} ${user.lastName}` : "Guest"),
@@ -74,22 +123,43 @@ const RealtorDetails = ({ id }: { id: string }) => {
               {/* Profile Section */}
               <div className="flex flex-col items-center space-y-4">
                 <div className="relative group">
-                  <Avatar className="size-32 border-4 border-primary/10">
-                    <AvatarImage src={user?.avatar} alt={userName} />
-                    <AvatarFallback className="text-4xl font-medium bg-primary/10">
-                      {userName
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar>
+                  <div className="relative">
+                    <Avatar className="size-32 border-4 border-primary/10">
+                      <AvatarImage
+                        src={user?.avatar.imageUrl}
+                        alt={userName}
+                        className={uploadMutation.isPending ? "opacity-50" : ""}
+                      />
+                      <AvatarFallback className="text-4xl font-medium bg-primary/10">
+                        {userName
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
+                      </AvatarFallback>
+                    </Avatar>
+
+                    {uploadMutation.isPending && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                      </div>
+                    )}
+                  </div>
                   <Button
                     size="icon"
                     className="absolute -bottom-2 -right-2 rounded-full cursor-pointer shadow-md"
                     variant="secondary"
+                    onClick={handleUploadClick}
+                    disabled={uploadMutation.isPending}
                   >
                     <Edit2Icon size={16} />
                   </Button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept="image/jpeg, image/png, image/webp"
+                    className="hidden"
+                  />
                 </div>
                 <div className="text-center space-y-2">
                   <h2 className="text-xl font-bold">{userName}</h2>

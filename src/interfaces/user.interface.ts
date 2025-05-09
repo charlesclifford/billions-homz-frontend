@@ -6,7 +6,7 @@ export interface IUser {
   lastName: string;
   email: string;
   isVerified: boolean;
-  avatar: string;
+  avatar: IImage;
   address?: string;
   city?: string;
   state?: string;
@@ -20,6 +20,11 @@ export interface IUser {
   updatedAt: string;
   isActive: boolean;
   role?: UserRole;
+}
+
+export interface IImage {
+  imageUrl: string;
+  publicId: string;
 }
 
 export interface UsersFilterInput {

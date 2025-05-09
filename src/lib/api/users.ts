@@ -1,6 +1,7 @@
 import { IRealtor, RealtorsFilterInput } from "@/interfaces/realtor.interface";
 import { IUser, UsersFilterInput } from "@/interfaces/user.interface";
 import instance from "@/services/axios";
+import { AxiosRequestConfig } from "axios";
 
 export const getAllUsers = async (params?: UsersFilterInput) => {
   const res = await instance.get("/users", { params });
@@ -34,5 +35,23 @@ export const getRealtorById = async (id: string) => {
 
 export const updateRealtor = async (id: string, data: Partial<IRealtor>) => {
   const res = await instance.put(`/realtors/${id}/update`, data);
+  return res.data;
+};
+
+export const uploadUserAvatar = async (
+  id: string,
+  data: FormData,
+  options?: AxiosRequestConfig
+) => {
+  const res = await instance.patch(`/users/${id}/avatar`, data, options);
+  return res.data;
+};
+
+export const uploadRealtorAvatar = async (
+  id: string,
+  data: FormData,
+  options?: AxiosRequestConfig
+) => {
+  const res = await instance.patch(`/realtors/${id}/avatar`, data, options);
   return res.data;
 };
