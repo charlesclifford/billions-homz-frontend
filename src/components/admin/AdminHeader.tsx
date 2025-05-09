@@ -1,26 +1,17 @@
 "use client";
-import { useAppSelector } from "@/store/hooks";
-import { formatText } from "@/utils/helpers";
-import { BellIcon, Calendar, MoonIcon, SunIcon } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { WiSunrise } from "react-icons/wi";
-import { ThemeToggler } from "../shared/ThemeToggler";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { SidebarTrigger } from "../ui/sidebar";
-import { cn } from "@/lib/utils";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
+import { useAppSelector } from "@/store/hooks";
+import { BellIcon, Calendar, MoonIcon, SunIcon } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { WiSunrise } from "react-icons/wi";
+import { ThemeToggler } from "../shared/ThemeToggler";
 import { Badge } from "../ui/badge";
-import { Separator } from "../ui/separator";
+import { SidebarTrigger } from "../ui/sidebar";
 
 const AdminHeader = () => {
   // const isTablet = useIsTablet();
@@ -37,55 +28,42 @@ const AdminHeader = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const {
-    greeting,
-    greetingIcon,
-    formattedDate,
-    formattedTime,
-    userName,
-    userRole,
-  } = useMemo(() => {
-    const currentHour = currentTime.getHours();
-    let greeting: string;
-    let greetingIcon: React.ReactNode;
+  const { greeting, greetingIcon, formattedDate, formattedTime } =
+    useMemo(() => {
+      const currentHour = currentTime.getHours();
+      let greeting: string;
+      let greetingIcon: React.ReactNode;
 
-    if (currentHour < 12) {
-      greeting = "morning";
-      greetingIcon = <WiSunrise size={20} className="text-amber-500" />;
-    } else if (currentHour < 17) {
-      greeting = "afternoon";
-      greetingIcon = <SunIcon size={18} className="text-amber-400" />;
-    } else {
-      greeting = "evening";
-      greetingIcon = <MoonIcon size={18} className="text-indigo-400" />;
-    }
+      if (currentHour < 12) {
+        greeting = "morning";
+        greetingIcon = <WiSunrise size={20} className="text-amber-500" />;
+      } else if (currentHour < 17) {
+        greeting = "afternoon";
+        greetingIcon = <SunIcon size={18} className="text-amber-400" />;
+      } else {
+        greeting = "evening";
+        greetingIcon = <MoonIcon size={18} className="text-indigo-400" />;
+      }
 
-    const formattedDate = currentTime.toLocaleDateString("en-US", {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-    });
+      const formattedDate = currentTime.toLocaleDateString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+      });
 
-    const formattedTime = currentTime.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-    });
+      const formattedTime = currentTime.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
 
-    const userName = user ? `${user.firstName} ${user.lastName}` : "Guest";
-    const userRole = user?.role
-      ? formatText(user.role).toLowerCase()
-      : "unknown role";
-
-    return {
-      greeting,
-      greetingIcon,
-      formattedDate,
-      formattedTime,
-      userName,
-      userRole,
-    };
-  }, [currentTime, user]);
+      return {
+        greeting,
+        greetingIcon,
+        formattedDate,
+        formattedTime,
+      };
+    }, [currentTime]);
 
   // Mock notifications data
   const notifications = [
@@ -184,48 +162,6 @@ const AdminHeader = () => {
             </Popover>
 
             <ThemeToggler />
-
-            {/* User Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-2 rounded-full hover:bg-accent p-1">
-                  <Avatar className="size-8">
-                    <AvatarImage
-                      src={user?.avatar}
-                      alt={`${userName}'s avatar`}
-                    />
-                    <AvatarFallback className="bg-primary/10 text-primary">
-                      {userName
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="hidden lg:flex flex-col items-start pr-2">
-                    <span className="text-sm font-medium leading-none">
-                      {userName}
-                    </span>
-                    <span className="text-xs text-muted-foreground capitalize">
-                      {userRole}
-                    </span>
-                  </div>
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end">
-                <div className="p-2">
-                  <p className="font-medium">{userName}</p>
-                  <p className="text-xs text-muted-foreground capitalize">
-                    {userRole}
-                  </p>
-                </div>
-                <Separator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem className="text-destructive">
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </nav>
         </div>
       </div>

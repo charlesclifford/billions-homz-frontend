@@ -1,9 +1,9 @@
-import RegisterForm from "@/components/auth/RegisterForm";
+import AccountSelection from "@/components/auth/AccountSelection";
 import Link from "next/link";
 
 const RegisterPage = () => {
   return (
-    <div className="w-full overflow-y-auto py-12 flex items-center justify-center">
+    <div className="w-full min-h-dvh overflow-y-auto py-12 flex items-center justify-center">
       <div className="w-full flex items-center justify-center">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center space-y-2">
@@ -11,7 +11,7 @@ const RegisterPage = () => {
             <p className="text-neutral-500">Create your account</p>
           </div>
 
-          <RegisterForm />
+          <AccountSelection />
 
           <div className="text-center text-sm text-neutral-500">
             Already have an account?{" "}
