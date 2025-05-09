@@ -20,11 +20,15 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { IRealtor } from "@/interfaces/realtor.interface";
 import { updateRealtor } from "@/lib/api/users";
+import { cn } from "@/lib/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { Edit2Icon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import PhoneInputWithCountrySelect, {
+  isValidPhoneNumber,
+} from "react-phone-number-input";
 import { toast } from "sonner";
 
 interface FormProps {
@@ -148,11 +152,29 @@ const UpdateRealtor = ({ user }: FormProps) => {
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone</FormLabel>
+                      <FormLabel>Phone Number</FormLabel>
                       <FormControl>
-                        <Input
-                          className="focus-visible:ring-0 shadow-none rounded-sm"
-                          {...field}
+                        <PhoneInputWithCountrySelect
+                          international
+                          countryCallingCodeEditable={false}
+                          defaultCountry="NG"
+                          placeholder="Enter phone number"
+                          value={field.value}
+                          onChange={field.onChange}
+                          className={cn(
+                            "placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-sm border bg-transparent px-3 py-1 text-base shadow-none transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+                            "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+                            "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+                            "[&>input]:h-full [&>input]:outline-none",
+                            "[&>div>select]:text-popover-foreground [&>div>select]:bg-popover [&>div>select]:focus:bg-accent [&>div>select]:focus:text-accent-foreground"
+                          )}
+                          error={
+                            field.value
+                              ? isValidPhoneNumber(field.value)
+                                ? undefined
+                                : "Invalid phone number"
+                              : "Phone number required"
+                          }
                         />
                       </FormControl>
                       <FormMessage />

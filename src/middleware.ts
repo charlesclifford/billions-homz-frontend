@@ -2,14 +2,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { TOKEN_NAME, USER_DETAILS } from "./constants/app.constant";
 import { IUser } from "./interfaces/user.interface";
-import { isAdminUser } from "./utils/helpers";
 
-const adminRoutes = ["/admin"];
+const adminRoutes = ["/admin", "/admin/*"];
 const privateRoutes = ["/profile"];
-const authRoutes = ["/auth/login", "/auth/sign-up"];
+const authRoutes = ["/auth/login", "/auth/register", "/auth/*"];
 
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+
+  // Skip middleware for unauthorized page to prevent redirect loops
+  if (pathname.startsWith("/admin/unauthorized")) {
+    return NextResponse.next();
+  }
 
   const token = req.cookies.get(TOKEN_NAME)?.value;
   const userCookie = req.cookies.get(USER_DETAILS)?.value;
@@ -20,6 +24,10 @@ export default async function middleware(req: NextRequest) {
       user = JSON.parse(userCookie) as IUser;
     } catch (error) {
       console.error("Failed to parse user details:", error);
+      // Clear invalid user cookie
+      const response = NextResponse.next();
+      response.cookies.delete(USER_DETAILS);
+      return response;
     }
   }
 
@@ -28,45 +36,48 @@ export default async function middleware(req: NextRequest) {
     user,
   });
 
+  console.log(`Middleware check - Path: ${pathname}, Role: ${user?.role}`);
+
   // Redirect authenticated users from auth routes to homepage
-  if (authRoutes.includes(pathname) && token) {
-    return NextResponse.redirect(new URL("/", req.url));
+  if (authRoutes.some(route => pathname.startsWith(route))) {
+    if (token) {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+    return NextResponse.next();
   }
 
-  // Redirect unauthenticated users from private routes to login
+  // Handle private routes
   if (privateRoutes.some((route) => pathname.startsWith(route))) {
     if (!token) {
       const loginUrl = new URL("/auth/login", req.url);
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);
     }
+    return NextResponse.next();
   }
-  // Admin route protection
+
+  // Handle admin routes
   if (adminRoutes.some((route) => pathname.startsWith(route))) {
     if (!token) {
-      // If no token, redirect to login page
       const loginUrl = new URL("/auth/login", req.url);
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);
     }
 
-    if (!isAdminUser(user)) {
-      // If user is not an admin, redirect to unauthorized page
-      return NextResponse.redirect(new URL("/unauthorized", req.url));
-    }
-  }
-
-  // Protect /admin/users route for SUPER_ADMIN only
-  if (pathname.startsWith("/admin/members")) {
-    if (!token) {
-      // If no token, redirect to login page
-      return NextResponse.redirect(new URL("/auth/login", req.url));
+    // Check for /admin/members route - SUPER_ADMIN only
+    if (pathname.startsWith("/admin/members")) {
+      if (user?.role !== "super_admin") {
+        return NextResponse.redirect(new URL("/admin/unauthorized", req.url));
+      }
+      return NextResponse.next();
     }
 
-    if (user?.role !== "super_admin") {
-      // If user is not a SUPER_ADMIN, redirect to unauthorized page
+    // Check for other admin routes - ADMIN or SUPER_ADMIN
+    if (!["super_admin", "admin"].includes(user?.role as string)) {
       return NextResponse.redirect(new URL("/admin/unauthorized", req.url));
     }
+
+    return NextResponse.next();
   }
 
   return NextResponse.next();

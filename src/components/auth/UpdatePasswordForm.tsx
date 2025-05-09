@@ -19,7 +19,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { changeInitialPassword } from "@/lib/api/auth";
 import { toast } from "sonner";
-import { TOKEN_NAME } from "@/constants/app.constant";
+import { TOKEN_NAME, USER_DETAILS } from "@/constants/app.constant";
 import { useUser } from "@/hooks/use-user";
 import cookies from "js-cookie";
 import { loginFailure, loginSuccess } from "@/store/features/auth/auth.slice";
@@ -79,11 +79,12 @@ const UpdatePasswordForm = () => {
       // Fetch user data after successful login
       try {
         const { data } = await refetch();
+        cookies.set(USER_DETAILS, JSON.stringify(data?.data));
         dispatch(loginSuccess({ user: data?.data || data.user }));
       } catch (error) {
         console.log(error);
         // Fallback to the user data from login response if user fetch fails
-        dispatch(loginSuccess({ user: data.user }));
+        dispatch(loginSuccess({ user: data?.data || data.user }));
       }
       router.push(callbackUrl);
     },

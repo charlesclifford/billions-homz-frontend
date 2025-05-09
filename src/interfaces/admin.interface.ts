@@ -1,3 +1,5 @@
+import { IImage } from "./user.interface";
+
 export type AdminPermission =
   | "manage_users"
   | "manage_properties"
@@ -21,7 +23,7 @@ export interface IAdmin {
   lastName: string;
   email: string;
   phone: string;
-  avatar?: string;
+  avatar?: IImage;
   permissions: AdminPermission[];
   isSuperAdmin?: boolean;
   address?: string;

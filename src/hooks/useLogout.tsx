@@ -15,8 +15,8 @@ const useLogout = () => {
 
   const logoutMutation = useMutation({
     mutationFn: logoutUser,
-    onSuccess: () => {
-      toast.success("Logged out successfully");
+    onSuccess: (data) => {
+      toast.success(data.message);
       cookies.remove(TOKEN_NAME);
       cookies.remove(USER_DETAILS);
       dispatch(logout());
