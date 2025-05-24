@@ -29,7 +29,7 @@ const HeaderUser = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center gap-2 rounded-full hover:bg-accent p-1">
+        <button className="flex items-center gap-2 rounded-full hover:bg-accent p-1 cursor-pointer">
           <Avatar className="size-8">
             <AvatarImage
               src={user?.avatar?.imageUrl}
@@ -42,12 +42,12 @@ const HeaderUser = () => {
                 .join("")}
             </AvatarFallback>
           </Avatar>
-          <div className="hidden lg:flex flex-col items-start pr-2">
+          {/* <div className="hidden lg:flex flex-col items-start pr-2">
             <span className="text-sm font-medium leading-none">{userName}</span>
             <span className="text-xs text-muted-foreground capitalize">
               {userRole}
             </span>
-          </div>
+          </div> */}
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end">

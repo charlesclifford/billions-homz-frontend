@@ -134,7 +134,7 @@ const ProfilePage = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Phone Number</FormLabel>
-                <FormControl>
+                <FormControl className="focus-within:border-ring">
                   <PhoneInput
                     international
                     countryCallingCodeEditable={false}

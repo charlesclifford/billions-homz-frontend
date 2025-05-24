@@ -1,5 +1,7 @@
+import AboutSection from "@/components/home/AboutSection";
+import HeroSection from "@/components/home/HeroSection";
+import WhatWeOffer from "@/components/home/WhatWeOffer";
 import { Metadata } from "next";
-import Link from "next/link";
 
 const pageTitle = "Home";
 
@@ -8,9 +10,13 @@ export const metadata: Metadata = {
 };
 
 const Homepage = () => {
-  return <div className="">
-  <Link href={'/admin'}>Go to Dashboard</Link>
-  </div>;
+  return (
+    <div className="min-h-dvh">
+      <HeroSection />
+      <AboutSection />
+      <WhatWeOffer />
+    </div>
+  );
 };
 
 export default Homepage;
