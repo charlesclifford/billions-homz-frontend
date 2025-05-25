@@ -31,21 +31,21 @@ const NavLinks = ({ items }: NavLinksProps) => {
         {items.map((item) => (
           <NavigationMenuItem key={item.href}>
             {!item.children ? (
-                <Link href={item.href} passHref>
-                  <NavigationMenuLink
-                    className={`py-[30px] px-5 flex items-center capitalize font-semibold relative transition duration-300 hover:bg-transparent rounded-none text-base group ${
-                      isActive(item.href) ? "text-primary" : ""
+              <Link href={item.href} passHref>
+                <NavigationMenuLink
+                  className={`py-[30px] px-5 flex items-center capitalize font-semibold relative transition duration-300 hover:bg-transparent rounded-none text-base group ${
+                    isActive(item.href) ? "text-primary" : ""
+                  }`}
+                >
+                  <span
+                    className={`relative before:absolute before:content-[''] before:bottom-0 before:left-0 before:h-[0.5px] before:bg-red-500 before:transition-all before:duration-500 before:w-0 group-hover:before:w-full hover:text-red-500 ${
+                      isActive(item.href) ? "before:w-full" : ""
                     }`}
                   >
-                    <span
-                      className={`relative before:absolute before:content-[''] before:bottom-0 before:left-0 before:h-[0.5px] before:bg-red-500 before:transition-all before:duration-500 before:w-0 group-hover:before:w-full hover:text-red-500 ${
-                        isActive(item.href) ? "before:w-full" : ""
-                      }`}
-                    >
-                      {item.name}
-                    </span>
-                  </NavigationMenuLink>
-                </Link>
+                    {item.name}
+                  </span>
+                </NavigationMenuLink>
+              </Link>
             ) : (
               <>
                 <NavigationMenuTrigger

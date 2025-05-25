@@ -1,7 +1,30 @@
 .about-section {
-  .border-shape-top-right,
-  .border-shape-bottom-left {
+  .border-shape {
     clip-path: path("M 0 0 Q 0 30 30 30 L 0 30 Z");
+  }
+
+  .box-hover {
+    &:hover {
+      &::before {
+        transform: scale3d(45, 45, 1);
+        will-change: tranform;
+      }
+    }
+    &::before {
+      content: "";
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-radius: 100%;
+      z-index: 0;
+      position: absolute;
+      background: var(--primary);
+      top: 0;
+      left: calc(100% - 40px);
+      transform: scale3d(1, 1, 1);
+      transform-style: preserve-3d;
+      transition: all 0.8s ease;
+    }
   }
 }
 

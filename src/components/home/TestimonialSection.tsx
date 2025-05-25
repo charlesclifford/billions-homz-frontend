@@ -1,0 +1,118 @@
+import React from "react";
+import SmallTitle from "../shared/SmallTitle";
+import { BiSolidQuoteAltLeft } from "react-icons/bi";
+import Image from "next/image";
+
+const testimonials = [
+  {
+    id: 1,
+    quote:
+      "Your team were great to work with on our basement remodel! I will definitely be working with them for future projects!",
+    name: "Floyd Miles",
+    role: "Assistant Project Manager",
+    image:
+      "https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/04/h2_testimonial-img2.jpg",
+  },
+  {
+    id: 2,
+    quote:
+      "Excellent service and attention to detail. The results exceeded our expectations!",
+    name: "Jane Smith",
+    role: "Homeowner",
+    image:
+      "https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/04/h2_testimonial-img3.jpg",
+  },
+  {
+    id: 3,
+    quote:
+      "Professional team that delivered on time and within budget. Highly recommended!",
+    name: "Robert Johnson",
+    role: "Project Coordinator",
+    image:
+      "https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/04/h2_testimonial-img1.jpg",
+  },
+];
+
+const TestimonialSection = () => {
+  return (
+    <div className="about-section w-full container mx-auto px-4 bg-[#1b1f12]">
+      <div className="w-full max-w-[min(100%,1290px)] mx-auto py-[150px] flex flex-col">
+        <div className="grid grid-cols-1 lg:grid-cols-[40%_auto]">
+          <div>
+            <SmallTitle
+              text="Testimonials"
+              className="text-white"
+              borderClass="border-white"
+            />
+
+            <div className="mt-[30px] text-white">
+              <h2 className="text-[42px] lg:text-[70px] font-bold leading-[1.06em] tracking-[-2px]">
+                Happy users feedback
+              </h2>
+            </div>
+          </div>
+          <div></div>
+        </div>
+
+        <div className="mt-[60px] relative">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-[30px]">
+            {testimonials.map((item, i) => (
+              <div key={i} className="rounded-[30px] bg-white relative h-fit">
+                {/* icon */}
+                <div className="absolute right-0 top-0 z-[2]">
+                  <div className="h-full">
+                    <div className="text-sm font-bold capitalize inline-grid relative group">
+                      <span className="flex items-center flex-row-reverse justify-center">
+                        <span className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-primary text-white transition-all duration-300">
+                          <span className="flex items-center justify-center w-[18px] h-[18px] overflow-hidden relative">
+                            <BiSolidQuoteAltLeft />
+                          </span>
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="relative pt-[63%] min-w-[60px] ">
+                  <div className="absolute top-0 right-0 w-[60px] h-[60px] z-[1]">
+                    <div className="rounded-bl-[30px] w-full h-full bg-[#1b1f12]"></div>
+                    <div className="border-shape w-[30px] h-[30px] absolute top-0 left-[-29.5px] rotate-180 bg-[#1b1f12]"></div>
+                    <div className="border-shape w-[30px] h-[30px] absolute right-[-0.5px] bottom-[-30px] rotate-180 bg-[#1b1f12]"></div>
+                  </div>
+
+                  {/* image */}
+                  <Image
+                    src={item.image}
+                    alt="img"
+                    width={500}
+                    height={500}
+                    className="absolute left-0 top-0 object-cover w-full h-full transition duration-300 rounded-[30px]"
+                  />
+                </div>
+
+                {/* content */}
+                <div className="py-10 px-10">
+                  <div className="font-semibold leading-[1.45em] text-[22px] text-black border-b border-b-neutral-200 pb-5 mb-5">
+                    <p>
+                      {item.quote}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap">
+                    <div className="flex flex-col text-base">
+                      <span className="font-bold ">{item.name}</span>
+                      <span className="text-neutral-500 leading-[1.75]">
+                        {item.role}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default TestimonialSection;

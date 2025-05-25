@@ -1,38 +1,13 @@
 import { DiamondIcon, RocketIcon } from "lucide-react";
 import React from "react";
+import SmallTitle from "../shared/SmallTitle";
 
 const AboutSection = () => {
   return (
     <div className="about-section w-full container mx-auto px-4 mb-[150px]">
-      <div className="w-full max-w-[min(100%,1290px)] mx-auto px-4 grid grid-cols-1 lg:grid-cols-3 gap-[30px] mb-[80px]">
+      <div className="w-full max-w-[min(100%,1290px)] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-[30px] mb-[80px]">
         <div className="col-span-1">
-          <div className="max-w-full w-[130px]">
-            <div className="py-0.5 px-5 border border-primary rounded-[20px]">
-              {/* Marquee wrapper */}
-              <div className="relative w-full overflow-hidden">
-                {/* Marquee content */}
-                <div className="animate-marquee whitespace-nowrap font-semibold uppercase text-[12px] py-[1px]">
-                  <span className="px-[5px] inline-flex items-center">
-                    Who we are
-                  </span>
-                  <span className="px-[5px] inline-flex items-center">·</span>
-                  <span className="px-[5px] inline-flex items-center">
-                    Who we are
-                  </span>
-                  <span className="px-[5px] inline-flex items-center">·</span>
-                  {/* Duplicate for seamless looping */}
-                  <span className="px-[5px] inline-flex items-center">
-                    Who we are
-                  </span>
-                  <span className="px-[5px] inline-flex items-center">·</span>
-                  <span className="px-[5px] inline-flex items-center">
-                    Who we are
-                  </span>
-                  <span className="px-[5px] inline-flex items-center">·</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <SmallTitle text="Who we are" />
         </div>
         <div className="col-span-2 flex flex-col">
           <div>
@@ -84,7 +59,7 @@ const AboutSection = () => {
         </div>
       </div>
 
-      <div className="w-full max-w-[min(100%,1290px)] mx-auto px-4">
+      <div className="w-full max-w-[min(100%,1290px)] mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-[15px]">
           <div className="bg-[url(/images/bg/h1_img-1.jpg)] bg-cover bg-center bg-no-repeat rounded-[30px] min-h-[350px]">
             <div className="max-w-full relative w-[150px] lg:w-[220px]">
@@ -96,9 +71,9 @@ const AboutSection = () => {
                 </div>
               </div>
               {/* top-right */}
-              <div className="bg-white w-[30px] h-[30px] absolute top-0 right-[-30px] rotate-90 border-shape-top-right"></div>
+              <div className="bg-white w-[30px] h-[30px] absolute top-0 right-[-30px] rotate-90 border-shape"></div>
               {/* bottom-left */}
-              <div className="bg-white w-[30px] h-[30px] absolute bottom-[-30px] left-0 rotate-90 border-shape-bottom-left"></div>
+              <div className="bg-white w-[30px] h-[30px] absolute bottom-[-30px] left-0 rotate-90 border-shape"></div>
             </div>
           </div>
           {/* grids */}
