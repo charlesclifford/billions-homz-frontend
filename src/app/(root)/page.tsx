@@ -1,4 +1,5 @@
 import AboutSection from "@/components/home/AboutSection";
+import BlogSection from "@/components/home/BlogSection";
 import ContactSection from "@/components/home/ContactSection";
 import HeroSection from "@/components/home/HeroSection";
 import TestimonialSection from "@/components/home/TestimonialSection";
@@ -19,6 +20,7 @@ const Homepage = () => {
       <WhatWeOffer />
       <TestimonialSection />
       <ContactSection />
+      <BlogSection />
     </div>
   );
 };
