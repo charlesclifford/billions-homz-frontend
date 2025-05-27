@@ -1,7 +1,12 @@
-import React from "react";
+"use client";
+import Autoplay from "embla-carousel-autoplay";
 import SmallTitle from "../shared/SmallTitle";
-import { BiSolidQuoteAltLeft } from "react-icons/bi";
-import Image from "next/image";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem
+} from "../ui/carousel";
+import TestimonialCard from "./TestimonialCard";
 
 const testimonials = [
   {
@@ -24,6 +29,33 @@ const testimonials = [
   },
   {
     id: 3,
+    quote:
+      "Professional team that delivered on time and within budget. Highly recommended!",
+    name: "Robert Johnson",
+    role: "Project Coordinator",
+    image:
+      "https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/04/h2_testimonial-img1.jpg",
+  },
+  {
+    id: 4,
+    quote:
+      "Your team were great to work with on our basement remodel! I will definitely be working with them for future projects!",
+    name: "Floyd Miles",
+    role: "Assistant Project Manager",
+    image:
+      "https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/04/h2_testimonial-img2.jpg",
+  },
+  {
+    id: 5,
+    quote:
+      "Excellent service and attention to detail. The results exceeded our expectations!",
+    name: "Jane Smith",
+    role: "Homeowner",
+    image:
+      "https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/04/h2_testimonial-img3.jpg",
+  },
+  {
+    id: 6,
     quote:
       "Professional team that delivered on time and within budget. Highly recommended!",
     name: "Robert Johnson",
@@ -55,60 +87,30 @@ const TestimonialSection = () => {
         </div>
 
         <div className="mt-[60px] relative">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-[30px]">
-            {testimonials.map((item, i) => (
-              <div key={i} className="rounded-[30px] bg-white relative h-fit">
-                {/* icon */}
-                <div className="absolute right-0 top-0 z-[2]">
-                  <div className="h-full">
-                    <div className="text-sm font-bold capitalize inline-grid relative group">
-                      <span className="flex items-center flex-row-reverse justify-center">
-                        <span className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-primary text-white transition-all duration-300">
-                          <span className="flex items-center justify-center w-[18px] h-[18px] overflow-hidden relative">
-                            <BiSolidQuoteAltLeft />
-                          </span>
-                        </span>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="relative pt-[63%] min-w-[60px] ">
-                  <div className="absolute top-0 right-0 w-[60px] h-[60px] z-[1]">
-                    <div className="rounded-bl-[30px] w-full h-full bg-[#1b1f12]"></div>
-                    <div className="border-shape w-[30px] h-[30px] absolute top-0 left-[-29.5px] rotate-180 bg-[#1b1f12]"></div>
-                    <div className="border-shape w-[30px] h-[30px] absolute right-[-0.5px] bottom-[-30px] rotate-180 bg-[#1b1f12]"></div>
-                  </div>
-
-                  {/* image */}
-                  <Image
-                    src={item.image}
-                    alt="img"
-                    width={500}
-                    height={500}
-                    className="absolute left-0 top-0 object-cover w-full h-full transition duration-300 rounded-[30px]"
-                  />
-                </div>
-
-                {/* content */}
-                <div className="py-10 px-10">
-                  <div className="font-semibold leading-[1.45em] text-[22px] text-black border-b border-b-neutral-200 pb-5 mb-5">
-                    <p>
-                      {item.quote}
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap">
-                    <div className="flex flex-col text-base">
-                      <span className="font-bold ">{item.name}</span>
-                      <span className="text-neutral-500 leading-[1.75]">
-                        {item.role}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+              slidesToScroll: "auto",
+            }}
+            className="w-full"
+            plugins={[
+              Autoplay({
+                delay: 5000,
+              }),
+            ]}
+          >
+            <CarouselContent>
+              {testimonials.map((item) => (
+                <CarouselItem
+                  key={item.id}
+                  className="pl-[30px] md:basis-1/2 lg:basis-1/3"
+                >
+                  <TestimonialCard item={item} />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
         </div>
       </div>
     </div>
