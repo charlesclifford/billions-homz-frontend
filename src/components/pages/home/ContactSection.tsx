@@ -1,5 +1,5 @@
 import React from "react";
-import SmallTitle from "../shared/SmallTitle";
+import SmallTitle from "../../shared/SmallTitle";
 import QuickContactForm from "./QuickContactForm";
 
 const ContactSection = () => {

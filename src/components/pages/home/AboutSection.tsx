@@ -1,6 +1,6 @@
 import { DiamondIcon, RocketIcon } from "lucide-react";
 import React from "react";
-import SmallTitle from "../shared/SmallTitle";
+import SmallTitle from "../../shared/SmallTitle";
 
 const AboutSection = () => {
   return (

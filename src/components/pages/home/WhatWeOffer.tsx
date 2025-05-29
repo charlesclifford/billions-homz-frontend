@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import SmallTitle from "../shared/SmallTitle";
+import SmallTitle from "../../shared/SmallTitle";
 
 export interface IServiceList {
   icon: LucideIcon;
@@ -58,8 +58,8 @@ const serviceList: IServiceList[] = [
 
 const WhatWeOffer = () => {
   return (
-    <div className="about-section w-full container mx-auto px-4 bg-[#F6F3EC]">
-      <div className="w-full max-w-[min(100%,1290px)] mx-auto py-[150px] flex flex-col ">
+    <div className="about-section w-full bg-[#F6F3EC]">
+      <div className="w-full container max-w-[min(100%,1290px)] mx-auto py-[150px] flex flex-col ">
         <SmallTitle text="what we offer" className="mx-auto" />
 
         <div className="max-w-full w-[760px] mx-auto text-center">

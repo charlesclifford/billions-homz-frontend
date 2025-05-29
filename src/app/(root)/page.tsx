@@ -1,9 +1,9 @@
-import AboutSection from "@/components/home/AboutSection";
-import BlogSection from "@/components/home/BlogSection";
-import ContactSection from "@/components/home/ContactSection";
-import HeroSection from "@/components/home/HeroSection";
-import TestimonialSection from "@/components/home/TestimonialSection";
-import WhatWeOffer from "@/components/home/WhatWeOffer";
+import AboutSection from "@/components/pages/home/AboutSection";
+import BlogSection from "@/components/pages/home/BlogSection";
+import ContactSection from "@/components/pages/home/ContactSection";
+import HeroSection from "@/components/pages/home/HeroSection";
+import TestimonialSection from "@/components/pages/home/TestimonialSection";
+import WhatWeOffer from "@/components/pages/home/WhatWeOffer";
 import { Metadata } from "next";
 
 const pageTitle = "Home";

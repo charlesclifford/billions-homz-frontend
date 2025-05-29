@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import ServiceCard from "../services/ServiceCard";
+import ServiceCard from "../../services/ServiceCard";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 

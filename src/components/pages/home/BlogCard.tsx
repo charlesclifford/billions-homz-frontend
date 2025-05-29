@@ -1,5 +1,5 @@
 import React from "react";
-import { AnimatedLink } from "../shared/AnimatedLink";
+import { AnimatedLink } from "../../shared/AnimatedLink";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 

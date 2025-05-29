@@ -26,6 +26,22 @@ const HeaderUser = () => {
     [user]
   );
 
+  const dropdownMenuList = [
+    {
+      name: "Profile",
+      href: "/#",
+    },
+    {
+      name: "Dashboard",
+      href: "/admin",
+      roles: ["admin", "super_admin"],
+    },
+  ];
+
+  const filteredMenu = dropdownMenuList.filter(
+    (nav) => !nav.roles || (userRole && nav.roles.includes(userRole))
+  );
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -56,9 +72,13 @@ const HeaderUser = () => {
           <p className="text-xs text-muted-foreground capitalize">{userRole}</p>
         </div>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <Link href={"/admin/settings"}>Profile</Link>
-        </DropdownMenuItem>
+        {filteredMenu.map(({ href, name }, i) => {
+          return (
+            <DropdownMenuItem key={i}>
+              <Link href={href}>{name}</Link>
+            </DropdownMenuItem>
+          );
+        })}
         <DropdownMenuItem
           className="text-destructive"
           disabled={isLoggingOut}

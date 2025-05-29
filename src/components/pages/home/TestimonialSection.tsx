@@ -1,11 +1,13 @@
 "use client";
 import Autoplay from "embla-carousel-autoplay";
-import SmallTitle from "../shared/SmallTitle";
+import SmallTitle from "../../shared/SmallTitle";
 import {
   Carousel,
   CarouselContent,
-  CarouselItem
-} from "../ui/carousel";
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "../../ui/carousel";
 import TestimonialCard from "./TestimonialCard";
 
 const testimonials = [
@@ -67,8 +69,8 @@ const testimonials = [
 
 const TestimonialSection = () => {
   return (
-    <div className="about-section w-full container mx-auto px-4 bg-[#1b1f12]">
-      <div className="w-full max-w-[min(100%,1290px)] mx-auto py-[150px] flex flex-col">
+    <div className="about-section w-full bg-[#1b1f12]">
+      <div className="w-full container max-w-[min(100%,1290px)] mx-auto py-[150px] flex flex-col">
         <div className="grid grid-cols-1 lg:grid-cols-[40%_auto]">
           <div>
             <SmallTitle
@@ -86,7 +88,7 @@ const TestimonialSection = () => {
           <div></div>
         </div>
 
-        <div className="mt-[60px] relative">
+        <div className="mt-[70px] relative">
           <Carousel
             opts={{
               align: "start",
@@ -110,6 +112,8 @@ const TestimonialSection = () => {
                 </CarouselItem>
               ))}
             </CarouselContent>
+            <CarouselNext className="hidden lg:flex w-[50px] h-[50px] right-0 -top-9 bg-transparent text-white cursor-pointer" />
+            <CarouselPrevious className="hidden lg:flex w-[50px] h-[50px] -top-9 left-[calc(100%-110px)] bg-transparent text-white cursor-pointer" />
           </Carousel>
         </div>
       </div>

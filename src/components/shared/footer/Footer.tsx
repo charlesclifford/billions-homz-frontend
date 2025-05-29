@@ -81,7 +81,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span className="elementor-icon-list-text">
+                            <span >
                               About Us
                             </span>
                           </AnimatedLink>
@@ -91,7 +91,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span className="elementor-icon-list-text">
+                            <span >
                               Why Choose Us
                             </span>
                           </AnimatedLink>
@@ -101,7 +101,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span className="elementor-icon-list-text">
+                            <span >
                               Our Team
                             </span>
                           </AnimatedLink>
@@ -111,7 +111,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span className="elementor-icon-list-text">
+                            <span >
                               Solutions
                             </span>
                           </AnimatedLink>
@@ -121,7 +121,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span className="elementor-icon-list-text">
+                            <span >
                               Partners
                             </span>
                           </AnimatedLink>
@@ -131,7 +131,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span className="elementor-icon-list-text">
+                            <span >
                               Core Values
                             </span>
                           </AnimatedLink>
@@ -146,7 +146,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span className="elementor-icon-list-text">
+                            <span >
                               Our Projects
                             </span>
                           </AnimatedLink>
@@ -156,7 +156,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span className="elementor-icon-list-text">
+                            <span >
                               News &amp; Updates
                             </span>
                           </AnimatedLink>
@@ -166,7 +166,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span className="elementor-icon-list-text">
+                            <span >
                               Terms &amp; Conditions
                             </span>
                           </AnimatedLink>
@@ -176,7 +176,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span className="elementor-icon-list-text">
+                            <span >
                               Support Center
                             </span>
                           </AnimatedLink>
@@ -186,7 +186,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span className="elementor-icon-list-text">
+                            <span >
                               Contact
                             </span>
                           </AnimatedLink>

@@ -1,6 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import SmallTitle from "../shared/SmallTitle";
+import SmallTitle from "../../shared/SmallTitle";
 import BlogCard from "./BlogCard";
 
 const blogPosts = [

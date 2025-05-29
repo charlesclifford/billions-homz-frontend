@@ -32,19 +32,17 @@ export const menuList: IMenu[] = [
     href: "/gallery",
   },
   {
+    name: "Blog",
+    href: "/#",
+  },
+  {
     name: "Contact",
     href: "/contact-us",
   },
   {
-    name: "Dashboard",
-    href: "/admin",
-    roles: ["ADMIN", "SUPER_ADMIN"],
+    name: "Realtor's Corner",
+    href: "/#",
+    children: [{ name: "Register as Realtor", href: "#" }],
   },
 ];
 
-export const rightMenu: IMenu[] = [
-  {
-    name: "Favourites",
-    href: "",
-  },
-];

@@ -1,5 +1,5 @@
 import React from "react";
-import { IServiceList } from "../home/HeroSection";
+import { IServiceList } from "../pages/home/HeroSection";
 
 const ServiceCard = ({
   item: { icon, content, title },
