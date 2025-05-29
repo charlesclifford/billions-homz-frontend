@@ -1,0 +1,166 @@
+import { DiamondIcon, RocketIcon } from "lucide-react";
+import React from "react";
+import SmallTitle from "../../shared/SmallTitle";
+
+const AboutSection = () => {
+  return (
+    <div className="about-section w-full container mx-auto px-4 mb-[150px]">
+      <div className="w-full max-w-[min(100%,1290px)] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-[30px] mb-[80px]">
+        <div className="col-span-1">
+          <SmallTitle text="Who we are" />
+        </div>
+        <div className="col-span-2 flex flex-col">
+          <div>
+            <div className="mb-5 lg:mb-10">
+              <h2 className="text-[42px] lg:text-[70px] font-bold leading-[1.06em] tracking-[-2px]">
+                The largest privately held real estate investors and managers in
+                the world
+              </h2>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-y-[30px] gap-x-[70px] pr-10">
+            <div className="flex flex-col">
+              <div className="mb-[15px] inline-flex items-center">
+                <span className="pr-[5px]">
+                  <DiamondIcon />
+                </span>
+                <span className="text-[26px] font-bold text-primary pl-[5px]">
+                  Our vision
+                </span>
+              </div>
+
+              <div className="text-neutral-600">
+                <p className="text-lg">
+                  To empower businesses with cutting-edge web solutions that
+                  enhance their digital presence and drive growth.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col">
+              <div className="mb-[15px] inline-flex items-center">
+                <span className="pr-[5px]">
+                  <RocketIcon />
+                </span>
+                <span className="text-[26px] font-bold text-primary pl-[5px]">
+                  Our mission
+                </span>
+              </div>
+
+              <div className="text-neutral-600">
+                <p className="text-lg">
+                  Our solutions are designed to meet the needs of modern
+                  enterprises, ensuring they thrive in today&apos;s competitive
+                  online landscape.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full max-w-[min(100%,1290px)] mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-[15px]">
+          <div className="bg-[url(/images/bg/h1_img-1.jpg)] bg-cover bg-center bg-no-repeat rounded-[30px] min-h-[350px]">
+            <div className="max-w-full relative w-[150px] lg:w-[220px]">
+              <div className="bg-white rounded-br-[30px] w-full h-full">
+                <div className="w-full h-full">
+                  <div className="h-full">
+                    <div className="h-[60px]"></div>
+                  </div>
+                </div>
+              </div>
+              {/* top-right */}
+              <div className="bg-white w-[30px] h-[30px] absolute top-0 right-[-30px] rotate-90 border-shape"></div>
+              {/* bottom-left */}
+              <div className="bg-white w-[30px] h-[30px] absolute bottom-[-30px] left-0 rotate-90 border-shape"></div>
+            </div>
+          </div>
+          {/* grids */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-[15px] grid-flow-row">
+            <div className="bg-gray-100 min-h-[200px] lg:min-h-[350px] py-[30px] lg:py-[40px] px-[15px] lg:px-[30px] pb-[30px] flex justify-between flex-col rounded-[25px] gap-5">
+              <div className="">
+                <div className="pb-[15px] border-b border-b-gray-200">
+                  <h6 className="text-[12px] font-semibold uppercase leading-[1.167em] text-primary">
+                    global reach
+                  </h6>
+                </div>
+              </div>
+              <div className="">
+                <div className="flex justify-center flex-col-reverse items-stretch">
+                  <div className="flex items-center text-lg leading-[1.5em] text-neutral-500">
+                    offices worldwide
+                  </div>
+                  <div className="text-[60px] flex text-center font-bold leading-[1.06em] tracking-[-2px]">
+                    {/* number prefix */}
+                    <span className="text-end"></span>
+                    <span className="">85</span>
+                    {/* number suffix */}
+                    <span className="text-start text-primary">
+                      <sup>+</sup>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="bg-gray-100 min-h-[200px] lg:min-h-[350px] py-[30px] lg:py-[40px] px-[15px] lg:px-[30px] pb-[30px] flex justify-between flex-col rounded-[25px] gap-5">
+              <div className="">
+                <div className="pb-[15px] border-b border-b-gray-200">
+                  <h6 className="text-[12px] font-semibold uppercase leading-[1.167em] text-primary">
+                    local expertise
+                  </h6>
+                </div>
+              </div>
+              <div className="">
+                <div className="flex justify-center flex-col-reverse items-stretch">
+                  <div className="flex items-center text-lg leading-[1.5em] text-neutral-500">
+                    employees
+                  </div>
+                  <div className="text-[60px] flex text-center font-bold leading-[1.06em] tracking-[-2px]">
+                    {/* number prefix */}
+                    <span className="text-end"></span>
+                    <span className="">1500</span>
+                    {/* number suffix */}
+                    <span className="text-start text-primary">
+                      <sup>+</sup>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="bg-gray-100 min-h-[200px] lg:min-h-[350px] py-[30px] lg:py-[40px] px-[15px] lg:px-[30px] pb-[30px] flex justify-between flex-col rounded-[25px] gap-5">
+              <div className="">
+                <div className="pb-[15px] border-b border-b-gray-200">
+                  <h6 className="text-[12px] font-semibold uppercase leading-[1.167em] text-primary">
+                    our impact
+                  </h6>
+                </div>
+              </div>
+              <div className="">
+                <div className="flex justify-center flex-col-reverse items-stretch">
+                  <div className="flex items-center text-lg leading-[1.5em] text-neutral-500">
+                    projects done
+                  </div>
+                  <div className="text-[60px] flex text-center font-bold leading-[1.06em] tracking-[-2px]">
+                    {/* number prefix */}
+                    <span className="text-end"></span>
+                    <span className="">248</span>
+                    {/* number suffix */}
+                    <span className="text-start text-primary">
+                      <sup>+</sup>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* hide on mobile */}
+            <div className="bg-[url(/images/bg/h1_img-2.jpg)] bg-no-repeat bg-center bg-cover min-h-[200px] lg:min-h-[350px] rounded-[25px]"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AboutSection;

@@ -1,3 +1,6 @@
+@import "../styles/services.css";
+@import "../styles/about.css";
+@import "../styles/footer.css";
 @import "tailwindcss";
 @import "tw-animate-css";
 

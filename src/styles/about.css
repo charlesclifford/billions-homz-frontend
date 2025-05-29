@@ -1,0 +1,60 @@
+.about-section {
+  .border-shape {
+    clip-path: path("M 0 0 Q 0 30 30 30 L 0 30 Z");
+  }
+
+  .box-hover {
+    &:hover {
+      &::before {
+        transform: scale3d(45, 45, 1);
+        will-change: tranform;
+      }
+    }
+    &::before {
+      content: "";
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-radius: 100%;
+      z-index: 0;
+      position: absolute;
+      background: var(--primary);
+      top: 0;
+      left: calc(100% - 40px);
+      transform: scale3d(1, 1, 1);
+      transform-style: preserve-3d;
+      transition: all 0.8s ease;
+    }
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: inline-block;
+  animation: marquee 10s linear infinite;
+}
+
+@keyframes helix {
+  0% {
+    opacity: 0;
+    perspective: 1300px;
+    transform: rotateY(-180deg);
+    transform-style: preserve-3d;
+  }
+  100% {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+}
+
+.animate-helix {
+  animation: helix 5s linear infinite;
+}

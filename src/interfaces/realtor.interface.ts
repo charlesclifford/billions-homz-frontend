@@ -1,4 +1,5 @@
 import { IProperty } from "./property.interface";
+import { IImage } from "./user.interface";
 
 export interface IRealtor {
   _id: string;
@@ -6,7 +7,7 @@ export interface IRealtor {
   lastName: string;
   email: string;
   phone: string;
-  avatar?: string;
+  avatar?: IImage;
   address?: string;
   city?: string;
   state?: string;

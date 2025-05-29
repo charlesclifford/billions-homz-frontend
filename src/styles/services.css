@@ -1,0 +1,53 @@
+.service-card {
+  border: 1px solid #ffffff1a;
+
+  &:hover {
+    .icon-box-wrapper {
+      &::before {
+        /* background: var(--primary); */
+        background: red;
+        transform: scaleX(1);
+        transition: 0.45s cubic-bezier(0.47, 0.05, 0.5, 0.94) 0.2s;
+      }
+      &::after {
+        /* background: var(--primary); */
+        background: red;
+        transform: scaleX(0);
+        transition: 0.45s cubic-bezier(0.47, 0.05, 0.5, 0.94) 0.2s;
+      }
+    }
+  }
+
+  .icon-box-wrapper {
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      display: block;
+      width: calc(100% + 2px);
+      left: -1px;
+      bottom: 0;
+      height: 1px;
+      background-color: #ffffff26;
+    }
+
+    &::before {
+      transform: scaleX(0);
+      transform-origin: 0 0;
+      transition: 0.45s cubic-bezier(0.47, 0.05, 0.5, 0.94);
+    }
+
+    &::after {
+      transform: scaleX(1);
+      transform-origin: 100% 0;
+      transition: 0.45s cubic-bezier(0.47, 0.05, 0.5, 0.94) 0.2s;
+    }
+
+    .icon-box-icon {
+      font-size: 48px;
+      svg {
+        fill: red;
+      }
+    }
+  }
+}

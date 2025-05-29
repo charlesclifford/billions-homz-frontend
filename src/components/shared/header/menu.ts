@@ -1,10 +1,8 @@
-import { HeartIcon, type LucideIcon } from "lucide-react";
-
-interface IMenu {
+export interface IMenu {
   name: string;
   href: string;
   roles?: string[];
-  icon?: LucideIcon;
+  children?: IMenu[];
 }
 export const menuList: IMenu[] = [
   {
@@ -12,28 +10,38 @@ export const menuList: IMenu[] = [
     href: "/",
   },
   {
-    name: "Listing",
-    href: "/listing",
+    name: "About",
+    href: "/about-us",
   },
   {
-    name: "About",
-    href: "/about",
+    name: "Listing",
+    href: "/listing",
+    children: [
+      {
+        name: "Estates",
+        href: "/listing/estates",
+      },
+      {
+        name: "Properties",
+        href: "/listing/properties",
+      },
+    ],
+  },
+  {
+    name: "Gallery",
+    href: "/gallery",
+  },
+  {
+    name: "Blog",
+    href: "/blogs",
   },
   {
     name: "Contact",
     href: "/contact-us",
   },
   {
-    name: "Dashboard",
-    href: "/admin",
-    roles: ["ADMIN", "SUPER_ADMIN"],
-  },
-];
-
-export const rightMenu: IMenu[] = [
-  {
-    name: "Favourites",
-    href: "",
-    icon: HeartIcon,
+    name: "Realtor's Corner",
+    href: "/#",
+    children: [{ name: "Register as Realtor", href: "#" }],
   },
 ];

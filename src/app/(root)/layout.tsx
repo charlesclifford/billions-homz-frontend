@@ -3,6 +3,7 @@ import ScrollToTop from "@/components/shared/ScrollToTop";
 import { Suspense } from "react";
 import "../globals.css";
 import Loading from "../loading";
+import Footer from "@/components/shared/footer/Footer";
 
 
 
@@ -17,7 +18,7 @@ export default async function RootLayout({
         <Header />
         <main className="w-full min-h-dvh">{children}</main>
         <ScrollToTop />
-        {/* <Footer /> */}
+        <Footer />
       </Suspense>
     </div>
   );
