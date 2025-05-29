@@ -10,6 +10,16 @@ import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import NavLinks from "./NavLinks";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { HamburgerMenu } from "iconsax-reactjs";
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
+import { AnimatedLink } from "../AnimatedLink";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const SCROLL_THRESHOLD = 150; // Minimum pixels to scroll before hiding header
 
@@ -18,6 +28,8 @@ const Header = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const lastScrollY = useRef(0);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
@@ -88,10 +100,8 @@ const Header = () => {
           >
             <div
               className={cn(
-                "grid grid-cols-5 items-center container mx-auto",
-                isScrolled
-                  ? "scale-y-[0.98]"
-                  : "scale-y-100"
+                "grid grid-cols-2 lg:grid-cols-5 items-center container mx-auto",
+                isScrolled ? "scale-y-[0.98]" : "scale-y-100"
               )}
             >
               {/* Logo */}
@@ -125,12 +135,69 @@ const Header = () => {
                 </Link>
               </div>
 
+              <div className="col-span-1 lg:hidden flex items-center justify-end py-4">
+                <button
+                  className="cursor-pointer rounded-[30px] size-10 flex items-center justify-center border border-neutral-500 active:bg-primary/10"
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                >
+                  <HamburgerMenu size="24" variant="Outline" />
+                </button>
+
+                {isMobile && (
+                  <Drawer
+                    open={isMenuOpen}
+                    onOpenChange={() => setIsMenuOpen(!isMenuOpen)}
+                  >
+                    <DrawerContent className="px-6 pb-8">
+                      <ul className="pl-2 py-4">
+                        {menuList.map((item, index) => (
+                          <li key={index} className="py-2">
+                            {item.children && item.children.length > 0 ? (
+                              <Accordion type="single" collapsible >
+                                <AccordionItem value={`item-${index}`}>
+                                  <AccordionTrigger className="font-normal text-xl py-2">
+                                    {item.name}
+                                  </AccordionTrigger>
+                                  <AccordionContent>
+                                    <ul className="pl-4">
+                                      {item.children.map((child, childIdx) => (
+                                        <li key={childIdx} className="font-normal text-base py-2">
+                                          <AnimatedLink
+                                            href={child.href}
+                                            className="text-xl"
+                                            onClick={() => setIsMenuOpen(false)}
+                                          >
+                                            {child.name}
+                                          </AnimatedLink>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </AccordionContent>
+                                </AccordionItem>
+                              </Accordion>
+                            ) : (
+                              <AnimatedLink
+                                href={item.href}
+                                className="text-xl"
+                                onClick={() => setIsMenuOpen(false)}
+                              >
+                                {item.name}
+                              </AnimatedLink>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </DrawerContent>
+                  </Drawer>
+                )}
+              </div>
+
               {/* navlinks */}
-              <div className="col-span-3 flex justify-center">
+              <div className="col-span-3 hidden lg:flex justify-center">
                 <NavLinks items={menuList} />
               </div>
 
-              <div className="pr-2 col-span-1 flex items-center justify-end gap-2">
+              <div className="pr-2 col-span-1 hidden lg:flex items-center justify-end gap-2">
                 <div className="flex items-center transition-transform duration-500 ease-[cubic-bezier(0.33,1,0.68,1)]">
                   {loading ? (
                     <Skeleton

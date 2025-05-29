@@ -33,7 +33,7 @@ export const menuList: IMenu[] = [
   },
   {
     name: "Blog",
-    href: "/#",
+    href: "/blogs",
   },
   {
     name: "Contact",
@@ -45,4 +45,3 @@ export const menuList: IMenu[] = [
     children: [{ name: "Register as Realtor", href: "#" }],
   },
 ];
-
