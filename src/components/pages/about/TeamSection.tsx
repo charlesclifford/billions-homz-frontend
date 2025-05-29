@@ -53,7 +53,7 @@ const members: IMember[] = [
 const TeamSection = () => {
   return (
     <div id="team" className="w-full about-section">
-      <div className="w-full container max-w-[min(100%,1290px)] mx-auto pb-[150px] flex flex-col ">
+      <div className="w-full container max-w-[min(100%,1290px)] mx-auto px-4 pb-[150px] flex flex-col ">
         <SmallTitle text="meet the team" className="mx-auto" />
 
         <div className="max-w-full w-[760px] mx-auto text-center">

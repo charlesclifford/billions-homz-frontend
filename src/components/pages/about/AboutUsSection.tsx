@@ -7,14 +7,14 @@ import { Buildings, RulerPen, Setting2 } from "iconsax-reactjs";
 const AboutUsSection = () => {
   return (
     <>
-      <div className="about-section w-full container mx-auto px-4 mb-[80px] pt-[100px]">
-        <div className="w-full max-w-[min(100%,1290px)] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-[30px] mb-[80px]">
+      <div className="about-section w-full container mx-auto  mb-[80px] mt-[30px] lg:mt-[100px]">
+        <div className="w-full max-w-[min(100%,1290px)] mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-[30px] mb-[80px]">
           <div className="col-span-1">
             <SmallTitle text="About us" />
 
             <div className="max-w-full w-[520px]">
               <div className="mt-[30px]">
-                <h2 className="text-[70px] font-bold leading-[1.06em] tracking-[-2px]">
+                <h2 className="text-[42px] lg:text-[70px] font-bold leading-[1.06em] tracking-[-1px] lg:tracking-[-2px]">
                   Shaping the world of things to come
                 </h2>
               </div>
@@ -72,7 +72,7 @@ const AboutUsSection = () => {
       </div>
 
       <div className="about-section flex flex-col z-[1]">
-        <div className="w-full max-w-[min(100%,1290px)] mx-auto">
+        <div className="w-full max-w-[min(100%,1290px)] mx-auto px-4">
           <div className="bg-[url(https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/03/h2_img1.jpg)] bg-no-repeat bg-cover bg-center w-full h-full rounded-[30px] grid grid-cols-1 lg:grid-cols-2">
             <div>
               <div className="max-w-full relative w-[150px] lg:w-[220px]">

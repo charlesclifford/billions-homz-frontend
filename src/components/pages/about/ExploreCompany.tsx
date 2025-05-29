@@ -58,7 +58,7 @@ const exploreList: IExploreList[] = [
 const ExploreCompany = () => {
   return (
     <div className="footer about-section w-full">
-      <div className="w-full container max-w-[min(100%,1290px)] mx-auto px-4 lg:px-0 py-[150px] flex flex-col">
+      <div className="w-full container max-w-[min(100%,1290px)] mx-auto px-4 py-[150px] flex flex-col">
         <div className="grid grid-cols-1 lg:grid-cols-[40%_auto]">
           <div>
             <SmallTitle text="Explore company" />
