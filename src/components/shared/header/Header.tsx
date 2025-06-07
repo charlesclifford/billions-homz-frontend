@@ -20,11 +20,12 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
 
 const SCROLL_THRESHOLD = 150; // Minimum pixels to scroll before hiding header
 
 const Header = () => {
-  const { loading } = useAppSelector((state) => state.auth);
+  const { loading, user } = useAppSelector((state) => state.auth);
   const [isVisible, setIsVisible] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const lastScrollY = useRef(0);
@@ -153,7 +154,7 @@ const Header = () => {
                         {menuList.map((item, index) => (
                           <li key={index} className="py-2">
                             {item.children && item.children.length > 0 ? (
-                              <Accordion type="single" collapsible >
+                              <Accordion type="single" collapsible>
                                 <AccordionItem value={`item-${index}`}>
                                   <AccordionTrigger className="font-normal text-xl py-2">
                                     {item.name}
@@ -161,7 +162,10 @@ const Header = () => {
                                   <AccordionContent>
                                     <ul className="pl-4">
                                       {item.children.map((child, childIdx) => (
-                                        <li key={childIdx} className="font-normal text-base py-2">
+                                        <li
+                                          key={childIdx}
+                                          className="font-normal text-base py-2"
+                                        >
                                           <AnimatedLink
                                             href={child.href}
                                             className="text-xl"
@@ -208,7 +212,15 @@ const Header = () => {
                     />
                   ) : (
                     <div className={isScrolled ? "scale-90" : "scale-100"}>
-                      <HeaderUser />
+                      {user ? (
+                        <HeaderUser />
+                      ) : (
+                        <div>
+                          <Link href={"/auth/login"}>
+                            <Button>Login</Button>
+                          </Link>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
