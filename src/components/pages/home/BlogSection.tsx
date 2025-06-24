@@ -32,7 +32,7 @@ const blogPosts = [
 
 const BlogSection = () => {
   return (
-    <div className="about-section w-full container mx-auto px-4 bg-white">
+    <div className="about-section w-full container mx-auto px-4">
       <div className="w-full max-w-[min(100%,1290px)] mx-auto py-[150px] flex flex-col">
         <div className="grid grid-cols-1 lg:grid-cols-2">
           <div>
@@ -50,7 +50,7 @@ const BlogSection = () => {
           <div className="flex items-center lg:items-end justify-center lg:justify-end pb-2.5 pt-[30px]">
             <Link
               href={"/posts"}
-              className="p-[5px] pl-[30px] border border-gray-300 rounded-[30px] text-sm font-bold capitalize inline-grid relative group hover:bg-gray-500 transition duration-300"
+              className="p-[5px] pl-[30px] border  rounded-[30px] text-sm font-bold capitalize inline-grid relative group transition duration-300"
             >
               <span className="flex gap-2.5 items-center flex-row-reverse justify-center">
                 <span className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-primary text-white">
@@ -66,7 +66,7 @@ const BlogSection = () => {
                     </span>
                   </span>
                 </span>
-                <span className="inline-block text-black group-hover:text-white">
+                <span className="inline-block e">
                   view All Posts
                 </span>
               </span>

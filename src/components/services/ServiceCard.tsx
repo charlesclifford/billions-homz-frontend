@@ -17,7 +17,7 @@ const ServiceCard = ({
             <h5 className="mb-5 text-[26px] leading-[1.23] font-bold">
               <span>{title}</span>
             </h5>
-            <p className="text-gray-600 dark:text-gray-400 text-lg">
+            <p className="text-neutral-600 dark:text-neutral-400 text-lg">
               {content}
             </p>
           </div>

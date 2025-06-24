@@ -126,7 +126,7 @@ const WhatWeOffer = () => {
                 </div>
 
                 <div className="relative">
-                  <p className="text-lg leading-[1.55] text-ellipsis line-clamp-3 group-hover/card:text-white transition duration-300 text-neutral-600 dark:text-neutral-400">
+                  <p className="text-lg leading-[1.55] text-ellipsis line-clamp-3 group-hover/card:text-white dark:group-hover/card:text-white transition duration-300 text-neutral-600 dark:text-neutral-400">
                     {content}
                   </p>
                 </div>

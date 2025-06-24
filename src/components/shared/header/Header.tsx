@@ -91,7 +91,7 @@ const Header = () => {
         >
           <div
             className={cn(
-              "bg-background/95 backdrop-blur-[60px] px-4 border border-neutral-300/50",
+              "bg-background/95 backdrop-blur-[60px] px-4 border ",
               "transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)]",
               "transform-gpu ",
               isScrolled
