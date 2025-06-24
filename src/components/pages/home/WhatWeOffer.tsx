@@ -58,7 +58,7 @@ const serviceList: IServiceList[] = [
 
 const WhatWeOffer = () => {
   return (
-    <div className="about-section w-full bg-[#F6F3EC]">
+    <div className="about-section w-full bg-[#F6F3EC] dark:bg-background">
       <div className="w-full container max-w-[min(100%,1290px)] mx-auto py-[150px] flex flex-col ">
         <SmallTitle text="what we offer" className="mx-auto" />
 
@@ -77,7 +77,7 @@ const WhatWeOffer = () => {
               <div
                 key={i}
                 className={cn(
-                  "bg-white rounded-[30px] rounded-tr-none min-h-[370px] p-[40px] flex flex-col relative box-hover overflow-hidden group/card justify-end",
+                  "bg-card rounded-[30px] rounded-tr-none min-h-[370px] p-[40px] flex flex-col relative box-hover overflow-hidden group/card justify-end",
                   className
                 )}
               >
@@ -88,7 +88,7 @@ const WhatWeOffer = () => {
                       className="rounded-[30px] text-sm font-bold capitalize inline-grid relative group"
                     >
                       <span className="flex items-center flex-row-reverse justify-center">
-                        <span className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-white text-black group-hover/card:text-white group-hover/card:bg-primary transition-all duration-300">
+                        <span className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-card text-foreground group-hover/card:text-white group-hover/card:bg-primary transition-all duration-300">
                           <span className="flex items-center justify-center w-[18px] h-[18px] overflow-hidden relative">
                             {/* Top icon – animates out along 45deg */}
                             <span className="flex absolute items-center justify-center  transition-all duration-500 transform-3d transform-[translate3d(0px,0px,0px)_scale3d(1,1,1)] opacity-100 group-hover:transform-[translate3d(17px,-17px,0px)_scale3d(0.2,0.2,1)] group-hover:opacity-0">
@@ -119,22 +119,22 @@ const WhatWeOffer = () => {
 
                 <div className="relative mb-2">
                   <div>
-                    <h5 className="text-black leading-[1] text-[26px] tracking-[0] font-bold group-hover/card:text-white transition duration-300">
+                    <h5 className="text-foreground leading-[1] text-[26px] tracking-[0] font-bold group-hover/card:text-white transition duration-300">
                       {title}
                     </h5>
                   </div>
                 </div>
 
                 <div className="relative">
-                  <p className="text-lg leading-[1.55] text-ellipsis line-clamp-3 group-hover/card:text-white transition duration-300">
+                  <p className="text-lg leading-[1.55] text-ellipsis line-clamp-3 group-hover/card:text-white transition duration-300 text-neutral-600 dark:text-neutral-400">
                     {content}
                   </p>
                 </div>
 
                 <div className="absolute top-0 right-0 w-[60px] h-[60px] ">
-                  <div className="rounded-bl-[30px] w-full h-full bg-[#F6F3EC]"></div>
-                  <div className="border-shape w-[30px] h-[30px] absolute top-0 left-[-29.5px] rotate-180 bg-[#F6F3EC]"></div>
-                  <div className="border-shape w-[30px] h-[30px] absolute right-[-0.5px] bottom-[-30px] rotate-180 bg-[#F6F3EC]"></div>
+                  <div className="rounded-bl-[30px] w-full h-full bg-[#F6F3EC] dark:bg-background"></div>
+                  <div className="border-shape w-[30px] h-[30px] absolute top-0 left-[-29.5px] rotate-180 bg-[#F6F3EC] dark:bg-background"></div>
+                  <div className="border-shape w-[30px] h-[30px] absolute right-[-0.5px] bottom-[-30px] rotate-180 bg-[#F6F3EC] dark:bg-background"></div>
                 </div>
                 <div></div>
               </div>
