@@ -70,7 +70,7 @@ const testimonials = [
 const TestimonialSection = () => {
   return (
     <div className="about-section w-full bg-[#1b1f12]">
-      <div className="w-full container max-w-[min(100%,1290px)] mx-auto py-[150px] flex flex-col">
+      <div className="w-full container max-w-[min(100%,1290px)] mx-auto px-4 py-[150px] flex flex-col">
         <div className="grid grid-cols-1 lg:grid-cols-[40%_auto]">
           <div>
             <SmallTitle
@@ -106,7 +106,7 @@ const TestimonialSection = () => {
               {testimonials.map((item) => (
                 <CarouselItem
                   key={item.id}
-                  className="pl-[30px] md:basis-1/2 lg:basis-1/3"
+                  className=" md:basis-1/2 lg:basis-1/3"
                 >
                   <TestimonialCard item={item} />
                 </CarouselItem>

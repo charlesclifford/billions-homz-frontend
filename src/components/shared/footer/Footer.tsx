@@ -33,7 +33,7 @@ const Footer = () => {
           </div>
 
           <div className="lg:px-4">
-            <div className="bg-card rounded-[20px] lg:rounded-[40px] flex flex-col  mx-4 px-[15px] lg:px-[30px] pt-[30px] lg:pt-[60px] mt-20 ">
+            <div className="bg-card rounded-[20px] lg:rounded-[40px] flex flex-col mx-0 lg:mx-4 px-[15px] lg:px-[30px] pt-[30px] lg:pt-[60px] mt-20 ">
               <div className="w-full max-w-[min(100%,1290px)] mx-auto flex flex-col ">
                 <div className="grid grid-cols-1 lg:grid-cols-3 border-b border-b-border pb-[30px] lg:pb-[60px] gap-[30px] lg:gap-0">
                   <div className="flex flex-col justify-between gap-[30px] pb-0 lg:pb-5 pr-0 lg:pr-10">
@@ -200,7 +200,7 @@ const Footer = () => {
                       <div>
                         <a
                           href="tel:+123456789"
-                          className="text-[28px] lg:text-4xl font-semibold leading-[1.5em] tracking-[-1px] lg:tracking-[-2px] relative contact-link lowercase"
+                          className="text-[26px] lg:text-3xl font-semibold leading-[1.5em] tracking-[-1px] lg:tracking-[-2px] relative contact-link lowercase"
                         >
                           <span>
                             <span>
@@ -212,7 +212,7 @@ const Footer = () => {
                       <div>
                         <a
                           href="mailto:billionshomz@gmail.com"
-                          className="text-[28px] lg:text-4xl font-semibold leading-[1.5em] tracking-[-1px] lg:tracking-[-2px] relative contact-link lowercase"
+                          className="text-[26px] lg:text-3xl font-semibold leading-[1.5em] tracking-[-1px] lg:tracking-[-2px] relative contact-link lowercase"
                         >
                           <span>
                             <span>
