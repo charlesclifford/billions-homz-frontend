@@ -16,7 +16,7 @@ const BlogsPage = () => {
         </div>
 
         <div className="h-[50px] w-full absolute bottom-0 left-0">
-          <div className="bg-white rounded-t-[50px] h-full w-full"></div>
+          <div className="bg-background rounded-t-[50px] h-full w-full"></div>
         </div>
       </div>
 

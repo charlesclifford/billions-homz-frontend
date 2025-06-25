@@ -26,7 +26,7 @@ const exploreList: IExploreList[] = [
       href: "#",
       text: "Our Solutions",
     },
-    containerClassName: "bg-neutral-800 text-white",
+    containerClassName: "bg-neutral-800 dark:bg-neutral-900 text-white",
     linkClassName: "before:!bg-white after:!bg-white",
   },
   {
@@ -38,8 +38,8 @@ const exploreList: IExploreList[] = [
       href: "#",
       text: "See Projects",
     },
-    containerClassName: "bg-yellow-200 text-black",
-    linkClassName: "text-primary",
+    containerClassName: "bg-primary text-white",
+    linkClassName: "text-white before:!bg-white after:!bg-white",
   },
   {
     id: "03",
@@ -50,7 +50,7 @@ const exploreList: IExploreList[] = [
       href: "#",
       text: "Discover More",
     },
-    containerClassName: "bg-neutral-800 text-white",
+    containerClassName: "bg-neutral-800 dark:bg-neutral-900 text-white",
     linkClassName: "before:!bg-white after:!bg-white",
   },
 ];
@@ -97,8 +97,8 @@ const ExploreCompany = () => {
                       <span className="flex items-center flex-row-reverse justify-center">
                         <span
                           className={cn(
-                            "w-[50px] h-[50px] rounded-full flex items-center justify-center text-black group-hover/card:text-white group-hover/card:bg-primary transition-all duration-300",
-                            "bg-yellow-200"
+                            "w-[50px] h-[50px] rounded-full flex items-center justify-center group-hover/card:text-white group-hover/card:bg-primary transition-all duration-300",
+                            "bg-primary"
                           )}
                         >
                           <span className="flex items-center justify-center w-[18px] h-[18px] overflow-hidden relative">
@@ -158,9 +158,9 @@ const ExploreCompany = () => {
                 </div>
 
                 <div className="absolute bottom-0 right-0 w-[60px] h-[60px] ">
-                  <div className="rounded-tl-[30px] w-full h-full bg-white"></div>
-                  <div className="border-shape w-[30px] h-[30px] absolute top-[-29.5px] right-[-0.5] -rotate-90 bg-white"></div>
-                  <div className="border-shape w-[30px] h-[30px] absolute left-[-29.5px] bottom-[-0.5] -rotate-90 bg-white"></div>
+                  <div className="rounded-tl-[30px] w-full h-full bg-background"></div>
+                  <div className="border-shape w-[30px] h-[30px] absolute top-[-29.5px] right-[-0.5] -rotate-90 bg-background"></div>
+                  <div className="border-shape w-[30px] h-[30px] absolute left-[-29.5px] bottom-[-0.5] -rotate-90 bg-background"></div>
                 </div>
               </div>
             );

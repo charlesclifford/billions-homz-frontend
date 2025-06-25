@@ -18,7 +18,7 @@ const AboutPage = () => {
         </div>
 
         <div className="h-[30px] lg:h-[50px] w-full absolute bottom-0 left-0">
-          <div className="bg-white rounded-t-[20px] lg:rounded-t-[50px] h-full w-full"></div>
+          <div className="bg-background rounded-t-[20px] lg:rounded-t-[50px] h-full w-full"></div>
         </div>
       </div>
 

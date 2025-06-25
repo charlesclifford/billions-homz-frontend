@@ -50,7 +50,7 @@ const BlogSection = () => {
           <div className="flex items-center lg:items-end justify-center lg:justify-end pb-2.5 pt-[30px]">
             <Link
               href={"/posts"}
-              className="p-[5px] pl-[30px] border  rounded-[30px] text-sm font-bold capitalize inline-grid relative group transition duration-300"
+              className="p-[5px] pl-[30px] border rounded-[30px] text-sm font-bold capitalize inline-grid relative group transition duration-300 dark:bg-white"
             >
               <span className="flex gap-2.5 items-center flex-row-reverse justify-center">
                 <span className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-primary text-white">
@@ -66,9 +66,7 @@ const BlogSection = () => {
                     </span>
                   </span>
                 </span>
-                <span className="inline-block e">
-                  view All Posts
-                </span>
+                <span className="inline-block text-black">view All Posts</span>
               </span>
             </Link>
           </div>

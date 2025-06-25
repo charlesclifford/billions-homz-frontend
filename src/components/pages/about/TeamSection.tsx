@@ -80,7 +80,7 @@ const TeamSection = () => {
                       className="rounded-[30px] text-sm font-bold capitalize inline-grid relative group"
                     >
                       <span className="flex items-center flex-row-reverse justify-center">
-                        <span className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-yellow-200 text-black group-hover/card:text-white group-hover/card:bg-primary transition-all duration-300">
+                        <span className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-primary group-hover/card:text-white group-hover/card:bg-primary transition-all duration-300">
                           <span className="flex items-center justify-center w-[18px] h-[18px] overflow-hidden relative">
                             {/* Top icon – animates out along 45deg */}
                             <span className="flex absolute items-center justify-center  transition-all duration-500 transform-3d transform-[translate3d(0px,0px,0px)_scale3d(1,1,1)] opacity-100 group-hover:transform-[translate3d(17px,-17px,0px)_scale3d(0.2,0.2,1)] group-hover:opacity-0">
@@ -123,9 +123,9 @@ const TeamSection = () => {
                 </div>
 
                 <div className="absolute top-0 right-0 w-[60px] h-[60px] ">
-                  <div className="rounded-bl-[30px] w-full h-full bg-white"></div>
-                  <div className="border-shape w-[30px] h-[30px] absolute top-0 left-[-29.5px] rotate-180 bg-white"></div>
-                  <div className="border-shape w-[30px] h-[30px] absolute right-[-0.5px] bottom-[-30px] rotate-180 bg-white"></div>
+                  <div className="rounded-bl-[30px] w-full h-full bg-background"></div>
+                  <div className="border-shape w-[30px] h-[30px] absolute top-0 left-[-29.5px] rotate-180 bg-background"></div>
+                  <div className="border-shape w-[30px] h-[30px] absolute right-[-0.5px] bottom-[-30px] rotate-180 bg-background"></div>
                 </div>
                 <div></div>
               </div>
