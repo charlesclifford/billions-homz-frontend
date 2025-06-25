@@ -30,7 +30,7 @@ const BlogCard = ({
 
       <div>
         <div className="flex items-center justify-between gap-[30px] leading-[2] mb-[23px] relative before:content-[''] before:bg-gray-200 before:order-1 before:h-[1px] before:grow">
-          <div className="bg-red-500 text-white py-[9px] px-5 rounded-[20px] leading-[1] font-semibold text-sm">
+          <div className="bg-primary text-white py-[6px] px-4 rounded-[20px] leading-[1] font-semibold text-xs">
             <span>{post.tag}</span>
           </div>
           <div className="text-sm font-semibold leading-[1] order-2 text-gray-500">
