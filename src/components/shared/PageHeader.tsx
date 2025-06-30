@@ -1,0 +1,29 @@
+import { cn } from "@/lib/utils";
+import React from "react";
+
+const PageHeader = ({ title, bgImage }: { title: string; bgImage: string }) => {
+  return (
+    <div
+      className={cn(
+        `bg-[url(${bgImage})] bg-no-repeat bg-cover bg-center w-full h-full relative before:content-[''] before:absolute before:bg-black/40 before:top-0 before:left-0 before:w-full before:h-full`
+      )}
+    >
+      <div className="relative container mx-auto pt-[175px] pb-10 px-[30px] flex flex-col">
+        <div>
+          <div className="mb-[150px]">
+            <h2 className="font-bold text-[52px] lg:text-[90px] leading-[1.06em] tracking-[-2px] text-white">
+              {title}
+            </h2>
+          </div>
+        </div>
+        <div></div>
+      </div>
+
+      <div className="h-[50px] w-full absolute bottom-0 left-0">
+        <div className="bg-background rounded-t-[50px] h-full w-full"></div>
+      </div>
+    </div>
+  );
+};
+
+export default PageHeader;
