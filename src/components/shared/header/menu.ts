@@ -15,15 +15,15 @@ export const menuList: IMenu[] = [
   },
   {
     name: "Listing",
-    href: "/listing",
+    href: "/listings",
     children: [
       {
         name: "Estates",
-        href: "/listing/estates",
+        href: "/listings/estates",
       },
       {
         name: "Properties",
-        href: "/listing/properties",
+        href: "/listings/properties",
       },
     ],
   },
