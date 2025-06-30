@@ -1,11 +1,20 @@
 import { cn } from "@/lib/utils";
 import React from "react";
 
-const PageHeader = ({ title, bgImage }: { title: string; bgImage: string }) => {
+const PageHeader = ({
+  title,
+  bgImage,
+  className = "",
+}: {
+  title: string;
+  bgImage: string;
+  className?: string;
+}) => {
   return (
     <div
       className={cn(
-        `bg-[url(${bgImage})] bg-no-repeat bg-cover bg-center w-full h-full relative before:content-[''] before:absolute before:bg-black/40 before:top-0 before:left-0 before:w-full before:h-full`
+        `bg-[url(${bgImage})] bg-no-repeat bg-cover bg-center w-full h-full relative before:content-[''] before:absolute before:bg-black/40 before:top-0 before:left-0 before:w-full before:h-full`,
+        className
       )}
     >
       <div className="relative container mx-auto pt-[175px] pb-10 px-[30px] flex flex-col">
