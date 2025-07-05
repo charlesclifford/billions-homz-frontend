@@ -49,23 +49,31 @@ export const getPostBySlug = async (slug: string) => {
   }
 };
 
-// export const createPost = async (data: PostFormData) => {
-//   try {
-//     const response = await instance.post("/posts/create", data);
-//     return handleResponse(response);
-//   } catch (error) {
-//     handleError(error);
-//   }
-// };
+export const createPost = async (data: FormData) => {
+  try {
+    const response = await instance.post("/posts/create", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
 
-// export const updatePost = async (id: string, data: PostFormData) => {
-//   try {
-//     const response = await instance.patch(`/posts/${id}/update`, data);
-//     return handleResponse(response);
-//   } catch (error) {
-//     handleError(error);
-//   }
-// };
+export const updatePost = async (id: string, data: FormData) => {
+  try {
+    const response = await instance.put(`/posts/${id}/update`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
 
 export const deletePost = async (id: string) => {
   try {

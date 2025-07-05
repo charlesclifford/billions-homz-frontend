@@ -1,6 +1,15 @@
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { NewspaperIcon } from "lucide-react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { NewspaperIcon, Plus } from "lucide-react";
 import React from "react";
+import BlogForm from "./BlogForm";
+import { Button } from "@/components/ui/button";
 
 const BlogsHeader = () => {
   return (
@@ -31,6 +40,13 @@ const BlogsHeader = () => {
             Blogs
           </h1>
         </div>
+
+        <BlogForm>
+          <Button className="cursor-pointer">
+            <Plus className="h-4 w-4" />
+            New Post
+          </Button>
+        </BlogForm>
       </div>
     </div>
   );
