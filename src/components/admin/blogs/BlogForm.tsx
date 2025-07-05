@@ -19,8 +19,17 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { useIsMobile } from "@/hooks/useMobile";
 import { IPost } from "@/interfaces/blog.interface";
 import { createPost, updatePost } from "@/lib/api/blog";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -68,6 +77,7 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [tagInput, setTagInput] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const isMobile = useIsMobile();
 
   const form = useForm<BlogFormValues>({
     resolver: zodResolver(formSchema),
@@ -231,6 +241,249 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
     setOpen(isOpen);
   };
 
+  const renderFormContent = () => (
+    <Form {...form}>
+      <form
+        id="blog-form"
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-6 p-4 h-full"
+      >
+        {/* Image Upload */}
+        <div className="space-y-2">
+          <FormLabel>Image</FormLabel>
+          {previewImage ? (
+            <div className="relative">
+              <Image
+                src={previewImage}
+                alt="Preview"
+                className="w-full aspect-video object-cover rounded-lg"
+                width={800}
+                height={450}
+                priority
+              />
+              <button
+                type="button"
+                onClick={handleRemoveImage}
+                className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          ) : (
+            <div
+              {...getRootProps()}
+              className="border-2 border-input border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
+            >
+              <input {...getInputProps()} />
+              <div className="flex flex-col items-center justify-center gap-2">
+                <ImagePlus className="h-8 w-8 text-gray-400" />
+                <p className="text-sm text-gray-500">
+                  Drag & drop an image here, or click to select
+                </p>
+                <p className="text-xs text-gray-400">
+                  JPEG, PNG, WEBP (Max 5MB)
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Title *</FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  placeholder="Enter post title"
+                  className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Tags Input */}
+        <FormField
+          control={form.control}
+          name="tags"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tags</FormLabel>
+              <FormControl>
+                <div>
+                  <div className="flex items-center gap-2 flex-wrap mb-2">
+                    {field.value?.map((tag) => (
+                      <div
+                        key={tag}
+                        className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full text-sm"
+                      >
+                        <Tag className="h-3 w-3" />
+                        <span>{tag}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveTag(tag)}
+                          className="text-gray-500 hover:text-red-500"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <Input
+                    value={tagInput}
+                    onChange={(e) => setTagInput(e.target.value)}
+                    onKeyDown={handleAddTag}
+                    placeholder="Add tags (press Enter or comma)"
+                    className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
+                  />
+                </div>
+              </FormControl>
+              <FormMessage />
+              <p className="text-sm text-muted-foreground">
+                Add relevant tags to help categorize your post
+              </p>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="excerpt"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Excerpt *</FormLabel>
+              <FormControl>
+                <Textarea
+                  {...field}
+                  placeholder="Enter a short excerpt"
+                  className="min-h-[100px] focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
+                />
+              </FormControl>
+              <FormMessage />
+              <p className="text-sm text-muted-foreground">
+                A brief summary of your post (20-200 characters)
+              </p>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="content"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Content *</FormLabel>
+              <FormControl>
+                <div className="rich-text-editor">
+                  <ReactQuill
+                    theme="snow"
+                    value={field.value}
+                    onChange={field.onChange}
+                    modules={modules}
+                    formats={formats}
+                  />
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="featured"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+              <div className="space-y-0.5">
+                <FormLabel className="text-base">Featured Post</FormLabel>
+                <p className="text-sm text-muted-foreground">
+                  Featured posts will be highlighted on the homepage
+                </p>
+              </div>
+              <FormControl>
+                <Switch
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="isPublished"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <div className="space-y-1 leading-none">
+                <FormLabel>Publish immediately</FormLabel>
+                <p className="text-sm text-muted-foreground">
+                  If checked, the post will be visible to the public
+                </p>
+              </div>
+            </FormItem>
+          )}
+        />
+      </form>
+    </Form>
+  );
+
+  const renderFooter = () => (
+    <>
+      <Button
+        type="button"
+        variant="outline"
+        className="cursor-pointer"
+        onClick={handleClose}
+      >
+        Cancel
+      </Button>
+      <Button
+        type="submit"
+        form="blog-form"
+        className="cursor-pointer"
+        disabled={createPostMutation.isPending || updatePostMutation.isPending}
+      >
+        {createPostMutation.isPending || updatePostMutation.isPending
+          ? "Saving..."
+          : initialValues?._id
+          ? "Update Post"
+          : "Create Post"}
+      </Button>
+    </>
+  );
+
+  if (isMobile) {
+    return (
+      <Sheet open={open} onOpenChange={handleOpenChange}>
+        <SheetTrigger asChild>{children}</SheetTrigger>
+        <SheetContent className="w-full sm:max-w-lg">
+          <SheetHeader>
+            <SheetTitle>
+              {initialValues?._id ? "Edit Post" : "Create New Post"}
+            </SheetTitle>
+          </SheetHeader>
+          <ScrollArea className="h-[calc(100vh-180px)]">
+            {renderFormContent()}
+          </ScrollArea>
+          <SheetFooter className="flex flex-row justify-end gap-2 pt-4">
+            {renderFooter()}
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -244,226 +497,9 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="h-[calc(100vh-200px)]">
-          <Form {...form}>
-            <form
-              id="blog-form"
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-6 p-4 h-full"
-            >
-              {/* Image Upload */}
-              <div className="space-y-2">
-                <FormLabel>Image</FormLabel>
-                {previewImage ? (
-                  <div className="relative">
-                    <Image
-                      src={previewImage}
-                      alt="Preview"
-                      className="w-full aspect-video object-cover rounded-lg"
-                      width={800}
-                      height={450}
-                      priority
-                    />
-                    <button
-                      type="button"
-                      onClick={handleRemoveImage}
-                      className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full cursor-pointer"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                ) : (
-                  <div
-                    {...getRootProps()}
-                    className="border-2 border-input border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
-                  >
-                    <input {...getInputProps()} />
-                    <div className="flex flex-col items-center justify-center gap-2">
-                      <ImagePlus className="h-8 w-8 text-gray-400" />
-                      <p className="text-sm text-gray-500">
-                        Drag & drop an image here, or click to select
-                      </p>
-                      <p className="text-xs text-gray-400">
-                        JPEG, PNG, WEBP (Max 5MB)
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title *</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="Enter post title"
-                        className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Tags Input */}
-              <FormField
-                control={form.control}
-                name="tags"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Tags</FormLabel>
-                    <FormControl>
-                      <div>
-                        <div className="flex items-center gap-2 flex-wrap mb-2">
-                          {field.value?.map((tag) => (
-                            <div
-                              key={tag}
-                              className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full text-sm"
-                            >
-                              <Tag className="h-3 w-3" />
-                              <span>{tag}</span>
-                              <button
-                                type="button"
-                                onClick={() => handleRemoveTag(tag)}
-                                className="text-gray-500 hover:text-red-500"
-                              >
-                                <X className="h-3 w-3" />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                        <Input
-                          value={tagInput}
-                          onChange={(e) => setTagInput(e.target.value)}
-                          onKeyDown={handleAddTag}
-                          placeholder="Add tags (press Enter or comma)"
-                          className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
-                        />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                    <p className="text-sm text-muted-foreground">
-                      Add relevant tags to help categorize your post
-                    </p>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="excerpt"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Excerpt *</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        {...field}
-                        placeholder="Enter a short excerpt"
-                        className="min-h-[100px] focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                    <p className="text-sm text-muted-foreground">
-                      A brief summary of your post (20-200 characters)
-                    </p>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="content"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Content *</FormLabel>
-                    <FormControl>
-                      <div className="rich-text-editor">
-                        <ReactQuill
-                          theme="snow"
-                          value={field.value}
-                          onChange={field.onChange}
-                          modules={modules}
-                          formats={formats}
-                        />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="featured"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base">Featured Post</FormLabel>
-                      <p className="text-sm text-muted-foreground">
-                        Featured posts will be highlighted on the homepage
-                      </p>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="isPublished"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <div className="space-y-1 leading-none">
-                      <FormLabel>Publish immediately</FormLabel>
-                      <p className="text-sm text-muted-foreground">
-                        If checked, the post will be visible to the public
-                      </p>
-                    </div>
-                  </FormItem>
-                )}
-              />
-            </form>
-          </Form>
+          {renderFormContent()}
         </ScrollArea>
-        <DialogFooter>
-          <Button
-            type="button"
-            variant="outline"
-            className="cursor-pointer"
-            onClick={handleClose}
-          >
-            Cancel
-          </Button>
-
-          <Button
-            type="submit"
-            form="blog-form"
-            className="cursor-pointer"
-            disabled={
-              createPostMutation.isPending || updatePostMutation.isPending
-            }
-          >
-            {createPostMutation.isPending || updatePostMutation.isPending
-              ? "Saving..."
-              : initialValues?._id
-              ? "Update Post"
-              : "Create Post"}
-          </Button>
-        </DialogFooter>
+        <DialogFooter>{renderFooter()}</DialogFooter>
       </DialogContent>
     </Dialog>
   );
