@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/accordion";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
+import { useIsTablet } from "@/hooks/useMobile";
 
 const SCROLL_THRESHOLD = 150; // Minimum pixels to scroll before hiding header
 
@@ -31,6 +32,7 @@ const Header = () => {
   const lastScrollY = useRef(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
 
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
@@ -144,7 +146,7 @@ const Header = () => {
                   <HamburgerMenu size="24" variant="Outline" />
                 </button>
 
-                {isMobile && (
+                {(isMobile || isTablet) && (
                   <Drawer
                     open={isMenuOpen}
                     onOpenChange={() => setIsMenuOpen(!isMenuOpen)}
