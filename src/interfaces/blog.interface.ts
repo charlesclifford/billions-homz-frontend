@@ -15,6 +15,7 @@ export interface IPost {
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
+  readTime?: number,
 }
 
 export interface PostFilterInput {

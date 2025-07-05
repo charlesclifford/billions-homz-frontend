@@ -5,6 +5,7 @@ import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminFooter from "@/components/admin/AdminFooter";
 import "react-quill-new/dist/quill.snow.css";
+import 'highlight.js/styles/github.css'; 
 
 const { SITE_NAME } = config;
 

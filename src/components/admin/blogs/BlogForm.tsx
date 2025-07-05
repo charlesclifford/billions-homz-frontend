@@ -20,6 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { IPost } from "@/interfaces/blog.interface";
 import { createPost, updatePost } from "@/lib/api/blog";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,6 +50,9 @@ const formSchema = z.object({
   isPublished: z.boolean(),
   featured: z.boolean(),
   tags: z.array(z.string()),
+  excerpt: z.string().min(20, {
+    message: "Excerpt must be at least 20 characters.",
+  }),
 });
 
 export type BlogFormValues = z.infer<typeof formSchema>;
@@ -140,6 +144,7 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
     formData.append("content", values.content);
     formData.append("isPublished", String(values.isPublished));
     formData.append("featured", String(values.featured));
+    formData.append("excerpt", String(values.excerpt));
 
     // Handle tags
     values.tags.forEach((tag) => {
@@ -200,7 +205,8 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
       [{ header: [1, 2, 3, false] }],
       ["bold", "italic", "underline", "strike", "blockquote"],
       [{ list: "ordered" }, { list: "bullet" }],
-      ["link", "image"],
+      ["link"],
+      ["code-block"],
       ["clean"],
     ],
   };
@@ -215,7 +221,7 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
     "list",
     "bullet",
     "link",
-    "image",
+    "code-block",
   ];
 
   const handleOpenChange = (isOpen: boolean) => {
@@ -341,6 +347,27 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
                     <FormMessage />
                     <p className="text-sm text-muted-foreground">
                       Add relevant tags to help categorize your post
+                    </p>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="excerpt"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Excerpt *</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        placeholder="Enter a short excerpt"
+                        className="min-h-[100px] focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    <p className="text-sm text-muted-foreground">
+                      A brief summary of your post (20-200 characters)
                     </p>
                   </FormItem>
                 )}

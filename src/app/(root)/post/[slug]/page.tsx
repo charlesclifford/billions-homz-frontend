@@ -1,3 +1,4 @@
+import PostContent from "@/components/pages/blogs/PostContent";
 import { IPost } from "@/interfaces/blog.interface";
 import { getAllPosts, getPostBySlug } from "@/lib/api/blog";
 import { config } from "@/utils/config";
@@ -12,11 +13,7 @@ export const generateMetadata = async ({
   try {
     const { slug } = await params;
     const data = await getPostBySlug(slug);
-    const post = data.post as IPost;
-
-    if (!post) {
-      notFound();
-    }
+    const post = data.data as IPost;
 
     return {
       title: post.title,
@@ -57,7 +54,7 @@ export const generateStaticParams = async () => {
       isPublished: true,
     });
 
-    posts = data.posts;
+    posts = data.data;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return posts.map((post: any) => ({
@@ -75,13 +72,18 @@ const SinglePostPage = async ({
   params: Promise<{ slug: string }>;
 }) => {
   const { slug } = await params;
-  const { post } = await getPostBySlug(slug);
+  const data = await getPostBySlug(slug);
+  const post = data.data as IPost;
 
   if (!post) {
     return notFound();
   }
 
-  return <div>SinglePostPage</div>;
+  return (
+    <div>
+      <PostContent post={post} />
+    </div>
+  );
 };
 
 export default SinglePostPage;

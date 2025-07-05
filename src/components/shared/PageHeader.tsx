@@ -16,12 +16,12 @@ const PageHeader = ({
         ` bg-no-repeat bg-cover bg-center w-full h-full relative before:content-[''] before:absolute before:bg-black/40 before:top-0 before:left-0 before:w-full before:h-full`,
         className
       )}
-       style={{ backgroundImage: `url(${bgImage})` }}
+      style={{ backgroundImage: `url(${bgImage})` }}
     >
       <div className="relative container mx-auto pt-[175px] pb-10 px-[30px] flex flex-col">
         <div>
           <div className="mb-[150px]">
-            <h2 className="font-bold text-[52px] lg:text-[90px] leading-[1.06em] tracking-[-2px] text-white">
+            <h2 className="font-bold text-[52px] lg:text-[90px] leading-[1.06em] tracking-[-2px] text-white capitalize">
               {title}
             </h2>
           </div>
