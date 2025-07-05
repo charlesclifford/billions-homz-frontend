@@ -39,7 +39,8 @@ const HeaderUser = () => {
   ];
 
   const filteredMenu = dropdownMenuList.filter(
-    (nav) => !nav.roles || (userRole && nav.roles.includes(userRole))
+    (nav) =>
+      !nav.roles || (userRole && nav.roles.includes(user?.role as string))
   );
 
   return (
@@ -74,7 +75,7 @@ const HeaderUser = () => {
         <DropdownMenuSeparator />
         {filteredMenu.map(({ href, name }, i) => {
           return (
-            <DropdownMenuItem key={i}>
+            <DropdownMenuItem key={i} asChild className="cursor-pointer">
               <Link href={href}>{name}</Link>
             </DropdownMenuItem>
           );

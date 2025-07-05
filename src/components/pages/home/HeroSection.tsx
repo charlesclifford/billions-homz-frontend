@@ -68,7 +68,7 @@ const HeroSection = () => {
   return (
     <div className="h-full w-full bg-[url(/images/bg/h1_bg.jpg)] bg-no-repeat bg-cover bg-center relative before:content-[''] before:absolute before:bg-black/40 before:top-0 before:left-0 before:w-full before:h-full mb-[150px]">
       <div className="h-[50px] w-full absolute bottom-0 left-0">
-        <div className="bg-white rounded-t-[50px] h-full w-full"></div>
+        <div className="bg-background rounded-t-[50px] h-full w-full"></div>
       </div>
 
       <div className="container max-w-[min(100%,1290px)] mx-auto px-4 pt-[150px] lg:pt-[245px] relative">

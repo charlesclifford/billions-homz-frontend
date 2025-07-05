@@ -59,7 +59,7 @@ const NavLinks = ({ items }: NavLinksProps) => {
                   </span>
                   <ChevronDown className="ml-1 w-3.5 h-3.5 inline-block" />
                 </button>
-                <ul className="absolute left-0 top-[calc(100%-20px)] min-w-[220px] bg-white shadow-lg flex flex-col opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity z-10 border border-gray-100 rounded-[20px] py-4">
+                <ul className="absolute left-0 top-[calc(100%-20px)] min-w-[220px] bg-background shadow-lg flex flex-col opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity z-10 border rounded-[20px] py-4">
                   {item?.children.map((child) => (
                     <li key={child.href} className="py-[7px] px-6">
                       <AnimatedLink

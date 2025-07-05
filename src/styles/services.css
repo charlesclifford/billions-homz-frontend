@@ -1,17 +1,14 @@
 .service-card {
-  border: 1px solid #ffffff1a;
 
   &:hover {
     .icon-box-wrapper {
       &::before {
-        /* background: var(--primary); */
-        background: red;
+        background: var(--primary);
         transform: scaleX(1);
         transition: 0.45s cubic-bezier(0.47, 0.05, 0.5, 0.94) 0.2s;
       }
       &::after {
-        /* background: var(--primary); */
-        background: red;
+        background: var(--primary);
         transform: scaleX(0);
         transition: 0.45s cubic-bezier(0.47, 0.05, 0.5, 0.94) 0.2s;
       }
@@ -28,7 +25,7 @@
       left: -1px;
       bottom: 0;
       height: 1px;
-      background-color: #ffffff26;
+      background-color: var(--border);
     }
 
     &::before {
@@ -46,7 +43,7 @@
     .icon-box-icon {
       font-size: 48px;
       svg {
-        fill: red;
+        fill: var(--primary);
       }
     }
   }

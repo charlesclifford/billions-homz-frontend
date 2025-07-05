@@ -4,7 +4,7 @@ import SmallTitle from "../../shared/SmallTitle";
 
 const AboutSection = () => {
   return (
-    <div className="about-section w-full container mx-auto px-4 mb-[150px]">
+    <div className="about-section w-full container mx-auto px-4 lg:mb-[150px]">
       <div className="w-full max-w-[min(100%,1290px)] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-[30px] mb-[80px]">
         <div className="col-span-1">
           <SmallTitle text="Who we are" />
@@ -29,7 +29,7 @@ const AboutSection = () => {
                 </span>
               </div>
 
-              <div className="text-neutral-600">
+              <div className="text-neutral-600 dark:text-neutral-400">
                 <p className="text-lg">
                   To empower businesses with cutting-edge web solutions that
                   enhance their digital presence and drive growth.
@@ -47,7 +47,7 @@ const AboutSection = () => {
                 </span>
               </div>
 
-              <div className="text-neutral-600">
+              <div className="text-neutral-600 dark:text-neutral-400">
                 <p className="text-lg">
                   Our solutions are designed to meet the needs of modern
                   enterprises, ensuring they thrive in today&apos;s competitive
@@ -63,7 +63,7 @@ const AboutSection = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-[15px]">
           <div className="bg-[url(/images/bg/h1_img-1.jpg)] bg-cover bg-center bg-no-repeat rounded-[30px] min-h-[350px]">
             <div className="max-w-full relative w-[150px] lg:w-[220px]">
-              <div className="bg-white rounded-br-[30px] w-full h-full">
+              <div className="bg-background rounded-br-[30px] w-full h-full">
                 <div className="w-full h-full">
                   <div className="h-full">
                     <div className="h-[60px]"></div>
@@ -71,16 +71,16 @@ const AboutSection = () => {
                 </div>
               </div>
               {/* top-right */}
-              <div className="bg-white w-[30px] h-[30px] absolute top-0 right-[-30px] rotate-90 border-shape"></div>
+              <div className="bg-background w-[30px] h-[30px] absolute top-0 right-[-30px] rotate-90 border-shape"></div>
               {/* bottom-left */}
-              <div className="bg-white w-[30px] h-[30px] absolute bottom-[-30px] left-0 rotate-90 border-shape"></div>
+              <div className="bg-background w-[30px] h-[30px] absolute bottom-[-30px] left-0 rotate-90 border-shape"></div>
             </div>
           </div>
           {/* grids */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-[15px] grid-flow-row">
-            <div className="bg-gray-100 min-h-[200px] lg:min-h-[350px] py-[30px] lg:py-[40px] px-[15px] lg:px-[30px] pb-[30px] flex justify-between flex-col rounded-[25px] gap-5">
+            <div className="bg-gray-100 dark:bg-card min-h-[200px] lg:min-h-[350px] py-[30px] lg:py-[40px] px-[15px] lg:px-[30px] pb-[30px] flex justify-between flex-col rounded-[25px] gap-5">
               <div className="">
-                <div className="pb-[15px] border-b border-b-gray-200">
+                <div className="pb-[15px] border-b border-b-gray-200 dark:border-b-border">
                   <h6 className="text-[12px] font-semibold uppercase leading-[1.167em] text-primary">
                     global reach
                   </h6>
@@ -103,9 +103,9 @@ const AboutSection = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-gray-100 min-h-[200px] lg:min-h-[350px] py-[30px] lg:py-[40px] px-[15px] lg:px-[30px] pb-[30px] flex justify-between flex-col rounded-[25px] gap-5">
+            <div className="bg-gray-100 dark:bg-card min-h-[200px] lg:min-h-[350px] py-[30px] lg:py-[40px] px-[15px] lg:px-[30px] pb-[30px] flex justify-between flex-col rounded-[25px] gap-5">
               <div className="">
-                <div className="pb-[15px] border-b border-b-gray-200">
+                <div className="pb-[15px] border-b border-b-gray-200 dark:border-b-border">
                   <h6 className="text-[12px] font-semibold uppercase leading-[1.167em] text-primary">
                     local expertise
                   </h6>
@@ -128,9 +128,9 @@ const AboutSection = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-gray-100 min-h-[200px] lg:min-h-[350px] py-[30px] lg:py-[40px] px-[15px] lg:px-[30px] pb-[30px] flex justify-between flex-col rounded-[25px] gap-5">
+            <div className="bg-gray-100 dark:bg-card min-h-[200px] lg:min-h-[350px] py-[30px] lg:py-[40px] px-[15px] lg:px-[30px] pb-[30px] flex justify-between flex-col rounded-[25px] gap-5">
               <div className="">
-                <div className="pb-[15px] border-b border-b-gray-200">
+                <div className="pb-[15px] border-b border-b-gray-200 dark:border-b-border">
                   <h6 className="text-[12px] font-semibold uppercase leading-[1.167em] text-primary">
                     our impact
                   </h6>
@@ -155,7 +155,7 @@ const AboutSection = () => {
             </div>
 
             {/* hide on mobile */}
-            <div className="bg-[url(/images/bg/h1_img-2.jpg)] bg-no-repeat bg-center bg-cover min-h-[200px] lg:min-h-[350px] rounded-[25px]"></div>
+            <div className="bg-[url(/images/bg/h1_img-2.jpg)] bg-no-repeat bg-center bg-cover min-h-[200px] lg:min-h-[350px] rounded-[25px] hidden md:block"></div>
           </div>
         </div>
       </div>

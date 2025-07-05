@@ -143,7 +143,7 @@ const QuickContactForm = () => {
           <div className="flex lg:justify-end">
             <button
               type="submit"
-              className="p-[5px] pl-[30px] bg-red-400 rounded-[30px] text-sm font-bold capitalize inline-grid relative group h-full cursor-pointer text-white"
+              className="p-[5px] pl-[30px] border rounded-[30px] text-sm font-bold capitalize inline-grid relative group h-full cursor-pointer dark:bg-white"
             >
               <span className="flex gap-2.5 items-center flex-row-reverse justify-center">
                 <span className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-primary text-white">
@@ -159,7 +159,7 @@ const QuickContactForm = () => {
                     </span>
                   </span>
                 </span>
-                <span className="inline-block">Submit</span>
+                <span className="inline-block text-black">Submit</span>
               </span>
             </button>
           </div>

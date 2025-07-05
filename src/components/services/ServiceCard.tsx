@@ -7,17 +7,19 @@ const ServiceCard = ({
   item: IServiceList;
 }) => {
   return (
-    <div className="service-card backdrop-blur-[30px] flex rounded-[20px] bg-black/5">
+    <div className="service-card bg-white dark:bg-card backdrop-blur-[30px] flex rounded-[20px] shadow-sm ">
       <div>
         <div className="p-[40px] pb-[50px]">
           <div className="mb-[23px] mx-auto relative pb-[23px] icon-box-wrapper">
             <span className="icon-box-icon">{icon}</span>
           </div>
           <div>
-            <h5 className="mb-5 text-white text-[26px] leading-[1.23] font-bold">
+            <h5 className="mb-5 text-[26px] leading-[1.23] font-bold">
               <span>{title}</span>
             </h5>
-            <p className="text-gray-400 text-lg">{content}</p>
+            <p className="text-neutral-600 dark:text-neutral-400 text-lg">
+              {content}
+            </p>
           </div>
         </div>
       </div>

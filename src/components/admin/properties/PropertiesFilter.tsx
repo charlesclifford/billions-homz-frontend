@@ -219,7 +219,7 @@ const PropertiesFilter = () => {
 
           <Button
             variant="secondary"
-            className="rounded-sm"
+            className="rounded-sm cursor-pointer"
             onClick={handleResetFilters}
           >
             Reset Filters

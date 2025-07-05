@@ -78,7 +78,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NextTopLoader color="#EE6C0E" showSpinner={false} />
+        <NextTopLoader color="var(--primary)" showSpinner={false} />
         <Providers>
           <Suspense fallback={<Loading />}>{children}</Suspense>
         </Providers>

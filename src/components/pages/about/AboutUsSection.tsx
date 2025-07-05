@@ -7,14 +7,14 @@ import { Buildings, RulerPen, Setting2 } from "iconsax-reactjs";
 const AboutUsSection = () => {
   return (
     <>
-      <div className="about-section w-full container mx-auto px-4 mb-[80px] pt-[100px]">
-        <div className="w-full max-w-[min(100%,1290px)] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-[30px] mb-[80px]">
+      <div className="about-section w-full container mx-auto  mb-[80px] mt-[30px] lg:mt-[100px]">
+        <div className="w-full max-w-[min(100%,1290px)] mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-[30px] mb-[80px]">
           <div className="col-span-1">
             <SmallTitle text="About us" />
 
             <div className="max-w-full w-[520px]">
               <div className="mt-[30px]">
-                <h2 className="text-[70px] font-bold leading-[1.06em] tracking-[-2px]">
+                <h2 className="text-[42px] lg:text-[70px] font-bold leading-[1.06em] tracking-[-1px] lg:tracking-[-2px]">
                   Shaping the world of things to come
                 </h2>
               </div>
@@ -44,7 +44,7 @@ const AboutUsSection = () => {
               <div className="">
                 <Link
                   href={"#team"}
-                  className="p-[5px] pl-[30px] bg-white rounded-[30px] text-sm font-bold capitalize inline-grid relative group border border-gray-300 hover:bg-gray-500 transition duration-300"
+                  className="p-[5px] pl-[30px] bg-white rounded-[30px] text-sm font-bold capitalize inline-grid relative group border transition duration-300"
                 >
                   <span className="flex gap-2.5 items-center flex-row-reverse justify-center">
                     <span className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-primary text-white">
@@ -72,11 +72,11 @@ const AboutUsSection = () => {
       </div>
 
       <div className="about-section flex flex-col z-[1]">
-        <div className="w-full max-w-[min(100%,1290px)] mx-auto">
+        <div className="w-full max-w-[min(100%,1290px)] mx-auto px-4">
           <div className="bg-[url(https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/03/h2_img1.jpg)] bg-no-repeat bg-cover bg-center w-full h-full rounded-[30px] grid grid-cols-1 lg:grid-cols-2">
             <div>
               <div className="max-w-full relative w-[150px] lg:w-[220px]">
-                <div className="bg-white rounded-br-[30px] w-full h-full">
+                <div className="bg-background rounded-br-[30px] w-full h-full">
                   <div className="w-full h-full">
                     <div className="h-full">
                       <div className="h-[60px]"></div>
@@ -84,15 +84,15 @@ const AboutUsSection = () => {
                   </div>
                 </div>
                 {/* top-right */}
-                <div className="bg-white w-[30px] h-[30px] absolute top-0 right-[-30px] rotate-90 border-shape"></div>
+                <div className="bg-background w-[30px] h-[30px] absolute top-0 right-[-30px] rotate-90 border-shape"></div>
                 {/* bottom-left */}
-                <div className="bg-white w-[30px] h-[30px] absolute bottom-[-30px] left-0 rotate-90 border-shape"></div>
+                <div className="bg-background w-[30px] h-[30px] absolute bottom-[-30px] left-0 rotate-90 border-shape"></div>
               </div>
             </div>
             <div className="lg:pt-[130px] pb-[60px] lg:pb-2.5 px-2.5  flex flex-col">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5">
                 <div className="min-h-[200px] lg:min-h-[250px]"></div>
-                <div className="bg-[#f5f5f5] min-h-[200px] lg:min-h-[250px] flex justify-between flex-col gap-5 rounded-[25px] p-[15px] lg:py-[30px] px-10">
+                <div className="bg-[#f5f5f5] dark:bg-card min-h-[200px] lg:min-h-[250px] flex justify-between flex-col gap-5 rounded-[25px] p-[15px] lg:py-[30px] px-10">
                   {/* icon */}
                   <div className="">
                     <div className="flex items-center justify-end">
@@ -102,7 +102,7 @@ const AboutUsSection = () => {
                   {/* text */}
                   <div>
                     <div className="flex justify-center flex-col-reverse items-stretch">
-                      <div className="flex items-center text-lg leading-[1.5em] text-neutral-500">
+                      <div className="flex items-center text-lg leading-[1.5em] text-neutral-600 dark:text-neutral-400">
                         projects in development
                       </div>
                       <div className="text-[60px] flex text-center font-bold leading-[1.06em] tracking-[-2px]">
@@ -117,7 +117,7 @@ const AboutUsSection = () => {
                     </div>
                   </div>
                 </div>
-                <div className="bg-[#f5f5f5] min-h-[200px] lg:min-h-[250px] flex justify-between flex-col gap-5 rounded-[25px] p-[15px] lg:py-[30px] px-10">
+                <div className="bg-[#f5f5f5] dark:bg-card min-h-[200px] lg:min-h-[250px] flex justify-between flex-col gap-5 rounded-[25px] p-[15px] lg:py-[30px] px-10">
                   {/* icon */}
                   <div className="">
                     <div className="flex items-center justify-end">
@@ -127,7 +127,7 @@ const AboutUsSection = () => {
                   {/* text */}
                   <div>
                     <div className="flex justify-center flex-col-reverse items-stretch">
-                      <div className="flex items-center text-lg leading-[1.5em] text-neutral-500">
+                      <div className="flex items-center text-lg leading-[1.5em] text-neutral-600 dark:text-neutral-400">
                         square feet of property
                       </div>
                       <div className="text-[60px] flex text-center font-bold leading-[1.06em] tracking-[-2px]">
@@ -142,7 +142,7 @@ const AboutUsSection = () => {
                     </div>
                   </div>
                 </div>
-                <div className="bg-[#f5f5f5] min-h-[200px] lg:min-h-[250px] flex justify-between flex-col gap-5 rounded-[25px] p-[15px] lg:py-[30px] px-10">
+                <div className="bg-[#f5f5f5] dark:bg-card min-h-[200px] lg:min-h-[250px] flex justify-between flex-col gap-5 rounded-[25px] p-[15px] lg:py-[30px] px-10">
                   {/* icon */}
                   <div className="">
                     <div className="flex items-center justify-end">
@@ -152,7 +152,7 @@ const AboutUsSection = () => {
                   {/* text */}
                   <div>
                     <div className="flex justify-center flex-col-reverse items-stretch">
-                      <div className="flex items-center text-lg leading-[1.5em] text-neutral-500">
+                      <div className="flex items-center text-lg leading-[1.5em] text-neutral-600 dark:text-neutral-400">
                         total projects cost
                       </div>
                       <div className="text-[60px] flex text-center font-bold leading-[1.06em] tracking-[-2px]">
