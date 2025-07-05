@@ -1,61 +1,122 @@
-import { IPost } from "@/interfaces/blog.interface";
-import React from "react";
+"use client";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import Link from "next/link";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { IPost } from "@/interfaces/blog.interface";
+import { deletePost } from "@/lib/api/blog";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Edit, Loader2, Trash2 } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
+import { toast } from "sonner";
+import BlogForm from "./BlogForm";
 
 const PostCard = ({ post }: { post: IPost }) => {
+  const queryClient = useQueryClient();
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [postToDelete, setPostToDelete] = useState<string | null>(null);
+
+  const handleDeleteClick = (postId: string) => {
+    setPostToDelete(postId);
+    setShowDeleteDialog(true);
+  };
+
+  const deletePostMutation = useMutation({
+    mutationFn: deletePost,
+    onSuccess: () => {
+      toast.success("Post deleted successfully");
+      queryClient.invalidateQueries({ queryKey: ["allPosts"] });
+      setShowDeleteDialog(false);
+    },
+    onError: (error) => {
+      toast.error("Failed to delete post");
+      console.error("Delete error:", error);
+    },
+  });
+
+  const confirmDelete = () => {
+    if (postToDelete) {
+      deletePostMutation.mutate(postToDelete);
+    }
+  };
+
   return (
-    <Card key={post._id} className="hover:shadow-lg transition-shadow">
-      <CardHeader>
-        <CardTitle className="text-xl">
-          <Link href={`/admin/blogs/${post._id}`} className="hover:underline">
-            {post.title}
-          </Link>
-        </CardTitle>
-        {post.image?.imageUrl && (
+    <>
+      <div className="group relative">
+        <div className="relative mb-4 h-48 overflow-hidden rounded-lg">
           <Image
-            src={post.image.imageUrl}
+            src={post.image?.imageUrl as string}
             alt={post.title}
-            className="w-full h-48 object-cover rounded mt-2"
-            width={300}
-            height={300}
+            fill
+            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, 33vw"
           />
-        )}
-      </CardHeader>
-      <CardContent>
-        <p className="text-muted-foreground line-clamp-3">
-          {post.excerpt || post.content.substring(0, 200)}...
-        </p>
-        {post.tags && post.tags?.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-4">
-            {post?.tags.map((tag) => (
-              <span
-                key={tag}
-                className="text-xs bg-secondary px-2 py-1 rounded-full"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        )}
-      </CardContent>
-      <CardFooter className="flex justify-between items-center">
-        <span className="text-sm text-muted-foreground">
-          {post.isPublished ? "Published" : "Draft"}
-        </span>
-        <Button asChild variant="outline" size="sm">
-          <Link href={`/admin/blogs/${post._id}`}>Read More</Link>
-        </Button>
-      </CardFooter>
-    </Card>
+        </div>
+
+        <h3 className="text-lg font-bold group-hover:text-primary">
+          {post.title}
+        </h3>
+
+        <div className="flex items-center justify-end gap-2 mt-2">
+          <BlogForm initialValues={post}>
+            <Button variant="outline" size="icon" className="cursor-pointer">
+              <Edit className="h-4 w-4" />
+            </Button>
+          </BlogForm>
+          <Button
+            variant="destructive"
+            size="icon"
+            className="cursor-pointer"
+            onClick={() => handleDeleteClick(post._id)}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Post</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this post? This action cannot be
+              undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              className="cursor-pointer"
+              onClick={() => setShowDeleteDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              className="cursor-pointer"
+              onClick={confirmDelete}
+              disabled={deletePostMutation.isPending}
+            >
+              {deletePostMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

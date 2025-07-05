@@ -14,11 +14,13 @@ export interface IPost {
   featured?: boolean;
   createdAt: string;
   updatedAt: string;
+  publishedAt: string;
+  readTime?: number,
 }
 
 export interface PostFilterInput {
-  page?: number;
-  limit?: number;
+  page: number;
+  limit: number;
   search?: string;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
