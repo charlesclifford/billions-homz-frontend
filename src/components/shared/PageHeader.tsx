@@ -13,9 +13,10 @@ const PageHeader = ({
   return (
     <div
       className={cn(
-        `bg-[url(${bgImage})] bg-no-repeat bg-cover bg-center w-full h-full relative before:content-[''] before:absolute before:bg-black/40 before:top-0 before:left-0 before:w-full before:h-full`,
+        ` bg-no-repeat bg-cover bg-center w-full h-full relative before:content-[''] before:absolute before:bg-black/40 before:top-0 before:left-0 before:w-full before:h-full`,
         className
       )}
+       style={{ backgroundImage: `url(${bgImage})` }}
     >
       <div className="relative container mx-auto pt-[175px] pb-10 px-[30px] flex flex-col">
         <div>
