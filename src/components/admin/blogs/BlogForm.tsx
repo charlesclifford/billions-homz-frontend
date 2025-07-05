@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Switch } from "@/components/ui/switch";
 import { IPost } from "@/interfaces/blog.interface";
 import { createPost, updatePost } from "@/lib/api/blog";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -363,6 +364,27 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
                       </div>
                     </FormControl>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="featured"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">Featured Post</FormLabel>
+                      <p className="text-sm text-muted-foreground">
+                        Featured posts will be highlighted on the homepage
+                      </p>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
                   </FormItem>
                 )}
               />
