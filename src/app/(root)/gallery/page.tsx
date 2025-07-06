@@ -9,7 +9,7 @@ const GalleryPage = () => {
         bgImage="https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/03/blog-bc.jpg"
       />
 
-      <div className="container max-w-[min(100%,1290px)] mx-auto px-4">
+      <div className="container max-w-[min(100%,1290px)] mx-auto px-4 py-16">
         <GalleryGrid />
       </div>
     </div>

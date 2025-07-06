@@ -37,7 +37,7 @@ const BlogsGrid = () => {
   };
 
   return (
-    <div className="mt-[60px] relative">
+    <div className="my-[60px] relative">
       {/* Featured Posts Section */}
       <div className="mb-16">
         <h2 className="text-3xl font-bold mb-8">Featured Posts</h2>
