@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { PhotoFormValues } from "@/components/admin/gallery/PhotoUploader";
 import { PhotosFilterInput } from "@/interfaces/photos.interface";
 import instance from "@/services/axios";
 
@@ -12,7 +13,7 @@ const handleResponse = (response: any) => {
 
 const handleError = (error: any) => {
   if (error.response) {
-    throw new Error(error.response.data.error || "Request failed");
+    throw new Error(error.response.data.message || "Request failed");
   } else if (error.request) {
     throw new Error("No response received from the server");
   } else {
@@ -32,7 +33,7 @@ export const getAllPhotos = async (params?: PhotosFilterInput) => {
 
 export const createPhoto = async (data: FormData) => {
   try {
-    const response = await instance.post("/photos/create", data, {
+    const response = await instance.post("/photos/add", data, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -43,7 +44,7 @@ export const createPhoto = async (data: FormData) => {
   }
 };
 
-export const updatePhoto = async (id: string, data: FormData) => {
+export const updatePhoto = async (id: string, data: PhotoFormValues) => {
   try {
     const response = await instance.put(`/photos/${id}/update`, data);
     return handleResponse(response);

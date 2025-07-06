@@ -15,7 +15,7 @@ const useGallery = (params?: PhotosFilterInput) => {
 
   // Infinite query version
   const infiniteQuery = useInfiniteQuery<PaginatedResponse<IGallery>, Error>({
-    queryKey: ["products-infinite", params],
+    queryKey: ["photos-infinite", params],
     queryFn: ({ pageParam = 1 }) =>
       getAllPhotos({
         ...params,

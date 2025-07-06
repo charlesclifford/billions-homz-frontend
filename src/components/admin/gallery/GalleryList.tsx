@@ -1,4 +1,5 @@
 "use client";
+import { getPaginationRange } from "@/components/shared/DataTable";
 import {
   Carousel,
   CarouselApi,
@@ -7,12 +8,6 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import useGallery from "@/hooks/useGallery";
-import { PhotosFilterInput } from "@/interfaces/photos.interface";
-import { cn } from "@/lib/utils";
-import { GalleryThumbnailsIcon, MapPin, XIcon } from "lucide-react";
-import Image from "next/image";
-import { useEffect, useState } from "react";
 import {
   Pagination,
   PaginationContent,
@@ -21,8 +16,18 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { getPaginationRange } from "@/components/shared/DataTable";
-import GalleryPhoto from "@/components/pages/gallery/GalleryPhoto";
+import useGallery from "@/hooks/useGallery";
+import { PhotosFilterInput } from "@/interfaces/photos.interface";
+import { cn } from "@/lib/utils";
+import {
+  GalleryThumbnailsIcon,
+  MapPin,
+  XIcon
+} from "lucide-react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import AdminGalleryPhoto from "./AdminGalleryPhoto";
+
 
 const GalleryList = () => {
   const [filter, setFilter] = useState<PhotosFilterInput>({
@@ -76,7 +81,7 @@ const GalleryList = () => {
             const rowSpan = Math.ceil((photo.height / photo.width) * 8);
 
             return (
-              <GalleryPhoto
+              <AdminGalleryPhoto
                 key={photo._id}
                 photo={photo}
                 rowSpan={rowSpan}

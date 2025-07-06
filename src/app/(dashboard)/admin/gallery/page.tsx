@@ -1,10 +1,11 @@
-import GalleryList from '@/components/admin/gallery/GalleryList'
-import React from 'react'
+import GalleryHeader from "@/components/admin/gallery/GalleryHeader";
+import GalleryList from "@/components/admin/gallery/GalleryList";
+import React from "react";
 
 const GalleryPage = () => {
   return (
     <div className="w-full">
-      {/* <GalleryHeader /> */}
+      <GalleryHeader />
 
       <div className="space-y-8">
         {/* <GalleryFilter /> */}
@@ -14,7 +15,7 @@ const GalleryPage = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default GalleryPage
+export default GalleryPage;
