@@ -28,7 +28,7 @@ const BlogCard = ({
       </Link>
 
       <div>
-        <div className="flex items-center justify-between gap-[30px] leading-[2] mb-[23px] relative before:content-[''] before:bg-gray-200 before:order-1 before:h-[1px] before:grow">
+        <div className="flex items-center justify-between gap-[30px] leading-[2] mb-[23px] relative before:content-[''] before:bg-border before:order-1 before:h-[1px] before:grow">
           {post.tags && post.tags?.length > 0 && (
             <div className="bg-primary text-white py-[6px] px-4 rounded-[20px] leading-[1] font-semibold text-xs">
               <span>{post.tags[0]}</span>

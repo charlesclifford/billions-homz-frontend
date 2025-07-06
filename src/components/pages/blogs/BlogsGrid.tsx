@@ -83,7 +83,7 @@ const BlogsGrid = () => {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-[30px]">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-[30px] mb-8">
             {posts.map((post) => (
               <BlogCard
                 key={post._id}

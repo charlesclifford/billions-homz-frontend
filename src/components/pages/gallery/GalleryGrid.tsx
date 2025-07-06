@@ -7,12 +7,22 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import useGallery from "@/hooks/useGallery";
+import { PhotosFilterInput } from "@/interfaces/photos.interface";
 import { cn } from "@/lib/utils";
-import instance from "@/services/axios";
 import { GalleryThumbnailsIcon, MapPin, XIcon } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import GalleryPhoto from "./GalleryPhoto";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { getPaginationRange } from "@/components/shared/DataTable";
 
 export interface GalleryImage {
   _id: string;
@@ -25,14 +35,17 @@ export interface GalleryImage {
 }
 
 const GalleryGrid = () => {
-  const [photos, setPhotos] = useState<GalleryImage[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<PhotosFilterInput>({
+    page: 1,
+    limit: 3,
+  });
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(
     null
   );
   const [api, setApi] = useState<CarouselApi>();
   const [thumbsApi, setThumbsApi] = useState<CarouselApi>();
   const [showThumbnails, setShowThumbnails] = useState(true);
+  const { photos, isPending, totalPages } = useGallery(filter);
 
   const openModal = (index: number) => setSelectedPhotoIndex(index);
   const closeModal = () => setSelectedPhotoIndex(null);
@@ -58,42 +71,72 @@ const GalleryGrid = () => {
     });
   }, [api, thumbsApi]);
 
-  useEffect(() => {
-    const fetchPhotos = async () => {
-      try {
-        const response = await instance.get("/gallery");
-        console.log("res>>>", response.data.data);
-        setPhotos(response.data.data as GalleryImage[]);
-      } catch (error) {
-        console.error("Error fetching photos:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const onPaginationChange = (page: number) => {
+    setFilter({ ...filter, page });
+  };
 
-    fetchPhotos();
-  }, []);
-
-  if (loading) return <div>Loading...</div>;
+  if (isPending) return <div>Loading...</div>;
 
   return (
     <div className="w-full relative">
       {/* Masonry Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-[30px] auto-rows-[10px]">
-        {photos.map((photo, i) => {
-          const rowSpan = Math.ceil((photo.height / photo.width) * 10);
+      <>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-[30px] auto-rows-[10px] mb-8">
+          {photos.map((photo, i) => {
+            const rowSpan = Math.ceil((photo.height / photo.width) * 10);
 
-          return (
-            <GalleryPhoto
-              key={photo._id}
-              photo={photo}
-              // columnSpan={columnSpan}
-              rowSpan={rowSpan}
-              onClick={() => openModal(i)}
-            />
-          );
-        })}
-      </div>
+            return (
+              <GalleryPhoto
+                key={photo._id}
+                photo={photo}
+                // columnSpan={columnSpan}
+                rowSpan={rowSpan}
+                onClick={() => openModal(i)}
+              />
+            );
+          })}
+        </div>
+
+        {photos.length > 0 && totalPages > 1 && (
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => onPaginationChange(filter?.page - 1)}
+                  aria-disabled={filter.page === 1}
+                  className={cn(
+                    "cursor-pointer",
+                    filter.page === 1 && "pointer-events-none opacity-50"
+                  )}
+                />
+              </PaginationItem>
+
+              {getPaginationRange(filter.page, totalPages).map((page) => (
+                <PaginationItem key={page}>
+                  <PaginationLink
+                    isActive={page === filter.page}
+                    onClick={() => onPaginationChange(page)}
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => onPaginationChange(filter.page + 1)}
+                  aria-disabled={filter.page >= totalPages}
+                  className={cn(
+                    "cursor-pointer",
+                    filter.page >= totalPages &&
+                      "pointer-events-none opacity-50"
+                  )}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
+      </>
 
       {/* Image Modal with Carousel */}
       {selectedPhotoIndex !== null && (
