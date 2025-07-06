@@ -18,7 +18,7 @@ import BlogCardSkeleton from "./BlogCardSkeleton";
 const BlogsGrid = () => {
   const [filter, setFilter] = useState<PostFilterInput>({
     page: 1,
-    limit: 9,
+    limit: 12,
     isPublished: true,
   });
   const [featuredFilter] = useState<PostFilterInput>({

@@ -28,7 +28,7 @@ const GalleryGrid = () => {
     infiniteQuery: { photos, isLoadingInfinite, isFetchingNextPage },
     hasMore,
     loadMore,
-  } = useGallery({ page: 1, limit: 3 });
+  } = useGallery({ page: 1, limit: 20 });
 
   const openModal = (index: number) => setSelectedPhotoIndex(index);
   const closeModal = () => setSelectedPhotoIndex(null);
