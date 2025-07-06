@@ -7,52 +7,57 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Skeleton } from "@/components/ui/skeleton";
 import useGallery from "@/hooks/useGallery";
-import { PhotosFilterInput } from "@/interfaces/photos.interface";
 import { cn } from "@/lib/utils";
 import { GalleryThumbnailsIcon, MapPin, XIcon } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import GalleryPhoto from "./GalleryPhoto";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { getPaginationRange } from "@/components/shared/DataTable";
-
-export interface GalleryImage {
-  _id: string;
-  imageUrl: string;
-  caption?: string;
-  tags?: string[];
-  location?: string;
-  width: number;
-  height: number;
-}
 
 const GalleryGrid = () => {
-  const [filter, setFilter] = useState<PhotosFilterInput>({
-    page: 1,
-    limit: 3,
-  });
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(
     null
   );
   const [api, setApi] = useState<CarouselApi>();
   const [thumbsApi, setThumbsApi] = useState<CarouselApi>();
   const [showThumbnails, setShowThumbnails] = useState(true);
-  const { photos, isPending, totalPages } = useGallery(filter);
+  const loaderRef = useRef<HTMLDivElement>(null);
+
+  const {
+    infiniteQuery: { photos, isLoadingInfinite, isFetchingNextPage },
+    hasMore,
+    loadMore,
+  } = useGallery({ page: 1, limit: 3 });
 
   const openModal = (index: number) => setSelectedPhotoIndex(index);
   const closeModal = () => setSelectedPhotoIndex(null);
-
   const toggleThumbnail = () => {
     setShowThumbnails(!showThumbnails);
   };
+
+  // Infinite scroll observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isFetchingNextPage) {
+          loadMore();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentLoader = loaderRef.current;
+    if (currentLoader) {
+      observer.observe(currentLoader);
+    }
+
+    return () => {
+      if (currentLoader) {
+        observer.unobserve(currentLoader);
+      }
+    };
+  }, [hasMore, isFetchingNextPage, loadMore]);
 
   // Sync main carousel and thumbnails
   useEffect(() => {
@@ -71,72 +76,58 @@ const GalleryGrid = () => {
     });
   }, [api, thumbsApi]);
 
-  const onPaginationChange = (page: number) => {
-    setFilter({ ...filter, page });
-  };
-
-  if (isPending) return <div>Loading...</div>;
-
   return (
     <div className="w-full relative">
-      {/* Masonry Grid */}
-      <>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-[30px] auto-rows-[10px] mb-8">
-          {photos.map((photo, i) => {
-            const rowSpan = Math.ceil((photo.height / photo.width) * 10);
-
-            return (
-              <GalleryPhoto
-                key={photo._id}
-                photo={photo}
-                // columnSpan={columnSpan}
-                rowSpan={rowSpan}
-                onClick={() => openModal(i)}
-              />
-            );
-          })}
+      {isLoadingInfinite && !photos.length ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-[30px]">
+          {[...Array(9)].map((_, i) => (
+            <Skeleton
+              key={i}
+              className="w-full rounded-[30px]"
+              style={{
+                height: `${Math.random() * 200 + 200}px`,
+                gridRowEnd: `span ${Math.ceil(Math.random() * 5 + 5)}`,
+              }}
+            />
+          ))}
         </div>
+      ) : (
+        <>
+          {/* Masonry Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-[30px] auto-rows-[10px] mb-8">
+            {photos.map((photo, i) => {
+              const rowSpan = Math.ceil((photo.height / photo.width) * 10);
 
-        {photos.length > 0 && totalPages > 1 && (
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={() => onPaginationChange(filter?.page - 1)}
-                  aria-disabled={filter.page === 1}
-                  className={cn(
-                    "cursor-pointer",
-                    filter.page === 1 && "pointer-events-none opacity-50"
-                  )}
+              return (
+                <GalleryPhoto
+                  key={photo._id}
+                  photo={photo}
+                  rowSpan={rowSpan}
+                  onClick={() => openModal(i)}
                 />
-              </PaginationItem>
+              );
+            })}
 
-              {getPaginationRange(filter.page, totalPages).map((page) => (
-                <PaginationItem key={page}>
-                  <PaginationLink
-                    isActive={page === filter.page}
-                    onClick={() => onPaginationChange(page)}
-                  >
-                    {page}
-                  </PaginationLink>
-                </PaginationItem>
-              ))}
+            {isFetchingNextPage && (
+              <>
+                {[...Array(7)].map((_, i) => (
+                  <Skeleton
+                    key={i}
+                    className="w-full rounded-[30px]"
+                    style={{
+                      height: `${Math.random() * 200 + 200}px`,
+                      gridRowEnd: `span ${Math.ceil(Math.random() * 5 + 5)}`,
+                    }}
+                  />
+                ))}
+              </>
+            )}
+          </div>
 
-              <PaginationItem>
-                <PaginationNext
-                  onClick={() => onPaginationChange(filter.page + 1)}
-                  aria-disabled={filter.page >= totalPages}
-                  className={cn(
-                    "cursor-pointer",
-                    filter.page >= totalPages &&
-                      "pointer-events-none opacity-50"
-                  )}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        )}
-      </>
+          {/* Infinite scroll trigger */}
+          <div ref={loaderRef} className="h-10 w-full" />
+        </>
+      )}
 
       {/* Image Modal with Carousel */}
       {selectedPhotoIndex !== null && (

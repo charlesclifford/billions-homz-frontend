@@ -1,15 +1,15 @@
 "use client";
-import { styled } from "styled-components";
-import { GalleryImage } from "./GalleryGrid";
-import Image from "next/image";
+import { IGallery } from "@/interfaces/photos.interface";
 import { MapPin } from "lucide-react";
+import Image from "next/image";
+import { styled } from "styled-components";
 
 const GalleryPhoto = ({
   photo,
   onClick,
   rowSpan,
 }: {
-  photo: GalleryImage;
+  photo: IGallery;
   onClick: () => void;
   rowSpan: number;
 }) => {
