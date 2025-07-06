@@ -18,7 +18,7 @@ import BlogCardSkeleton from "./BlogCardSkeleton";
 const BlogsGrid = () => {
   const [filter, setFilter] = useState<PostFilterInput>({
     page: 1,
-    limit: 9,
+    limit: 12,
     isPublished: true,
   });
   const [featuredFilter] = useState<PostFilterInput>({
@@ -37,7 +37,7 @@ const BlogsGrid = () => {
   };
 
   return (
-    <div className="mt-[60px] relative">
+    <div className="my-[60px] relative">
       {/* Featured Posts Section */}
       <div className="mb-16">
         <h2 className="text-3xl font-bold mb-8">Featured Posts</h2>
@@ -83,7 +83,7 @@ const BlogsGrid = () => {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-[30px]">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-[30px] mb-8">
             {posts.map((post) => (
               <BlogCard
                 key={post._id}
