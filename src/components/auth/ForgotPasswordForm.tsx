@@ -1,23 +1,22 @@
 "use client";
-import React from "react";
-import { Button } from "../ui/button";
+import { forgotPassword } from "@/lib/api/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import { Loader2Icon, MailCheckIcon } from "lucide-react";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { Button } from "../ui/button";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
-  FormMessage,
+  FormMessage
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { AxiosError } from "axios";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
-import { Loader2Icon, MailCheckIcon } from "lucide-react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { forgotPassword } from "@/lib/api/auth";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -83,12 +82,12 @@ const ForgotPasswordForm = () => {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email address</FormLabel>
+              {/* <FormLabel>Email address</FormLabel> */}
               <FormControl>
                 <Input
                   type="email"
                   placeholder="you@example.com"
-                  className="focus-visible:ring-0 shadow-none rounded-sm"
+                  className="focus-visible:ring-0 shadow-none rounded-[30px] h-[45px] px-4"
                   autoComplete="email"
                   {...field}
                 />
@@ -101,7 +100,7 @@ const ForgotPasswordForm = () => {
         <Button
           type="submit"
           disabled={submitMutation.isPending}
-          className="w-full rounded-sm cursor-pointer"
+          className="w-full cursor-pointer rounded-[30px] h-[45px]"
         >
           {submitMutation.isPending ? (
             <>

@@ -5,19 +5,13 @@ import React from "react";
 
 const ForgotPasswordPage = () => {
   return (
-    <div className="w-full h-dvh flex items-center justify-center">
+    <div className="w-full h-[calc(100dvh-80px)] flex items-center justify-center">
       <div className="w-full max-w-md space-y-8">
-        <div className="text-center space-y-2">
-          <h2 className="text-3xl font-bold ">Billions Homz</h2>
-
-          <div className="space-y-1">
-            <h2 className="text-2xl font-semibold ">
-              Reset Your Password
-            </h2>
-            <p className="text-neutral-500">
-              Enter your email to receive a password reset link
-            </p>
-          </div>
+        <div className="lg:text-center space-y-2">
+          <h2 className="text-3xl font-bold ">Reset Your Password</h2>
+          <p className="text-neutral-500">
+            Enter your email to receive a password reset link
+          </p>
         </div>
         <ForgotPasswordForm />
         <div className="text-center text-sm text-neutral-500 flex items-center justify-center gap-1">

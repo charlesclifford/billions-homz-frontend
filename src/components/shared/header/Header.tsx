@@ -9,9 +9,9 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import NavLinks from "./NavLinks";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { HamburgerMenu } from "iconsax-reactjs";
-import { Drawer, DrawerContent } from "@/components/ui/drawer";
+import { Drawer, DrawerContent, DrawerFooter } from "@/components/ui/drawer";
 import { AnimatedLink } from "../AnimatedLink";
 import {
   Accordion,
@@ -22,6 +22,10 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { useIsTablet } from "@/hooks/useMobile";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { formatText } from "@/utils/helpers";
+import useLogout from "@/hooks/useLogout";
 
 const SCROLL_THRESHOLD = 150; // Minimum pixels to scroll before hiding header
 
@@ -31,8 +35,10 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const lastScrollY = useRef(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAccountDrawerOpen, setIsAccountDrawerOpen] = useState(false);
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
+  const { signOut, isLoggingOut } = useLogout();
 
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
@@ -71,6 +77,25 @@ const Header = () => {
     window.addEventListener("scroll", throttledScroll, { passive: true });
     return () => window.removeEventListener("scroll", throttledScroll);
   }, [handleScroll]);
+
+  const accountOptions = [
+    { name: "Profile", href: "/#" },
+    {
+      name: "Dashboard",
+      href: "/admin",
+      roles: ["admin", "super_admin"],
+    },
+  ];
+
+  const userRole = useMemo(
+    () => (user?.role ? formatText(user.role).toLowerCase() : "unknown role"),
+    [user]
+  );
+
+  const filteredMenu = accountOptions.filter(
+    (nav) =>
+      !nav.roles || (userRole && nav.roles.includes(user?.role as string))
+  );
 
   return (
     <div
@@ -147,54 +172,166 @@ const Header = () => {
                 </button>
 
                 {(isMobile || isTablet) && (
-                  <Drawer
-                    open={isMenuOpen}
-                    onOpenChange={() => setIsMenuOpen(!isMenuOpen)}
-                  >
-                    <DrawerContent className="px-6 pb-8">
-                      <ul className="pl-2 py-4">
-                        {menuList.map((item, index) => (
-                          <li key={index} className="py-2">
-                            {item.children && item.children.length > 0 ? (
-                              <Accordion type="single" collapsible>
-                                <AccordionItem value={`item-${index}`}>
-                                  <AccordionTrigger className="font-normal text-xl py-2">
+                  <>
+                    <Drawer
+                      open={isMenuOpen}
+                      onOpenChange={() => setIsMenuOpen(!isMenuOpen)}
+                    >
+                      <DrawerContent className="px-2 pb-2 h-[95dvh]">
+                        <ScrollArea className="flex-1 overflow-auto">
+                          <ul className="px-4 py-4 space-y-2">
+                            {menuList.map((item, index) => (
+                              <li key={index} className="py-2">
+                                {item.children && item.children.length > 0 ? (
+                                  <Accordion type="single" collapsible>
+                                    <AccordionItem value={`item-${index}`}>
+                                      <AccordionTrigger className="font-normal text-lg py-2">
+                                        {item.name}
+                                      </AccordionTrigger>
+                                      <AccordionContent className="py-0">
+                                        <ul className="pl-4">
+                                          {item.children.map(
+                                            (child, childIdx) => (
+                                              <li
+                                                key={childIdx}
+                                                className="py-2"
+                                              >
+                                                <AnimatedLink
+                                                  href={child.href}
+                                                  className="text-lg"
+                                                  onClick={() =>
+                                                    setIsMenuOpen(false)
+                                                  }
+                                                >
+                                                  {child.name}
+                                                </AnimatedLink>
+                                              </li>
+                                            )
+                                          )}
+                                        </ul>
+                                      </AccordionContent>
+                                    </AccordionItem>
+                                  </Accordion>
+                                ) : (
+                                  <AnimatedLink
+                                    href={item.href}
+                                    className="text-lg"
+                                    onClick={() => setIsMenuOpen(false)}
+                                  >
                                     {item.name}
-                                  </AccordionTrigger>
-                                  <AccordionContent>
-                                    <ul className="pl-4">
-                                      {item.children.map((child, childIdx) => (
-                                        <li
-                                          key={childIdx}
-                                          className="font-normal text-base py-2"
-                                        >
-                                          <AnimatedLink
-                                            href={child.href}
-                                            className="text-xl"
-                                            onClick={() => setIsMenuOpen(false)}
-                                          >
-                                            {child.name}
-                                          </AnimatedLink>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  </AccordionContent>
-                                </AccordionItem>
-                              </Accordion>
-                            ) : (
-                              <AnimatedLink
-                                href={item.href}
-                                className="text-xl"
+                                  </AnimatedLink>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        </ScrollArea>
+
+                        <Separator className="my-1" />
+
+                        <div className="px-4 py-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg">Theme</span>
+                            <ThemeToggler />
+                          </div>
+                        </div>
+
+                        <DrawerFooter>
+                          {loading ? (
+                            <div className="flex justify-center">
+                              <Skeleton className="h-10 w-full rounded-full" />
+                            </div>
+                          ) : user ? (
+                            <div className="flex flex-col space-y-4">
+                              <Button
+                                variant="outline"
+                                className="w-full rounded-[30px] h-[45px] cursor-pointer"
+                                onClick={() => {
+                                  setIsAccountDrawerOpen(true);
+                                }}
+                              >
+                                My Account
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col space-y-4">
+                              <Button
+                                asChild
+                                className="rounded-[30px] h-[40px]"
                                 onClick={() => setIsMenuOpen(false)}
                               >
-                                {item.name}
-                              </AnimatedLink>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    </DrawerContent>
-                  </Drawer>
+                                <Link href="/auth/login">Sign In</Link>
+                              </Button>
+                              <Button
+                                variant="outline"
+                                className="rounded-[30px] h-[40px]"
+                                onClick={() => setIsMenuOpen(false)}
+                              >
+                                <Link href="/auth/register/user">
+                                  Create Account
+                                </Link>
+                              </Button>
+                            </div>
+                          )}
+                        </DrawerFooter>
+                      </DrawerContent>
+                    </Drawer>
+
+                    {/* Account Options Drawer */}
+                    <Drawer
+                      open={isAccountDrawerOpen}
+                      onOpenChange={setIsAccountDrawerOpen}
+                    >
+                      <DrawerContent className="px-2 pb-2">
+                        <div className="px-4 py-6">
+                          <div className="flex items-center space-x-4 mb-6">
+                            <Avatar className="h-12 w-12">
+                              <AvatarFallback>
+                                {user?.firstName?.charAt(0)}
+                                {user?.lastName?.charAt(0)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <h3 className="font-medium">
+                                {user?.firstName} {user?.lastName}
+                              </h3>
+                              <p className="text-sm text-muted-foreground">
+                                {user?.email}
+                              </p>
+                            </div>
+                          </div>
+
+                          <ul className="space-y-2 pl-2">
+                            {filteredMenu.map((option, i) => (
+                              <li
+                                key={i}
+                                className="py-2"
+                                onClick={() => {
+                                  setIsMenuOpen(false);
+                                  setIsAccountDrawerOpen(false);
+                                }}
+                              >
+                                <AnimatedLink
+                                  href={option.href}
+                                  className="text-lg"
+                                >
+                                  {option.name}
+                                </AnimatedLink>
+                              </li>
+                            ))}
+                            <li className="py-2">
+                              <button
+                                className="text-destructive !text-lg"
+                                disabled={isLoggingOut}
+                                onClick={signOut}
+                              >
+                                Logout
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </DrawerContent>
+                    </Drawer>
+                  </>
                 )}
               </div>
 
@@ -213,14 +350,17 @@ const Header = () => {
                       )}
                     />
                   ) : (
-                    <div className={isScrolled ? "scale-90" : "scale-100"}>
+                    <div className={isScrolled ? "scale-95" : "scale-100"}>
                       {user ? (
                         <HeaderUser />
                       ) : (
                         <div>
-                          <Link href={"/auth/login"}>
-                            <Button>Login</Button>
-                          </Link>
+                          <Button
+                            asChild
+                            className="rounded-[30px] h-[40px] px-6"
+                          >
+                            <Link href={"/auth/login"}>Login</Link>
+                          </Button>
                         </div>
                       )}
                     </div>

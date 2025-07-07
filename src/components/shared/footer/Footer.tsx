@@ -3,6 +3,7 @@ import Link from "next/link";
 import { AnimatedLink } from "../AnimatedLink";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { Heart } from "iconsax-reactjs";
 
 const Footer = () => {
   const getYear = () => new Date().getFullYear();
@@ -16,7 +17,7 @@ const Footer = () => {
 
         <div className="w-full container mx-auto flex flex-col items-center relative">
           <div className="max-w-full w-[526px] text-center px-4">
-            <div className="mt-[60px] lg:mt-20 mb-3">
+            <div className="mt-28 mb-3">
               <h2 className="text-[42px] lg:text-[70px] font-bold leading-[1.06em] tracking-[-1px] lg:tracking-[-2px] text-white">
                 Your dream home awaits
               </h2>
@@ -81,9 +82,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span >
-                              About Us
-                            </span>
+                            <span>About Us</span>
                           </AnimatedLink>
                         </li>
                         <li className="not-last:pb-2.5">
@@ -91,9 +90,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span >
-                              Why Choose Us
-                            </span>
+                            <span>Why Choose Us</span>
                           </AnimatedLink>
                         </li>
                         <li className="not-last:pb-2.5">
@@ -101,9 +98,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span >
-                              Our Team
-                            </span>
+                            <span>Our Team</span>
                           </AnimatedLink>
                         </li>
                         <li className="not-last:pb-2.5">
@@ -111,9 +106,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span >
-                              Solutions
-                            </span>
+                            <span>Solutions</span>
                           </AnimatedLink>
                         </li>
                         <li className="not-last:pb-2.5">
@@ -121,9 +114,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span >
-                              Partners
-                            </span>
+                            <span>Partners</span>
                           </AnimatedLink>
                         </li>
                         <li className="not-last:pb-2.5">
@@ -131,9 +122,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span >
-                              Core Values
-                            </span>
+                            <span>Core Values</span>
                           </AnimatedLink>
                         </li>
                       </ul>
@@ -146,9 +135,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span >
-                              Our Projects
-                            </span>
+                            <span>Our Projects</span>
                           </AnimatedLink>
                         </li>
                         <li className="not-last:pb-2.5">
@@ -156,9 +143,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span >
-                              News &amp; Updates
-                            </span>
+                            <span>News &amp; Updates</span>
                           </AnimatedLink>
                         </li>
                         <li className="not-last:pb-2.5">
@@ -166,9 +151,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span >
-                              Terms &amp; Conditions
-                            </span>
+                            <span>Terms &amp; Conditions</span>
                           </AnimatedLink>
                         </li>
                         <li className="not-last:pb-2.5">
@@ -176,9 +159,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span >
-                              Support Center
-                            </span>
+                            <span>Support Center</span>
                           </AnimatedLink>
                         </li>
                         <li className="not-last:pb-2.5">
@@ -186,9 +167,7 @@ const Footer = () => {
                             href={"#"}
                             className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                           >
-                            <span >
-                              Contact
-                            </span>
+                            <span>Contact</span>
                           </AnimatedLink>
                         </li>
                       </ul>
@@ -265,6 +244,22 @@ const Footer = () => {
                     <p className="text-neutral-600 dark:text-neutral-400">
                       &copy; {getYear()} <b>Billions Homz</b>. All Rights
                       Reserved.
+                    </p>
+                    <p className="text-sm text-neutral-600 dark:text-neutral-400 inline-flex pt-4">
+                      Built with
+                      <Heart
+                        size="18"
+                        color="red"
+                        variant="Bold"
+                        className="mx-1"
+                      />
+                      by
+                      <a
+                        href="#"
+                        className="ml-1 hover:underline hover:underline-offset-2"
+                      >
+                        24karat
+                      </a>
                     </p>
                   </div>
                 </div>
