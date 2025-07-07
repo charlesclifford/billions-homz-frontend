@@ -1,8 +1,13 @@
 "use client";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { signUpUser } from "@/lib/api/auth";
 import { cn } from "@/lib/utils";
-import { setAccountType } from "@/store/features/auth/auth.slice";
-import { useAppDispatch } from "@/store/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -22,13 +27,6 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 // Base schema for all users
 const formSchema = z
@@ -60,7 +58,6 @@ export type RegisterFormValues = z.infer<typeof formSchema>;
 
 const RegisterForm = ({ type }: { type: string }) => {
   const router = useRouter();
-  const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -84,7 +81,6 @@ const RegisterForm = ({ type }: { type: string }) => {
     onSuccess: (data) => {
       toast.success(data?.message);
       router.push(callbackUrl);
-      dispatch(setAccountType(null));
     },
     onError: (error: AxiosError<{ message: string }>) => {
       console.log("error", error);
