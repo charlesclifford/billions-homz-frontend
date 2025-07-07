@@ -161,86 +161,86 @@ const GalleryGrid = () => {
             </div>
           </header>
 
-          <Carousel
-            setApi={setApi}
-            opts={{
-              startIndex: selectedPhotoIndex,
-            }}
-          >
-            <CarouselContent
-              className={cn(
-                "w-[calc(100vw-20px)] h-dvh transition-all duration-300 py-2",
-                showThumbnails
-                  ? "md:h-[calc(100dvh-160px)]"
-                  : "h-[calc(100dvh-80px)]"
-              )}
-            >
-              {photos.map((photo) => (
-                <CarouselItem
-                  key={photo._id}
-                  className="flex items-center justify-center"
-                >
-                  <div className="relative w-full h-full">
-                    <Image
-                      src={photo.imageUrl}
-                      alt={photo.caption || "photo"}
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-
-            <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 text-white bg-black/50 p-3 rounded-full hover:bg-black/75 transition-colors z-10 disabled:hidden hidden md:flex border-transparent hover:text-white cursor-pointer size-10" />
-            <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 text-white bg-black/50 p-3 rounded-full hover:bg-black/75 transition-colors z-10 disabled:hidden hidden md:flex border-transparent hover:text-white cursor-pointer size-10" />
-          </Carousel>
-
-          {/* Thumbnail Navigation */}
-          <div
-            className={cn(
-              "w-full max-w-[calc(100vw-40px)] px-2 py-1 transition-all duration-300 overflow-hidden hidden md:flex",
-              showThumbnails ? "h-20 opacity-100" : "h-0 opacity-0",
-              "md:flex items-center justify-center"
-            )}
-          >
+          <div className="">
             <Carousel
-              setApi={setThumbsApi}
+              setApi={setApi}
               opts={{
-                align: "start",
-                dragFree: true,
-                containScroll: "keepSnaps",
+                startIndex: selectedPhotoIndex,
               }}
-              className="w-full"
             >
-              <CarouselContent className="ml-0">
-                {photos.map((photo, index) => (
-                  <CarouselItem key={photo._id} className="basis-20 pl-2">
-                    <div
-                      className={`relative h-16 rounded-md overflow-hidden cursor-pointer transition-all border-2 ${
-                        selectedPhotoIndex === index
-                          ? "border-red-500"
-                          : "border-transparent"
-                      }`}
-                      onClick={() => {
-                        setSelectedPhotoIndex(index);
-                        api?.scrollTo(index);
-                      }}
-                    >
+              <CarouselContent
+                className={cn(
+                  "w-full h-[calc(100dvh-80px)] transition-all duration-300 py-2",
+                  showThumbnails
+                    ? "md:h-[calc(100dvh-160px)]"
+                    : "h-[calc(100dvh-80px)]"
+                )}
+              >
+                {photos.map((photo) => (
+                  <CarouselItem key={photo._id} className="flex ">
+                    <div className="relative w-full h-full">
                       <Image
                         src={photo.imageUrl}
-                        alt=""
-                        fill
-                        className={cn(
-                          "object-cover transition-opacity duration-300",
-                          selectedPhotoIndex === index ? "" : "opacity-50"
-                        )}
+                        alt={photo.caption || "photo"}
+                        width={500}
+                        height={500}
+                        className="w-full h-full object-contain"
                       />
                     </div>
                   </CarouselItem>
                 ))}
               </CarouselContent>
+
+              <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 text-white bg-black/50 p-3 rounded-full hover:bg-black/75 transition-colors z-10 disabled:hidden hidden md:flex border-transparent hover:text-white cursor-pointer size-10" />
+              <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 text-white bg-black/50 p-3 rounded-full hover:bg-black/75 transition-colors z-10 disabled:hidden hidden md:flex border-transparent hover:text-white cursor-pointer size-10" />
             </Carousel>
+
+            {/* Thumbnail Navigation */}
+            <div
+              className={cn(
+                "w-full max-w-[calc(100vw-40px)] px-2 py-1 transition-all duration-300 overflow-hidden hidden md:flex",
+                showThumbnails ? "h-20 opacity-100" : "h-0 opacity-0",
+                "md:flex items-center justify-center"
+              )}
+            >
+              <Carousel
+                setApi={setThumbsApi}
+                opts={{
+                  align: "start",
+                  dragFree: true,
+                  containScroll: "keepSnaps",
+                }}
+                className="w-full"
+              >
+                <CarouselContent className="ml-0">
+                  {photos.map((photo, index) => (
+                    <CarouselItem key={photo._id} className="basis-20 pl-2">
+                      <div
+                        className={`relative h-16 rounded-md overflow-hidden cursor-pointer transition-all border-2 ${
+                          selectedPhotoIndex === index
+                            ? "border-red-500"
+                            : "border-transparent"
+                        }`}
+                        onClick={() => {
+                          setSelectedPhotoIndex(index);
+                          api?.scrollTo(index);
+                        }}
+                      >
+                        <Image
+                          src={photo.imageUrl}
+                          alt=""
+                          fill
+                          className={cn(
+                            "object-cover transition-opacity duration-300",
+                            selectedPhotoIndex === index ? "" : "opacity-50"
+                          )}
+                        />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+            </div>
           </div>
         </div>
       )}
