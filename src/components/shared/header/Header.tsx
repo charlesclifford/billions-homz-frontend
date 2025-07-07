@@ -228,12 +228,12 @@ const Header = () => {
 
                         <Separator className="my-1" />
 
-                        {/* <div className="pl-2 py-4">
-                        <div className="flex items-center justify-between">
-                          <span className="text-lg">Theme</span>
-                          <ThemeToggler />
+                        <div className="px-4 py-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg">Theme</span>
+                            <ThemeToggler />
+                          </div>
                         </div>
-                      </div> */}
 
                         <DrawerFooter>
                           {loading ? (
@@ -304,6 +304,7 @@ const Header = () => {
                             {filteredMenu.map((option, i) => (
                               <li
                                 key={i}
+                                className="py-2"
                                 onClick={() => {
                                   setIsMenuOpen(false);
                                   setIsAccountDrawerOpen(false);
@@ -317,7 +318,7 @@ const Header = () => {
                                 </AnimatedLink>
                               </li>
                             ))}
-                            <li>
+                            <li className="py-2">
                               <button
                                 className="text-destructive !text-lg"
                                 disabled={isLoggingOut}
