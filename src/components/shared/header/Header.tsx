@@ -11,7 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import NavLinks from "./NavLinks";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { HamburgerMenu } from "iconsax-reactjs";
-import { Drawer, DrawerContent } from "@/components/ui/drawer";
+import { Drawer, DrawerContent, DrawerFooter } from "@/components/ui/drawer";
 import { AnimatedLink } from "../AnimatedLink";
 import {
   Accordion,
@@ -22,6 +22,8 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { useIsTablet } from "@/hooks/useMobile";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 
 const SCROLL_THRESHOLD = 150; // Minimum pixels to scroll before hiding header
 
@@ -151,48 +153,96 @@ const Header = () => {
                     open={isMenuOpen}
                     onOpenChange={() => setIsMenuOpen(!isMenuOpen)}
                   >
-                    <DrawerContent className="px-6 pb-8">
-                      <ul className="pl-2 py-4">
-                        {menuList.map((item, index) => (
-                          <li key={index} className="py-2">
-                            {item.children && item.children.length > 0 ? (
-                              <Accordion type="single" collapsible>
-                                <AccordionItem value={`item-${index}`}>
-                                  <AccordionTrigger className="font-normal text-xl py-2">
-                                    {item.name}
-                                  </AccordionTrigger>
-                                  <AccordionContent>
-                                    <ul className="pl-4">
-                                      {item.children.map((child, childIdx) => (
-                                        <li
-                                          key={childIdx}
-                                          className="font-normal text-base py-2"
-                                        >
-                                          <AnimatedLink
-                                            href={child.href}
-                                            className="text-xl"
-                                            onClick={() => setIsMenuOpen(false)}
-                                          >
-                                            {child.name}
-                                          </AnimatedLink>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  </AccordionContent>
-                                </AccordionItem>
-                              </Accordion>
-                            ) : (
-                              <AnimatedLink
-                                href={item.href}
-                                className="text-xl"
-                                onClick={() => setIsMenuOpen(false)}
-                              >
-                                {item.name}
-                              </AnimatedLink>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
+                    <DrawerContent className="px-2 pb-8 h-[95dvh]">
+                      <ScrollArea className="h-[calc(95dvh-290px)]">
+                        <ul className="px-4 py-4 space-y-2">
+                          {menuList.map((item, index) => (
+                            <li key={index} className="py-2">
+                              {item.children && item.children.length > 0 ? (
+                                <Accordion type="single" collapsible>
+                                  <AccordionItem value={`item-${index}`}>
+                                    <AccordionTrigger className="font-normal text-lg py-2">
+                                      {item.name}
+                                    </AccordionTrigger>
+                                    <AccordionContent>
+                                      <ul className="pl-4">
+                                        {item.children.map(
+                                          (child, childIdx) => (
+                                            <li key={childIdx} className="py-2">
+                                              <AnimatedLink
+                                                href={child.href}
+                                                className="text-lg"
+                                                onClick={() =>
+                                                  setIsMenuOpen(false)
+                                                }
+                                              >
+                                                {child.name}
+                                              </AnimatedLink>
+                                            </li>
+                                          )
+                                        )}
+                                      </ul>
+                                    </AccordionContent>
+                                  </AccordionItem>
+                                </Accordion>
+                              ) : (
+                                <AnimatedLink
+                                  href={item.href}
+                                  className="text-lg"
+                                  onClick={() => setIsMenuOpen(false)}
+                                >
+                                  {item.name}
+                                </AnimatedLink>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      </ScrollArea>
+
+                      <Separator className="my-2" />
+
+                      {/* <div className="pl-2 py-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-lg">Theme</span>
+                          <ThemeToggler />
+                        </div>
+                      </div> */}
+
+                      <DrawerFooter>
+                        {loading ? (
+                          <div className="flex justify-center">
+                            <Skeleton className="h-10 w-full rounded-full" />
+                          </div>
+                        ) : user ? (
+                          <div className="flex flex-col space-y-4">
+                            <HeaderUser />
+                            <Button
+                              variant="outline"
+                              onClick={() => setIsMenuOpen(false)}
+                              className="w-full"
+                            >
+                              My Account
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col space-y-4">
+                            <Button
+                              asChild
+                              className="rounded-[30px] h-[40px]"
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              <Link href="/auth/login">Sign In</Link>
+                            </Button>
+                            <Button
+                              variant="outline"
+                              className="rounded-[30px] h-[40px]"
+                              onClick={() => setIsMenuOpen(false)}
+                            >
+                              <Link href="/auth/register">Create Account</Link>
+                            </Button>
+                          </div>
+                        )}
+                      </DrawerFooter>
                     </DrawerContent>
                   </Drawer>
                 )}
@@ -213,14 +263,17 @@ const Header = () => {
                       )}
                     />
                   ) : (
-                    <div className={isScrolled ? "scale-90" : "scale-100"}>
+                    <div className={isScrolled ? "scale-95" : "scale-100"}>
                       {user ? (
                         <HeaderUser />
                       ) : (
                         <div>
-                          <Link href={"/auth/login"}>
-                            <Button>Login</Button>
-                          </Link>
+                          <Button
+                            asChild
+                            className="rounded-[30px] h-[40px] px-6"
+                          >
+                            <Link href={"/auth/login"}>Login</Link>
+                          </Button>
                         </div>
                       )}
                     </div>

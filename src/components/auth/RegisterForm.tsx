@@ -2,7 +2,7 @@
 import { signUpUser } from "@/lib/api/auth";
 import { cn } from "@/lib/utils";
 import { setAccountType } from "@/store/features/auth/auth.slice";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useAppDispatch } from "@/store/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -19,10 +19,16 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Base schema for all users
 const formSchema = z
@@ -31,11 +37,9 @@ const formSchema = z
     lastName: z.string().min(1, "Last name is required"),
     email: z.string().email("Invalid email address"),
     phone: z.string().min(10, "Phone number must be at least 10 digits"),
-    licenseNumber: z.string().min(1, "License number is required").optional(),
-    experienceYears: z.coerce
-      .number()
-      .min(0, "Experience cannot be negative")
-      .optional(),
+    gender: z.enum(["male", "female"], {
+      required_error: "Please select your gender",
+    }),
     password: z
       .string()
       .min(8, { message: "Password must be at least 8 characters" })
@@ -54,11 +58,9 @@ const formSchema = z
 
 export type RegisterFormValues = z.infer<typeof formSchema>;
 
-const RegisterForm = () => {
+const RegisterForm = ({ type }: { type: string }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { accountType } = useAppSelector((state) => state.auth);
-
   const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -72,13 +74,8 @@ const RegisterForm = () => {
       lastName: "",
       email: "",
       phone: "",
+      gender: undefined,
       password: "",
-      ...(accountType === "realtor"
-        ? {
-            licenseNumber: "",
-            experienceYears: 0,
-          }
-        : {}),
     },
   });
 
@@ -96,13 +93,13 @@ const RegisterForm = () => {
   });
 
   const onSubmit = async (values: RegisterFormValues) => {
-    const data = {
+    const payload = {
       ...values,
-      role: accountType,
+      role: type,
     };
 
     // console.log(">>>>>>", data);
-    registerMutation.mutate(data);
+    registerMutation.mutate(payload);
   };
 
   return (
@@ -115,11 +112,11 @@ const RegisterForm = () => {
             name="firstName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>First Name</FormLabel>
+                {/* <FormLabel>First Name</FormLabel> */}
                 <FormControl>
                   <Input
                     placeholder="John"
-                    className="focus-visible:ring-0 shadow-none rounded-sm"
+                    className="focus-visible:ring-0 shadow-none rounded-[30px] h-[45px] px-4"
                     {...field}
                   />
                 </FormControl>
@@ -132,11 +129,11 @@ const RegisterForm = () => {
             name="lastName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Last Name</FormLabel>
+                {/* <FormLabel>Last Name</FormLabel> */}
                 <FormControl>
                   <Input
                     placeholder="Doe"
-                    className="focus-visible:ring-0 shadow-none rounded-sm"
+                    className="focus-visible:ring-0 shadow-none rounded-[30px] h-[45px] px-4"
                     {...field}
                   />
                 </FormControl>
@@ -151,11 +148,11 @@ const RegisterForm = () => {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              {/* <FormLabel>Email</FormLabel> */}
               <FormControl>
                 <Input
                   placeholder="you@example.com"
-                  className="focus-visible:ring-0 shadow-none rounded-sm"
+                  className="focus-visible:ring-0 shadow-none rounded-[30px] h-[45px] px-4"
                   {...field}
                 />
               </FormControl>
@@ -169,7 +166,7 @@ const RegisterForm = () => {
           name="phone"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Phone Number</FormLabel>
+              {/* <FormLabel>Phone Number</FormLabel> */}
               <FormControl className="focus-within:border-ring">
                 <PhoneInput
                   international
@@ -183,7 +180,8 @@ const RegisterForm = () => {
                     "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
                     "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
                     "[&>input]:h-full [&>input]:outline-none",
-                    "[&>div>select]:text-popover-foreground [&>div>select]:bg-popover [&>div>select]:focus:bg-accent [&>div>select]:focus:text-accent-foreground"
+                    "[&>div>select]:text-popover-foreground [&>div>select]:bg-popover [&>div>select]:focus:bg-accent [&>div>select]:focus:text-accent-foreground",
+                    "rounded-[30px] h-[45px]"
                   )}
                   error={
                     field.value
@@ -201,16 +199,37 @@ const RegisterForm = () => {
 
         <FormField
           control={form.control}
+          name="gender"
+          render={({ field }) => (
+            <FormItem>
+              <Select onValueChange={field.onChange} value={field.value}>
+                <FormControl>
+                  <SelectTrigger className="focus-visible:ring-0 shadow-none rounded-[30px] !h-[45px] px-4 w-full cursor-pointer">
+                    <SelectValue placeholder="Select gender" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="male">Male</SelectItem>
+                  <SelectItem value="female">Female</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              {/* <FormLabel>Password</FormLabel> */}
               <div className="relative">
                 <FormControl>
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
-                    className="focus-visible:ring-0 shadow-none rounded-sm pr-10"
+                    className="focus-visible:ring-0 shadow-none rounded-[30px] h-[45px] px-6 pr-12"
                     {...field}
                   />
                 </FormControl>
@@ -236,13 +255,13 @@ const RegisterForm = () => {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
+              {/* <FormLabel>Confirm Password</FormLabel> */}
               <div className="relative">
                 <FormControl>
                   <Input
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="••••••••"
-                    className="focus-visible:ring-0 shadow-none rounded-sm"
+                    className="focus-visible:ring-0 shadow-none rounded-[30px] h-[45px] px-6 pr-12"
                     {...field}
                   />
                 </FormControl>
@@ -263,52 +282,9 @@ const RegisterForm = () => {
           )}
         />
 
-        {/* Realtor-specific fields */}
-        {accountType === "realtor" && (
-          <>
-            <FormField
-              control={form.control}
-              name="licenseNumber"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>License Number</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="REA12345678"
-                      className="focus-visible:ring-0 shadow-none rounded-sm"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="experienceYears"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Years of Experience</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min="0"
-                      placeholder="5"
-                      className="focus-visible:ring-0 shadow-none rounded-sm"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </>
-        )}
-
         <Button
           type="submit"
-          className="w-full rounded-sm cursor-pointer"
+          className="w-full cursor-pointer rounded-[30px] h-[45px]"
           disabled={registerMutation.isPending}
         >
           {registerMutation.isPending ? (

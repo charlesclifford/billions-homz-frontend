@@ -1,29 +1,28 @@
 "use client";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
-  FormMessage,
+  FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
-import { Eye, EyeOff, Loader2Icon } from "lucide-react";
-import { useAppDispatch } from "@/store/hooks";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
-import { changeInitialPassword } from "@/lib/api/auth";
-import { toast } from "sonner";
 import { TOKEN_NAME, USER_DETAILS } from "@/constants/app.constant";
 import { useUser } from "@/hooks/use-user";
-import cookies from "js-cookie";
+import { changeInitialPassword } from "@/lib/api/auth";
 import { loginFailure, loginSuccess } from "@/store/features/auth/auth.slice";
+import { useAppDispatch } from "@/store/hooks";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import cookies from "js-cookie";
+import { Eye, EyeOff, Loader2Icon } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
 
 const formSchema = z
   .object({
@@ -109,19 +108,19 @@ const UpdatePasswordForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <FormField
           control={form.control}
           name="newPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>New Password</FormLabel>
+              {/* <FormLabel>New Password</FormLabel> */}
               <FormControl>
                 <div className="relative">
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter new password"
-                    className="focus-visible:ring-0 shadow-none rounded-sm"
+                    className="focus-visible:ring-0 shadow-none rounded-[30px] h-[45px] px-6 pr-12"
                     {...field}
                   />
                   <button
@@ -147,13 +146,13 @@ const UpdatePasswordForm = () => {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Confirm Password</FormLabel>
+              {/* <FormLabel>Confirm Password</FormLabel> */}
               <FormControl>
                 <div className="relative">
                   <Input
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="Confirm new password"
-                    className="focus-visible:ring-0 shadow-none rounded-sm"
+                    className="focus-visible:ring-0 shadow-none rounded-[30px] h-[45px] px-6 pr-12"
                     {...field}
                   />
                   <button
@@ -176,7 +175,7 @@ const UpdatePasswordForm = () => {
 
         <Button
           type="submit"
-          className="w-full rounded-sm"
+          className="w-full cursor-pointer rounded-[30px] h-[45px]"
           disabled={updatePasswordMutation.isPending}
         >
           {updatePasswordMutation.isPending && (

@@ -1,10 +1,12 @@
 "use client";
 import { TOKEN_NAME, USER_DETAILS } from "@/constants/app.constant";
+import { useUser } from "@/hooks/use-user";
 import { loginUser } from "@/lib/api/auth";
 import { loginFailure, loginSuccess } from "@/store/features/auth/auth.slice";
 import { useAppDispatch } from "@/store/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import cookies from "js-cookie";
 import { Eye, EyeOff, Loader2Icon } from "lucide-react";
 import Link from "next/link";
@@ -19,12 +21,9 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
-  FormMessage,
+  FormMessage
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { useUser } from "@/hooks/use-user";
-import { AxiosError } from "axios";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -94,12 +93,12 @@ const LoginForm = () => {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              {/* <FormLabel>Email</FormLabel> */}
               <FormControl>
                 <Input
                   type="email"
                   placeholder="you@example.com"
-                  className="focus-visible:ring-0 shadow-none rounded-sm"
+                  className="focus-visible:ring-0 shadow-none rounded-[30px] h-[45px] px-4"
                   {...field}
                 />
               </FormControl>
@@ -113,8 +112,8 @@ const LoginForm = () => {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <div className="flex justify-between items-center">
-                <FormLabel>Password</FormLabel>
+              <div className="flex justify-end items-center">
+                {/* <FormLabel>Password</FormLabel> */}
                 <Link
                   href="/auth/forgot-password"
                   className="text-sm font-medium text-primary hover:underline"
@@ -127,13 +126,13 @@ const LoginForm = () => {
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    className="focus-visible:ring-0 shadow-none rounded-sm pr-10"
+                    className="focus-visible:ring-0 shadow-none rounded-[30px] h-[45px] px-4 pr-12"
                     {...field}
                   />
                 </FormControl>
                 <button
                   type="button"
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+                  className="absolute right-5 top-1/2 transform -translate-y-1/2 text-muted-foreground"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
@@ -151,7 +150,7 @@ const LoginForm = () => {
         <Button
           type="submit"
           disabled={loginMutation.isPending}
-          className="w-full rounded-sm cursor-pointer"
+          className="w-full rounded-[30px] cursor-pointer h-[45px]"
         >
           {loginMutation.isPending ? (
             <>
