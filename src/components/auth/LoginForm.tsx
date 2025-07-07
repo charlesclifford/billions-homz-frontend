@@ -10,7 +10,7 @@ import { AxiosError } from "axios";
 import cookies from "js-cookie";
 import { Eye, EyeOff, Loader2Icon } from "lucide-react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -21,7 +21,7 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormMessage
+  FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
 
@@ -36,7 +36,6 @@ export type LoginFormValues = z.infer<typeof formSchema>;
 
 const LoginForm = () => {
   const dispatch = useAppDispatch();
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const { refetch } = useUser();
@@ -55,9 +54,7 @@ const LoginForm = () => {
     mutationFn: loginUser,
     onSuccess: async (data) => {
       if (data?.requiresPasswordChange) {
-        router.push(
-          `/auth/update-password?token=${data?.tempToken}&userId=${data?.userId}`
-        );
+        window.location.href = `/auth/update-password?token=${data?.tempToken}&userId=${data?.userId}`;
       } else {
         toast.success(data?.message);
         cookies.set(TOKEN_NAME, data?.accessToken);
@@ -71,7 +68,7 @@ const LoginForm = () => {
           // Fallback to the user data from login response if user fetch fails
           dispatch(loginSuccess({ user: data?.data || data.user }));
         }
-        router.push(callbackUrl);
+        window.location.href = callbackUrl;
       }
     },
     onError: (error: AxiosError<{ message: string }>) => {

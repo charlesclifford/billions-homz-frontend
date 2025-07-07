@@ -140,7 +140,7 @@ const QuickContactForm = () => {
               *
             </span>
           </p>
-          <div className="flex lg:justify-end">
+          <div className="flex justify-end">
             <button
               type="submit"
               className="p-[5px] pl-[30px] border rounded-[30px] text-sm font-bold capitalize inline-grid relative group h-full cursor-pointer dark:bg-white"

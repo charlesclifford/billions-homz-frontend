@@ -23,13 +23,11 @@ const GalleryPhoto = ({
         <Image
           src={photo.imageUrl}
           alt={photo.caption || "Property image"}
-          className="w-full h-auto max-w-full max-h-full object-cover"
+          className="w-full h-full object-cover"
           loading="lazy"
           width={300}
           height={300}
           style={{
-            width: "100%",
-            height: "auto",
             aspectRatio: `${photo.width}/${photo.height}`,
           }}
         />
