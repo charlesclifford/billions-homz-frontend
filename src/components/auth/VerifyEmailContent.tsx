@@ -3,15 +3,13 @@ import { verifyEmail } from "@/lib/api/auth";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 
-const VerifyEmailContent = () => {
+const VerifyEmailContent = ({ token }: { token: string }) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const token = searchParams.get("token");
 
   const verifyMutation = useMutation({
     mutationFn: verifyEmail,
@@ -55,7 +53,7 @@ const VerifyEmailContent = () => {
         <div className="flex gap-2 mt-4">
           <Button
             variant="outline"
-            className="cursor-pointer rounded-sm"
+            className="cursor-pointer rounded-[30px] h-[45px] px-6"
             onClick={() => router.push("/")}
           >
             Go Home
@@ -96,7 +94,7 @@ const VerifyEmailContent = () => {
         <div className="flex gap-2 mt-4">
           <Button
             variant="outline"
-            className="cursor-pointer rounded-sm"
+            className="cursor-pointer rounded-[30px] h-[45px] px-6"
             onClick={() => router.push("/")}
           >
             Go Home
@@ -123,8 +121,9 @@ const VerifyEmailContent = () => {
         You will be redirected shortly...
       </p>
       <Button
+        variant={"link"}
         onClick={() => router.push("/login")}
-        className="mt-4 cursor-pointer rounded-sm"
+        className="mt-4 cursor-pointer rounded-[30px] h-[45px]"
       >
         Go to Login
       </Button>

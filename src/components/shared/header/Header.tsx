@@ -238,7 +238,7 @@ const Header = () => {
                               className="rounded-[30px] h-[40px]"
                               onClick={() => setIsMenuOpen(false)}
                             >
-                              <Link href="/auth/register">Create Account</Link>
+                              <Link href="/auth/register/user">Create Account</Link>
                             </Button>
                           </div>
                         )}

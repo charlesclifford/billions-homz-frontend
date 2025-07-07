@@ -42,6 +42,6 @@ export const menuList: IMenu[] = [
   {
     name: "Realtor's Corner",
     href: "/#",
-    children: [{ name: "Register as Realtor", href: "#" }],
+    children: [{ name: "Register as Realtor", href: "/auth/register/realtor" }],
   },
 ];

@@ -1,7 +1,5 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import ServiceCard from "../../services/ServiceCard";
-import { ArrowUpRight } from "lucide-react";
-import Link from "next/link";
 
 export interface IServiceList {
   icon: ReactNode;
@@ -71,7 +69,7 @@ const HeroSection = () => {
         <div className="bg-background rounded-t-[50px] h-full w-full"></div>
       </div>
 
-      <div className="container max-w-[min(100%,1290px)] mx-auto px-4 pt-[150px] lg:pt-[245px] relative">
+      <div className="container max-w-[min(100%,1290px)] mx-auto px-4 pt-[200px] lg:pt-[245px] relative">
         <div className="max-w-full w-[910px] mx-auto text-center self-center">
           <div className="mb-5">
             <h1 className="text-white font-bold text-[52px] lg:text-[90px] leading-[1]">
@@ -89,42 +87,8 @@ const HeroSection = () => {
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row justify-between max-w-full border-t border-t-neutral-400 py-[60px] lg:items-end items-center gap-8">
-          <div className="w-[450px] lg:w-[660px] max-w-full">
-            <div>
-              <h4 className="text-white leading-[1] text-[32px] lg:text-4xl font-bold">
-                We developed landmark real estate projects that deliver lasting
-                value to investors and communities.
-              </h4>
-            </div>
-          </div>
-          <div className="max-w-full">
-            <div className="">
-              <Link
-                href={"/about-us"}
-                className="p-[5px] pl-[30px] bg-white rounded-[30px] text-sm font-bold capitalize inline-grid relative group"
-              >
-                <span className="flex gap-2.5 items-center flex-row-reverse justify-center">
-                  <span className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-primary text-white">
-                    <span className="flex items-center justify-center w-[18px] h-[18px] overflow-hidden relative">
-                      {/* Top icon – animates out along 45deg */}
-                      <span className="flex absolute items-center justify-center  transition-all duration-500 transform-3d transform-[translate3d(0px,0px,0px)_scale3d(1,1,1)] opacity-100 group-hover:transform-[translate3d(17px,-17px,0px)_scale3d(0.2,0.2,1)] group-hover:opacity-0">
-                        <ArrowUpRight />
-                      </span>
-
-                      {/* Bottom icon – animates in along 45deg */}
-                      <span className="flex absolute items-center justify-center  transition-all duration-500 transform-[translate3d(-17px,17px,0px)_scale3d(0.2,0.2,1)_rotate(-45deg)] opacity-0 group-hover:transform-[translate3d(0px,0px,0px)_scale3d(1,1,1)] group-hover:opacity-100">
-                        <ArrowUpRight />
-                      </span>
-                    </span>
-                  </span>
-                  <span className="inline-block text-black ">
-                    view services
-                  </span>
-                </span>
-              </Link>
-            </div>
-          </div>
+        <div className=" py-[60px] ">
+          
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-[30px] z-[2]">
