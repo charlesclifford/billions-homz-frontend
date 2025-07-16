@@ -94,7 +94,7 @@ const AdminHeader = () => {
     <header className="sticky top-0 right-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b ">
       <div className="w-full flex h-16 items-center justify-between px-4 box-border">
         <div className="mr-2">
-          <SidebarTrigger />
+          <SidebarTrigger className="cursor-pointer" />
         </div>
 
         <div className="flex items-center space-x-4">

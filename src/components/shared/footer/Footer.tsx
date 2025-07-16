@@ -1,9 +1,8 @@
 "use client";
+import { Heart } from "iconsax-reactjs";
 import Link from "next/link";
 import { AnimatedLink } from "../AnimatedLink";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
-import { Heart } from "iconsax-reactjs";
+import Logo from "../Logo";
 
 const Footer = () => {
   const getYear = () => new Date().getFullYear();
@@ -43,27 +42,7 @@ const Footer = () => {
                         href="/"
                         className="text-xl flex items-center gap-1"
                       >
-                        <Avatar
-                          className={cn(
-                            "transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)]",
-                            "size-10",
-                            "group-data-[collapsible=icon]:size-8",
-                            "group-data-[collapsible=icon]:mx-auto"
-                          )}
-                        >
-                          <AvatarFallback className="bg-primary/10 text-primary text-sm">
-                            BH
-                          </AvatarFallback>
-                        </Avatar>
-
-                        <span
-                          className={cn(
-                            "text-lg font-semibold whitespace-nowrap transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)]",
-                            "group-data-[collapsible=icon]:hidden"
-                          )}
-                        >
-                          Billions Homz
-                        </span>
+                        <Logo className="h-10" />
                       </Link>
                     </div>
                     <div className="text-center lg:text-left">

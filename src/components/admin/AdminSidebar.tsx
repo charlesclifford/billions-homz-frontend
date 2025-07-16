@@ -10,11 +10,12 @@ import {
   NewspaperIcon,
   SettingsIcon,
   UserCog2Icon,
-  Users2Icon
+  Users2Icon,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Avatar, AvatarFallback } from "../ui/avatar";
+import Logo from "../shared/Logo";
 import {
   Sidebar,
   SidebarContent,
@@ -39,6 +40,11 @@ const navMain: ISidebarMenu[] = [
     title: "Dashboard",
     url: "/admin",
     icon: CircleGaugeIcon,
+  },
+  {
+    title: "Estates",
+    url: "/admin/estates",
+    icon: HomeIcon,
   },
   {
     title: "Properties",
@@ -110,29 +116,33 @@ const AdminSidebar = () => {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="px-2 py-2 border-b">
+      <SidebarHeader className="px-2 py-2 border-b min-h-[64px] flex items-center justify-center">
         <div className="flex items-center py-1">
-          <Link href="/" className="text-xl flex items-center gap-1 ">
-            <Avatar
+          <Link href="/" className="flex items-center ">
+            <div
               className={cn(
-                "size-10 transition-all duration-200",
-                "group-data-[collapsible=icon]:size-8", // Smaller when collapsed
-                "group-data-[collapsible=icon]:mx-auto" // Center when collapsed
+                "aspect-square transition-all duration-200",
+                "group-data-[collapsible=icon]:block",
+                "group-data-[collapsible=icon]:w-8",
+                "group-data-[state=expanded]:hidden",
+                "hidden md:block"
               )}
             >
-              <AvatarFallback className="bg-primary/10 text-primary text-sm">
-                BH
-              </AvatarFallback>
-            </Avatar>
-
-            <span
+              <Image
+                src={"/logos/b-t.png"}
+                alt="logo"
+                width={300}
+                height={150}
+                className="object-contain w-full h-full"
+              />
+            </div>
+            <Logo
               className={cn(
-                "text-lg font-semibold whitespace-nowrap transition-opacity duration-200",
-                "group-data-[collapsible=icon]:hidden" // Hide text when collapsed
+                "h-10 transition-all duration-200",
+                "group-data-[collapsible=icon]:hidden",
+                "group-data-[state=expanded]:block"
               )}
-            >
-              Billions Homz
-            </span>
+            />
           </Link>
         </div>
       </SidebarHeader>
