@@ -185,7 +185,7 @@ const Footer = () => {
                       <ul className="flex flex-wrap">
                         <li className="mx-2 relative social-link">
                           <a
-                            href="#"
+                            href="https://facebook.com/billionshomzproperties"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="capitalize text-sm font-semibold leading-[20px] text-neutral-600 dark:text-neutral-400 hover:text-black"
@@ -195,7 +195,7 @@ const Footer = () => {
                         </li>
                         <li className="mx-2 relative social-link">
                           <a
-                            href="#"
+                            href="https://instagram.com/billionshomz_"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="capitalize text-sm font-semibold leading-[20px] text-neutral-600 dark:text-neutral-400 hover:text-black "

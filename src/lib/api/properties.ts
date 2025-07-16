@@ -54,7 +54,7 @@ export const getPropertyBySlug = async (slug: string) => {
   }
 };
 
-export const createProperty = async (data: PropertyFormData) => {
+export const createProperty = async (data: FormData) => {
   try {
     const response = await instance.post("/properties/create", data);
     return handleResponse(response);
@@ -102,6 +102,58 @@ export const deleteImages = async (params: DeleteImagesParams) => {
 export const publishProperty = async (id: string) => {
   try {
     const response = await instance.patch(`/properties/${id}/publish`);
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+/**
+ * estates
+ */
+
+export const getAllEstates = async () => {
+  try {
+    const response = await instance.get(`/estates`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const createEstate = async (data: FormData) => {
+  try {
+    const response = await instance.post(`/estates/create`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const updateEstate = async (id: string, data: FormData) => {
+  try {
+    const response = await instance.put(`/estates/${id}/update`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const deleteEstate = async (id: string) => {
+  try {
+    const response = await instance.delete(`/estates/${id}/delete`);
+
     return handleResponse(response);
   } catch (error) {
     handleError(error);

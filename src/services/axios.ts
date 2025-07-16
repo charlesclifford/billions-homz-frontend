@@ -30,13 +30,15 @@ instance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response) {
-      // Handle 400 errors specifically
-      if (error.response.status === 400) {
-        console.error("Bad Request:", error.response.data);
+      const { status, data } = error.response;
+
+      // Handle 400 Bad Request
+      if (status === 400) {
+        console.error("Bad Request:", data);
         // You can transform the error message here
         return Promise.reject({
           message: "Invalid request data",
-          details: error.response.data,
+          details: data,
           status: 400,
         });
       }

@@ -32,7 +32,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2Icon, Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import PhoneInputWithCountrySelect, { isValidPhoneNumber } from "react-phone-number-input";
+import PhoneInputWithCountrySelect, {
+  isValidPhoneNumber,
+} from "react-phone-number-input";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -51,6 +53,9 @@ const formSchema = z.object({
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
   role: z.enum(["admin", "super_admin"]),
   permissions: z.array(z.string()).optional(),
+  gender: z.enum(["male", "female"], {
+    required_error: "Please select your gender",
+  }),
 });
 
 export type InviteAdminFormValues = z.infer<typeof formSchema>;
@@ -77,6 +82,7 @@ const InviteAdmin = () => {
       phone: "",
       role: "admin",
       permissions: [],
+      gender: undefined,
     },
   });
 
@@ -123,7 +129,7 @@ const InviteAdmin = () => {
           <SheetTitle className="text-xl">Invite Admin</SheetTitle>
         </SheetHeader>
 
-        <ScrollArea className="overflow-x-hidden overflow-y-auto">
+        <ScrollArea className="h-[calc(100vh-170px)]">
           <Form {...form}>
             <form
               id="admin-invite-form"
@@ -226,6 +232,31 @@ const InviteAdmin = () => {
 
                 <FormField
                   control={form.control}
+                  name="gender"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Gender</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="focus-visible:ring-0 shadow-none rounded-sm w-full cursor-pointer">
+                            <SelectValue placeholder="Select gender" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="male">Male</SelectItem>
+                          <SelectItem value="female">Female</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="role"
                   render={({ field }) => (
                     <FormItem>
@@ -235,7 +266,7 @@ const InviteAdmin = () => {
                         value={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger className="focus-visible:ring-0 shadow-none rounded-sm w-full">
+                          <SelectTrigger className="focus-visible:ring-0 shadow-none rounded-sm w-full cursor-pointer">
                             <SelectValue placeholder="Select role" />
                           </SelectTrigger>
                         </FormControl>
