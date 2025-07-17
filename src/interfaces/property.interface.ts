@@ -1,3 +1,4 @@
+import { IEstate } from "./estate.interface";
 import { IRealtor } from "./realtor.interface";
 
 export interface IProperty {
@@ -24,14 +25,24 @@ export interface IProperty {
   commissionRate?: number; // Commission rate applied for this sale
   commissionAmount?: number;
   commissionPaid: boolean;
+
+  isPlot?: boolean;
+  estateId?: IEstate;
+
+  location?: {
+    address?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    landmark?: string;
+    coordinates?: {
+      lat: number;
+      lng: number;
+    };
+  };
 }
 
-export type PropertyType =
-  | "apartment"
-  | "house"
-  | "land"
-  | "commercial"
-  | "villa";
+export type PropertyType = "residential" | "commercial" | "land";
 export type PropertyStatus = "available" | "sold" | "under contract" | "rented";
 export type ListingType = "rent" | "sale" | "lease";
 

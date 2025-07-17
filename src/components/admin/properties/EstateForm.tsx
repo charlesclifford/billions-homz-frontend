@@ -32,9 +32,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 
-export const NairaIcon = () => (
-  <span className="text-gray-500 font-medium">₦</span>
-);
+export const NairaIcon = () => <span className="font-medium">₦</span>;
+export const SquareMetreIcon = () => <span className="font-medium text-sm">sqm</span>;
 
 const formSchema = z.object({
   name: z.string().min(1, "Estate name is required"),
@@ -296,11 +295,7 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                                 min="0"
                                 placeholder="Enter area"
                                 className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm pr-10"
-                                suffix={
-                                  <div className="flex items-center gap-1 text-gray-500">
-                                    <span className="text-sm">sqm</span>
-                                  </div>
-                                }
+                                suffix={<SquareMetreIcon />}
                                 {...field}
                                 onChange={(e) =>
                                   field.onChange(parseFloat(e.target.value))
