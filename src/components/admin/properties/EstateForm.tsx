@@ -1,4 +1,5 @@
 "use client";
+import { InputWithAffix } from "@/components/shared/InputWithAffix";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -31,6 +32,10 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 
+export const NairaIcon = () => (
+  <span className="text-gray-500 font-medium">₦</span>
+);
+
 const formSchema = z.object({
   name: z.string().min(1, "Estate name is required"),
   description: z.string().optional(),
@@ -44,6 +49,8 @@ const formSchema = z.object({
   features: z.array(z.string()).optional(),
   bannerImage: z.string().optional(),
   totalPlots: z.number().min(1, "Must have at least 1 plot"),
+  area: z.number().min(0, "Area cannot be negative").optional(),
+  price: z.number().min(0, "Price cannot be negative").optional(),
 });
 
 export type EstateFormValues = z.infer<typeof formSchema>;
@@ -73,6 +80,8 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
       },
       features: initialValues?.features || [],
       totalPlots: initialValues?.totalPlots || undefined,
+      area: initialValues?.area || undefined,
+      price: initialValues?.price || undefined,
       bannerImage: initialValues?.bannerImage?.imageUrl || "",
     },
   });
@@ -161,6 +170,9 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
     formData.append("location[landmark]", values.location.landmark || "");
     formData.append("totalPlots", values.totalPlots.toString());
 
+    if (values.area) formData.append("area", values.area.toString());
+    if (values.price) formData.append("price", values.price.toString());
+
     if (values.features) {
       values.features.forEach((feature) => {
         formData.append("features[]", feature);
@@ -190,13 +202,12 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
 
   return (
     <div className="">
-      <Card className="max-w-6xl mx-auto">
+      <Card>
         <CardHeader>
-          <CardTitle>
+          <CardTitle className="font-bold text-2xl">
             {initialValues?._id ? "Update Estate" : "Create New Estate"}
           </CardTitle>
         </CardHeader>
-
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <CardContent className="space-y-6">
@@ -215,7 +226,11 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                         <FormItem>
                           <FormLabel>Estate Name</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter estate name" {...field} />
+                            <Input
+                              placeholder="Enter estate name"
+                              className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -231,7 +246,7 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                           <FormControl>
                             <Textarea
                               placeholder="Describe the estate..."
-                              className="resize-none min-h-[120px]"
+                              className="resize-none min-h-[120px] focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
                               {...field}
                             />
                           </FormControl>
@@ -239,28 +254,90 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                         </FormItem>
                       )}
                     />
+                  </div>
 
-                    <FormField
-                      control={form.control}
-                      name="totalPlots"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Total Number of Plots</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              min="1"
-                              placeholder="Enter total plots"
-                              {...field}
-                              onChange={(e) =>
-                                field.onChange(parseInt(e.target.value))
-                              }
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  {/* Property Details */}
+                  <div className="space-y-4">
+                    <h2 className="text-lg font-semibold">Property Details</h2>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="totalPlots"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Total Plots</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                min="1"
+                                placeholder="Enter total plots"
+                                className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
+                                {...field}
+                                onChange={(e) =>
+                                  field.onChange(parseInt(e.target.value))
+                                }
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="area"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Area</FormLabel>
+                            <FormControl>
+                              <InputWithAffix
+                                type="number"
+                                min="0"
+                                placeholder="Enter area"
+                                className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm pr-10"
+                                suffix={
+                                  <div className="flex items-center gap-1 text-gray-500">
+                                    <span className="text-sm">sqm</span>
+                                  </div>
+                                }
+                                {...field}
+                                onChange={(e) =>
+                                  field.onChange(parseFloat(e.target.value))
+                                }
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="price"
+                        render={({ field }) => {
+                          return (
+                            <FormItem>
+                              <FormLabel>Price</FormLabel>
+                              <FormControl>
+                                <InputWithAffix
+                                  type="number"
+                                  min="0"
+                                  placeholder="Enter price"
+                                  prefix={<NairaIcon />}
+                                  className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
+                                  {...field}
+                                  onChange={(e) =>
+                                    field.onChange(parseFloat(e.target.value))
+                                  }
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          );
+                        }}
+                      />
+                    </div>
                   </div>
 
                   {/* Features */}
@@ -331,7 +408,11 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                           <FormItem>
                             <FormLabel>State</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter state" {...field} />
+                              <Input
+                                placeholder="Enter state"
+                                className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -345,7 +426,11 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                           <FormItem>
                             <FormLabel>City</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter city" {...field} />
+                              <Input
+                                placeholder="Enter city"
+                                className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -359,7 +444,11 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                           <FormItem>
                             <FormLabel>Address</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter address" {...field} />
+                              <Input
+                                placeholder="Enter address"
+                                className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -373,7 +462,11 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                           <FormItem>
                             <FormLabel>Nearby Landmark</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter landmark" {...field} />
+                              <Input
+                                placeholder="Enter landmark"
+                                className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -387,11 +480,11 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                     <div className="space-y-2">
                       <FormLabel>Banner Image</FormLabel>
                       {previewImage ? (
-                        <div className="relative">
+                        <div className="relative aspect-video rounded-lg border-2 border-input border-dashed ">
                           <Image
                             src={previewImage}
                             alt="Preview"
-                            className="w-full aspect-video object-cover rounded-lg"
+                            className="w-full h-full object-contain "
                             width={800}
                             height={450}
                             priority
@@ -407,7 +500,7 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                       ) : (
                         <div
                           {...getRootProps()}
-                          className="border-2 border-input border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors "
+                          className="border-2 border-input border-dashed rounded-lg text-center cursor-pointer hover:border-primary transition-colors "
                         >
                           <input {...getInputProps()} />
                           <div className="flex flex-col items-center justify-center gap-2 aspect-video">

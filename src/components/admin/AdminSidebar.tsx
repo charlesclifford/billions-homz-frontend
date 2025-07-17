@@ -101,11 +101,16 @@ const AdminSidebar = () => {
   const { setOpenMobile } = useSidebar();
 
   const isItemActive = (itemUrl: string) => {
-    if (pathname === itemUrl) return true; // Exact match first
-    return (
-      pathname.startsWith(itemUrl) &&
-      pathname.split("/").length === itemUrl.split("/").length
-    );
+    // Exact match
+    if (pathname === itemUrl) return true;
+    
+    // Special case for "/admin" to prevent matching all admin routes
+    if (itemUrl === "/admin") {
+      return pathname === "/admin";
+    }
+    
+    // Match parent routes and their nested routes
+    return pathname.startsWith(`${itemUrl}/`) || pathname === itemUrl;
   };
 
   const userRole = user?.role;

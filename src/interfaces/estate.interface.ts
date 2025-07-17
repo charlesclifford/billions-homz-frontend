@@ -22,4 +22,6 @@ export interface IEstate {
   soldPlots?: number;
   createdBy?: IAdmin;
   slug: string;
+  area?: number;
+  price?: number;
 }

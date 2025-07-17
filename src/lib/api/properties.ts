@@ -122,6 +122,26 @@ export const getAllEstates = async () => {
   }
 };
 
+export const getEstateById = async (id: string) => {
+  try {
+    const response = await instance.get(`/estates/${id}`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const getEstateBySlug = async (slug: string) => {
+  try {
+    const response = await instance.get(`/estates/slug/${slug}`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
 export const createEstate = async (data: FormData) => {
   try {
     const response = await instance.post(`/estates/create`, data, {

@@ -5,6 +5,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -27,6 +28,7 @@ import {
 import useEstates from "@/hooks/useEstates";
 import { IEstate } from "@/interfaces/estate.interface";
 import { deleteEstate } from "@/lib/api/properties";
+import { formatCurrency } from "@/utils/helpers";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Edit2, Loader2, MapPin, Trash2 } from "lucide-react";
 import Image from "next/image";
@@ -159,6 +161,8 @@ const EstateContent = () => {
               <TableRow>
                 <TableHead>Estate</TableHead>
                 <TableHead>Location</TableHead>
+                <TableHead>Area</TableHead>
+                <TableHead>Price</TableHead>
                 <TableHead>Plots</TableHead>
                 <TableHead>Features</TableHead>
                 <TableHead>Status</TableHead>
@@ -229,6 +233,12 @@ const EstateContent = () => {
                       </div>
                     </TableCell>
                     <TableCell>
+                      {estate.area ? `${estate.area} m²` : "-"}
+                    </TableCell>
+                    <TableCell>
+                      {estate.price ? formatCurrency(estate.price) : "-"}
+                    </TableCell>
+                    <TableCell>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">
                           {estate.soldPlots || 0}
@@ -296,6 +306,15 @@ const EstateContent = () => {
             </TableBody>
           </Table>
         </CardContent>
+        {estates && estates.length > 0 && (
+          <CardFooter className="flex justify-between">
+            <div className="text-sm text-muted-foreground">
+              Showing {estates.length}{" "}
+              {estates.length === 1 ? "estate" : "estates"}
+            </div>
+            {/* Pagination would go here */}
+          </CardFooter>
+        )}
       </Card>
     </div>
   );
