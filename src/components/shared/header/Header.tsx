@@ -134,7 +134,7 @@ const Header = () => {
               )}
             >
               {/* Logo */}
-              <div className="col-span-1 transition-transform duration-500 ease-[cubic-bezier(0.33,1,0.68,1)]">
+              <div className="col-span-1 transition-transform duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] pl-2 lg:pl-4">
                 <Link href="/" className="text-xl flex items-center gap-1">
                   <Logo className="h-8" />
                 </Link>

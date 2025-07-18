@@ -10,7 +10,7 @@ const PropertyCard = ({ property }: { property: IProperty }) => {
     <div className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
       <div className="relative aspect-video">
         <Image
-          src={property.images[0] || "/placeholder-property.jpg"}
+          src={property.images[0].imageUrl || "/placeholder-property.jpg"}
           alt={property.title}
           fill
           className="object-cover"
