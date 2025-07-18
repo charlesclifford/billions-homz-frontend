@@ -7,7 +7,7 @@ import { Buildings, RulerPen, Setting2 } from "iconsax-reactjs";
 const AboutUsSection = () => {
   return (
     <>
-      <div className="about-section w-full container mx-auto  mb-[80px] mt-[30px] lg:mt-[100px]">
+      <div className="about-section w-full container mx-auto mb-[80px] mt-[30px] lg:mt-[100px]">
         <div className="w-full max-w-[min(100%,1290px)] mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-[30px] mb-[80px]">
           <div className="col-span-1">
             <SmallTitle text="About us" />

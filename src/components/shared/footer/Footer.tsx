@@ -157,24 +157,24 @@ const Footer = () => {
                     <div className="flex flex-col gap-2 lg:gap-[15px] items-center lg:items-start">
                       <div>
                         <a
-                          href="tel:+123456789"
-                          className="text-[26px] lg:text-3xl font-semibold leading-[1.5em] tracking-[-1px] lg:tracking-[-2px] relative contact-link lowercase"
+                          href="tel:+2348149996145"
+                          className="text-[26px] lg:text-[28px] font-semibold leading-[1.5em] tracking-[-1px] lg:tracking-[-2px] relative contact-link lowercase"
                         >
                           <span>
                             <span>
-                              <span>+(234) 123 - 456 789</span>
+                              <span>+(234) 814 - 999 6145</span>
                             </span>
                           </span>
                         </a>
                       </div>
                       <div>
                         <a
-                          href="mailto:billionshomz@gmail.com"
-                          className="text-[26px] lg:text-3xl font-semibold leading-[1.5em] tracking-[-1px] lg:tracking-[-2px] relative contact-link lowercase"
+                          href="mailto:billionshomzproperties@gmail.com"
+                          className="text-[26px] lg:text-[28px] font-semibold leading-[1.5em] tracking-[-1px] lg:tracking-[-2px] relative contact-link lowercase"
                         >
                           <span>
                             <span>
-                              <span>billionshomz@gmail.com</span>
+                              <span>billionshomzproperties@gmail.com</span>
                             </span>
                           </span>
                         </a>
