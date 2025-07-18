@@ -9,7 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
 const useProperties = (params?: PropertyFilterInput) => {
-  const { data, isPending, isError, refetch } = useQuery<
+  const { data, isPending, isError, refetch, error } = useQuery<
     PaginatedResponse<IProperty>
   >({
     queryKey: ["allProperties", params],
@@ -33,6 +33,7 @@ const useProperties = (params?: PropertyFilterInput) => {
     totalPages,
     isPending,
     isError,
+    error,
     refetch,
   };
 };

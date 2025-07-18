@@ -34,7 +34,7 @@ const PropertyCard = ({ property }: { property: IProperty }) => {
           {/* {property?.address} */}
         </p>
         <Button asChild variant="outline" className="w-full mt-2">
-          <Link href={`/properties/${property._id}`}>View Details</Link>
+          <Link href={`/admin/properties/${property._id}`}>View Details</Link>
         </Button>
       </div>
     </div>

@@ -33,7 +33,9 @@ import { toast } from "sonner";
 import * as z from "zod";
 
 export const NairaIcon = () => <span className="font-medium">₦</span>;
-export const SquareMetreIcon = () => <span className="font-medium text-sm">sqm</span>;
+export const SquareMetreIcon = () => (
+  <span className="font-medium text-sm">sqm</span>
+);
 
 const formSchema = z.object({
   name: z.string().min(1, "Estate name is required"),
@@ -46,7 +48,6 @@ const formSchema = z.object({
     landmark: z.string().optional(),
   }),
   features: z.array(z.string()).optional(),
-  bannerImage: z.string().optional(),
   totalPlots: z.number().min(1, "Must have at least 1 plot"),
   area: z.number().min(0, "Area cannot be negative").optional(),
   price: z.number().min(0, "Price cannot be negative").optional(),
@@ -81,14 +82,15 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
       totalPlots: initialValues?.totalPlots || undefined,
       area: initialValues?.area || undefined,
       price: initialValues?.price || undefined,
-      bannerImage: initialValues?.bannerImage?.imageUrl || "",
     },
   });
 
   // Set initial image preview if editing
   useEffect(() => {
-    if (initialValues?.bannerImage?.imageUrl) {
-      setPreviewImage(initialValues.bannerImage.imageUrl);
+    if (initialValues) {
+      if (initialValues.bannerImage?.imageUrl) {
+        setPreviewImage(initialValues.bannerImage.imageUrl);
+      }
     }
   }, [initialValues]);
 
@@ -132,8 +134,8 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
   const createMutation = useMutation({
     mutationFn: (data: FormData) => createEstate(data),
     onSuccess: (data) => {
-      toast.success(data?.message || "Estate created successfully");
       queryClient.invalidateQueries({ queryKey: ["allEstates"] });
+      toast.success(data?.message || "Estate created successfully");
       router.push("/admin/estates");
     },
     onError: (error: Error) => {
@@ -146,8 +148,8 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
     mutationFn: (data: FormData) =>
       updateEstate(initialValues?._id as string, data),
     onSuccess: (data) => {
-      toast.success(data?.message || "Estate updated successfully");
       queryClient.invalidateQueries({ queryKey: ["allEstates"] });
+      toast.success(data?.message || "Estate updated successfully");
       router.push("/admin/estates");
     },
     onError: (error: Error) => {
@@ -157,6 +159,20 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
   });
 
   const onSubmit = (values: EstateFormValues) => {
+    // Validate image for both create and edit cases
+    const isEditing = !!initialValues?._id;
+    const hadOriginalImage = !!initialValues?.bannerImage?.imageUrl;
+    const imageWasRemoved = isEditing && hadOriginalImage && !previewImage;
+    const noNewImageProvided = !imageFile;
+
+    if (
+      (!isEditing && noNewImageProvided) ||
+      (isEditing && imageWasRemoved && noNewImageProvided)
+    ) {
+      toast.error("Banner image is required");
+      return;
+    }
+
     const formData = new FormData();
 
     // Append all form values
@@ -186,7 +202,7 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
       formData.append("removeImage", "true");
     }
 
-    if (initialValues?._id) {
+    if (isEditing) {
       updateMutation.mutate(formData);
     } else {
       createMutation.mutate(formData);
@@ -196,7 +212,6 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
   const handleRemoveImage = () => {
     setPreviewImage(null);
     setImageFile(null);
-    form.setValue("bannerImage", "");
   };
 
   return (
@@ -259,7 +274,7 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                   <div className="space-y-4">
                     <h2 className="text-lg font-semibold">Property Details</h2>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-4">
                       <FormField
                         control={form.control}
                         name="totalPlots"
@@ -475,11 +490,11 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                     <div className="space-y-2">
                       <FormLabel>Banner Image</FormLabel>
                       {previewImage ? (
-                        <div className="relative aspect-video rounded-lg border-2 border-input border-dashed ">
+                        <div className="relative aspect-video rounded-lg border-2 border-input border-dashed">
                           <Image
                             src={previewImage}
                             alt="Preview"
-                            className="w-full h-full object-contain "
+                            className="w-full h-full object-contain"
                             width={800}
                             height={450}
                             priority
@@ -495,7 +510,16 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                       ) : (
                         <div
                           {...getRootProps()}
-                          className="border-2 border-input border-dashed rounded-lg text-center cursor-pointer hover:border-primary transition-colors "
+                          className={`border-2 border-input border-dashed rounded-lg text-center cursor-pointer hover:border-primary transition-colors ${
+                            form.formState.isSubmitted &&
+                            ((!initialValues?._id && !imageFile) ||
+                              (initialValues?._id &&
+                                initialValues.bannerImage?.imageUrl &&
+                                !previewImage &&
+                                !imageFile))
+                              ? "border-red-500"
+                              : ""
+                          }`}
                         >
                           <input {...getInputProps()} />
                           <div className="flex flex-col items-center justify-center gap-2 aspect-video">
@@ -508,6 +532,24 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                             </p>
                           </div>
                         </div>
+                      )}
+                      {form.formState.isSubmitted && (
+                        <>
+                          {!initialValues?._id && !imageFile && (
+                            <p className="text-sm font-medium text-destructive">
+                              Banner image is required
+                            </p>
+                          )}
+                          {initialValues?._id &&
+                            initialValues.bannerImage?.imageUrl &&
+                            !previewImage &&
+                            !imageFile && (
+                              <p className="text-sm font-medium text-destructive">
+                                Please provide a new image or keep the existing
+                                one
+                              </p>
+                            )}
+                        </>
                       )}
                     </div>
                   </div>
@@ -535,9 +577,9 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                     {initialValues?._id ? "Updating..." : "Creating..."}
                   </>
                 ) : initialValues?._id ? (
-                  "Update Estate"
+                  "Update"
                 ) : (
-                  "Create Estate"
+                  "Create"
                 )}
               </Button>
             </CardFooter>

@@ -662,9 +662,9 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                     {initialValues?._id ? "Updating..." : "Creating..."}
                   </>
                 ) : initialValues?._id ? (
-                  "Update Property"
+                  "Update"
                 ) : (
-                  "Create Property"
+                  "Create"
                 )}
               </Button>
             </CardFooter>
