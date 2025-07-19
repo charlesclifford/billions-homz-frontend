@@ -1,37 +1,91 @@
+"use client";
+import { getPaginationRange } from "@/components/shared/DataTable";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import useEstates from "@/hooks/useEstates";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
-import React from "react";
+import { setFilter } from "@/store/features/property/estate.slice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import EstateCard from "./EstateCard";
+import EstateCardSkeleton from "./EstateCardSkeleton";
 
 const EstatesList = () => {
+  const dispatch = useAppDispatch();
+  const { filter } = useAppSelector((state) => state.estate);
+  const { estates, isPending, totalPages } = useEstates(filter);
+
+  const onPaginationChange = (page: number) => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    dispatch(setFilter({ page }));
+  };
+
+  if (isPending) {
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-[30px]">
+        {[...Array(3)].map((_, i) => (
+          <EstateCardSkeleton key={i} />
+        ))}
+      </div>
+    );
+  }
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-[30px]">
-      {[...Array(6)].map((_, i) => (
-        <div
-          key={i}
-          className={cn("rounded-[30px] relative", "group/card bg-pink-500")}
-        >
-          {/* thumbnail */}
-          <div className="pt-[122%] relative rounded-[30px] group overflow-hidden">
-            <Image
-              src="https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/03/faq-bc.jpg"
-              alt=""
-              width={500}
-              height={500}
-              className="w-full h-full object-cover absolute top-0 left-0 group-hover:transform-[translate3d(0,0,0)_scale(1.2)] transform-[translate3d(-6.66%,0,0)_scale(1.2)] transition duration-300 ease-in-out"
-            />
-          </div>
-          {/* content */}
-          <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-end p-10 z-[3] text-white">
-            {/* status */}
-            <div></div>
-            {/* location */}
-            <div>location</div>
-            {/* title */}
-            <h4 className="">title</h4>
-          </div>
-        </div>
-      ))}
-      <div></div>
+    <div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-[30px]">
+        {estates?.map((estate) => (
+          <EstateCard key={estate._id} estate={estate} />
+        ))}
+      </div>
+
+      {estates && estates?.length > 0 && totalPages > 1 && (
+        <Pagination className="mt-[60px] justify-start gap-2.5">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                onClick={() => onPaginationChange(filter.page - 1)}
+                aria-disabled={filter.page === 1}
+                className={cn(
+                  "cursor-pointer rounded-full w-[50px] h-[50px]",
+                  filter.page === 1 && "pointer-events-none opacity-50 hidden"
+                )}
+              />
+            </PaginationItem>
+
+            {getPaginationRange(filter.page, totalPages).map((page) => (
+              <PaginationItem key={page}>
+                <PaginationLink
+                  isActive={page === filter.page}
+                  className={cn(
+                    "cursor-pointer rounded-full w-[50px] h-[50px] hover:bg-primary hover:text-white",
+                    page === filter.page && "bg-primary text-white"
+                  )}
+                  onClick={() => onPaginationChange(page)}
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+
+            <PaginationItem>
+              <PaginationNext
+                onClick={() => onPaginationChange(filter.page + 1)}
+                aria-disabled={filter.page >= totalPages}
+                className={cn(
+                  "cursor-pointer rounded-full w-[50px] h-[50px]",
+                  filter.page >= totalPages &&
+                    "pointer-events-none opacity-50 hidden"
+                )}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
     </div>
   );
 };
