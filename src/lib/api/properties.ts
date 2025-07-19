@@ -6,6 +6,7 @@ import {
   PropertyFilterInput,
 } from "@/interfaces/property.interface";
 import instance from "@/services/axios";
+import { EstateFilterState } from "@/store/features/property/estate.slice";
 
 // Handle responses and errors
 const handleResponse = (response: any) => {
@@ -119,9 +120,9 @@ export const publishProperty = async (id: string) => {
  * estates
  */
 
-export const getAllEstates = async () => {
+export const getAllEstates = async (params?: EstateFilterState) => {
   try {
-    const response = await instance.get(`/estates`);
+    const response = await instance.get(`/estates`, { params });
 
     return handleResponse(response);
   } catch (error) {
