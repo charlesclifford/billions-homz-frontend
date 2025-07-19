@@ -3,6 +3,7 @@ export interface IMenu {
   href: string;
   roles?: string[];
   children?: IMenu[];
+  disabled?: boolean;
 }
 export const menuList: IMenu[] = [
   {
@@ -24,6 +25,7 @@ export const menuList: IMenu[] = [
       {
         name: "Properties",
         href: "/listings/properties",
+        disabled: true,
       },
     ],
   },

@@ -162,7 +162,7 @@ const Header = () => {
                                 {item.children && item.children.length > 0 ? (
                                   <Accordion type="single" collapsible>
                                     <AccordionItem value={`item-${index}`}>
-                                      <AccordionTrigger className="font-normal text-lg py-2">
+                                      <AccordionTrigger className="font-normal text-lg py-2 hover:no-underline hover:cursor-pointer">
                                         {item.name}
                                       </AccordionTrigger>
                                       <AccordionContent className="py-0">
@@ -174,13 +174,33 @@ const Header = () => {
                                                 className="py-2"
                                               >
                                                 <AnimatedLink
-                                                  href={child.href}
-                                                  className="text-lg"
+                                                  href={
+                                                    child.disabled
+                                                      ? "#"
+                                                      : child.href
+                                                  }
+                                                  className={cn(
+                                                    "text-lg",
+                                                    child.disabled
+                                                      ? "pointer-events-none opacity-50 relative block"
+                                                      : ""
+                                                  )}
                                                   onClick={() =>
                                                     setIsMenuOpen(false)
                                                   }
+                                                  aria-disabled={child.disabled}
+                                                  tabIndex={
+                                                    child.disabled
+                                                      ? -1
+                                                      : undefined
+                                                  }
                                                 >
                                                   {child.name}
+                                                  {child.disabled && (
+                                                    <span className="absolute right-0 top-1/2 -translate-y-1/2 text-[10px] font-medium bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                                                      Coming Soon
+                                                    </span>
+                                                  )}
                                                 </AnimatedLink>
                                               </li>
                                             )
