@@ -68,7 +68,7 @@ export const createProperty = async (data: FormData) => {
 
 export const updateProperty = async (id: string, data: FormData) => {
   try {
-    const response = await instance.patch(`/properties/${id}/update`, data, {
+    const response = await instance.put(`/properties/${id}/update`, data, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

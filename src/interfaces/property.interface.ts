@@ -10,7 +10,7 @@ export interface IProperty {
   bedrooms?: number;
   bathrooms?: number;
   area: number;
-  images: string[];
+  images: IImage[];
   status: PropertyStatus;
   realtor: string;
   features: string[];
