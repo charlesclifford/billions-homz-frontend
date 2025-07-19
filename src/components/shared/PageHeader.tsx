@@ -18,10 +18,12 @@ const PageHeader = ({
       )}
       style={{ backgroundImage: `url(${bgImage})` }}
     >
+      <div className="absolute inset-0 bg-gradient-to-r from-black/20 to-black/0"></div>
+
       <div className="relative container mx-auto pt-[160px] lg:pt-[175px] pb-10 px-[30px] flex flex-col">
         <div>
           <div className="mb-12 lg:mb-[150px]">
-            <h2 className="font-bold text-[52px] lg:text-[90px] leading-[1.06em] tracking-[-2px] text-white capitalize">
+            <h2 className="font-bold text-[52px] lg:text-[90px] leading-[1.06em] tracking-[-2px] text-white capitalize text-shadow">
               {title}
             </h2>
           </div>
