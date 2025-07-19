@@ -2,6 +2,7 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import userReducer from "./features/user/user.slice";
 import authReducer from "./features/auth/auth.slice";
 import propertyReducer from "./features/property/property.slice";
+import estateReducer from "./features/property/estate.slice";
 import adminReducer from "./features/admin/admin.slice";
 import realtorReducer from "./features/realtor/realtor.slice";
 import blogReducer from "./features/blog/blog.slice";
@@ -19,6 +20,7 @@ const persistConfig = {
 // Combine reducers
 const rootReducer = combineReducers({
   auth: authReducer,
+  estate: estateReducer,
   property: propertyReducer,
   user: userReducer,
   admin: adminReducer,
