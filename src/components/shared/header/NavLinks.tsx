@@ -3,6 +3,7 @@ import { usePathname } from "next/navigation";
 import { IMenu } from "./menu";
 import { AnimatedLink } from "../AnimatedLink";
 import { ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface NavLinksProps {
   items: IMenu[];
@@ -63,10 +64,22 @@ const NavLinks = ({ items }: NavLinksProps) => {
                   {item?.children.map((child) => (
                     <li key={child.href} className="py-[7px] px-6">
                       <AnimatedLink
-                        href={child.href}
-                        className="!bg-[length:0_1px] hover:!bg-[length:100%_1px]"
+                        href={child.disabled ? "#" : child.href}
+                        className={cn(
+                          "!bg-[length:0_1px] hover:!bg-[length:100%_1px] relative",
+                          child.disabled
+                            ? "pointer-events-none opacity-50 block"
+                            : ""
+                        )}
+                        aria-disabled={child.disabled}
+                        tabIndex={child.disabled ? -1 : undefined}
                       >
                         {child.name}
+                        {child.disabled && (
+                          <span className="absolute right-0 top-1/2 -translate-y-1/2 text-[10px] font-medium bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                            Coming Soon
+                          </span>
+                        )}
                       </AnimatedLink>
                     </li>
                   ))}
