@@ -21,16 +21,8 @@ const BlogsGrid = () => {
     limit: 12,
     isPublished: true,
   });
-  const [featuredFilter] = useState<PostFilterInput>({
-    page: 1,
-    limit: 3,
-    isPublished: true,
-    featured: true,
-  });
 
   const { posts, isPending, totalPages } = usePosts(filter);
-  const { posts: featuredPosts, isPending: isFeaturedPending } =
-    usePosts(featuredFilter);
 
   const onPaginationChange = (page: number) => {
     setFilter({ ...filter, page });
@@ -38,35 +30,8 @@ const BlogsGrid = () => {
 
   return (
     <div className="my-[60px] relative">
-      {/* Featured Posts Section */}
-      <div className="mb-16">
-        <h2 className="text-3xl font-bold mb-8">Featured Posts</h2>
-
-        {isFeaturedPending ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(3)].map((_, index) => (
-              <BlogCardSkeleton key={`featured-skeleton-${index}`} />
-            ))}
-          </div>
-        ) : featuredPosts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredPosts.map((post) => (
-              <BlogCard
-                key={`featured-${post._id}`}
-                post={post}
-                containerClassName="mb-2.5"
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-8">
-            <p className="text-muted-foreground">No featured posts available</p>
-          </div>
-        )}
-      </div>
-
       {/* All Posts Section */}
-      <h2 className="text-3xl font-bold mb-8">Latest Posts</h2>
+      <h2 className="text-4xl font-bold mb-8">Latest Posts</h2>
       {isPending ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 mb-8">
           {[...Array(6)].map((_, index) => (
