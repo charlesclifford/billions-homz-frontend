@@ -132,7 +132,7 @@ const FeaturedPost = () => {
                     <div className="mt-[25px] relative">
                       <Link
                         href={`/blog/${post.slug}`}
-                        className="font-bold text-sm leading-[1.57] relative hover:text-primary transition-colors"
+                        className="font-bold text-[15px] leading-[1.57] relative transition-colors before:content-[''] before:absolute before:bottom-0 before:left-[-1px] before:block before:w-[calc(100%+2px)] before:h-[2px] before:bg-primary before:scale-x-0 before:origin-left before:transition-transform before:duration-300 before:ease-[cubic-bezier(0.47,0.05,0.5,0.94)] hover:before:duration-300 hover:before:ease-[cubic-bezier(0.47,0.05,0.5,0.94)] hover:before:delay-200 hover:before:bg-foreground hover:before:scale-x-100 after:content-[''] after:absolute after:bottom-0 after:left-[-1px] after:block after:w-[calc(100%+2px)] after:h-[2px] after:bg-primary after:scale-x-100 after:origin-right after:transition-transform after:duration-300 after:delay-200 after:ease-[cubic-bezier(0.47,0.05,0.5,0.94)] hover:after:scale-x-0 hover:after:bg-foreground hover:after:delay-0"
                       >
                         Continue Reading
                       </Link>
