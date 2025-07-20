@@ -63,7 +63,7 @@ const EstatesList = () => {
                   isActive={page === filter.page}
                   className={cn(
                     "cursor-pointer rounded-full w-[50px] h-[50px] hover:bg-primary hover:text-white",
-                    page === filter.page && "bg-primary text-white"
+                    page === filter.page && "bg-primary dark:bg-primary text-white"
                   )}
                   onClick={() => onPaginationChange(page)}
                 >

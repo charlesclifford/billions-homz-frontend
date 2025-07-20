@@ -24,4 +24,5 @@ export interface IEstate {
   slug: string;
   area?: number;
   price?: number;
+  createdAt?: string
 }
