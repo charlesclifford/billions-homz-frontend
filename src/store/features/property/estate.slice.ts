@@ -21,7 +21,7 @@ export const SLICE_NAME = "estate";
 
 export const initialFilterState: EstateFilterState = {
   page: 1,
-  limit: 1,
+  limit: 15,
 };
 
 const initialState: EstateState = {

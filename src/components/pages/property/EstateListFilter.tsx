@@ -80,9 +80,9 @@ const EstateListFilter = () => {
     <div className="">
       <form
         onSubmit={handleSearch}
-        className="w-full pb-[55px] flex flex-wrap gap-4"
+        className="w-full pb-[55px] flex flex-col lg:flex-row gap-5"
       >
-        <div className="flex-1 min-w-[200px]">
+        <div className="flex-1 min-w-[300px]">
           <Input
             placeholder="Enter state or city"
             className="focus-visible:ring-0 shadow-none bg-gray-100 rounded-[30px] py-[15px] px-[30px] leading-[1.75] h-14 w-full"
@@ -106,24 +106,24 @@ const EstateListFilter = () => {
           </Select>
         </div>
 
-        <div className="flex items-center gap-5">
+        <div className="flex items-center flex-col-reverse md:flex-row gap-5">
           <Button
             variant="outline"
             type="button"
             className={cn(
-              "font-bold leading-[1.5] capitalize rounded-[30px] cursor-pointer py-[17px] px-[40px] h-14",
+              "font-bold leading-[1.5] capitalize rounded-[30px] cursor-pointer py-[17px] px-[40px] h-14 w-full md:w-fit ms-auto",
               !isFilterActive ? "opacity-50 cursor-not-allowed" : ""
             )}
             disabled={!isFilterActive}
             onClick={handleReset}
           >
-            Reset Filters
+            Reset
           </Button>
           <Button
             type="submit"
-            className="font-bold leading-[1.5] capitalize rounded-[30px] cursor-pointer py-[17px] px-[40px] h-14"
+            className="font-bold leading-[1.5] capitalize rounded-[30px] cursor-pointer py-[17px] px-[40px] h-14 w-full md:w-fit"
           >
-            Search Properties
+            Search
           </Button>
         </div>
       </form>
