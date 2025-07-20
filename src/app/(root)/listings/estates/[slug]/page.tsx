@@ -1,0 +1,218 @@
+import EstateShareButtons from "@/components/pages/property/EstateShareButtons";
+import PageHeader from "@/components/shared/PageHeader";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { IEstate } from "@/interfaces/estate.interface";
+import { getEstateBySlug } from "@/lib/api/properties";
+import { CurrencyIcon, Dot, MapPin, RulerDimensionLine } from "lucide-react";
+import Image from "next/image";
+import { notFound } from "next/navigation";
+import React from "react";
+
+const EstateDetailsPage = async ({ params }: { params: { slug: string } }) => {
+  const { slug } = params;
+  const data = await getEstateBySlug(slug);
+  const estate = data.data as IEstate;
+
+  if (!estate) return notFound();
+
+  // Create share URL
+  const shareUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/properties/${estate.slug}`
+      : `https://yourdomain.com/properties/${estate.slug}`;
+  const shareTitle = `Check out ${estate.name} in ${estate.location?.city}`;
+
+  return (
+    <div className="">
+      <PageHeader
+        title=""
+        bgImage="https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/03/faq-bc.jpg"
+      />
+
+      {/* Header Section */}
+      <div className="container max-w-[min(100%,1290px)] mx-auto px-4 mt-[50px] mb-[100px] flex flex-col">
+        <div className="mb-5 inline-flex">
+          <MapPin className="mr-2 text-primary" />
+          <span className="font-semibold">
+            {estate.location?.city}, {estate.location?.state}
+          </span>
+        </div>
+
+        <div className="flex justify-between items-start">
+          <h2 className="mb-[13px] tracking-[-2px] leading-[1] text-[45px] lg:text-[70px] font-bold capitalize">
+            {estate.name}
+          </h2>
+        </div>
+
+        <Separator className="mt-5" />
+        <div className="flex flex-row mb-[50px]">
+          <div className="pt-[45px] flex items-center gap-[65px]">
+            {estate.area && (
+              <SummaryItem
+                icon={<RulerDimensionLine />}
+                label="Project Area"
+                value={`${estate.area} sq. ft`}
+              />
+            )}
+            <SummaryItem
+              icon={<CurrencyIcon />}
+              label="Price Range"
+              value={`₦${estate.price?.toLocaleString()}`}
+            />
+          </div>
+        </div>
+
+        {/* Main Content with Sidebar */}
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Main Content (Left) */}
+          <div className="flex-1">
+            {/* Banner Image */}
+            {estate.bannerImage?.imageUrl && (
+              <div className="overflow-hidden mb-8">
+                <Image
+                  src={estate.bannerImage.imageUrl}
+                  alt={estate.name}
+                  width={800}
+                  height={1200}
+                  className="w-full h-auto max-h-[600px] object-contain"
+                  priority
+                />
+              </div>
+            )}
+
+            <div>
+              {/* Project Description */}
+              <div className="mb-8">
+                <div className="mb-[25px]">
+                  <h3 className="text-[36px] lg:text-[52px] tracking-[-1px] font-bold">
+                    Project description
+                  </h3>
+                </div>
+                <p className="text-gray-700 leading-relaxed">
+                  {estate.description || "No description available."}
+                </p>
+              </div>
+            </div>
+
+            {/* Features & Amenities */}
+            <div className="mb-8">
+              <div className="mb-[25px]">
+                <h3 className="text-[36px] lg:text-[52px] tracking-[-1px] font-bold">
+                  Features
+                </h3>
+              </div>
+              {estate.features?.length ? (
+                <div className="flex flex-wrap gap-2">
+                  {estate.features.map((feature, idx) => (
+                    <span
+                      key={idx}
+                      className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm"
+                    >
+                      {feature}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-500">No features listed.</p>
+              )}
+            </div>
+          </div>
+
+          {/* Sidebar (Right) */}
+          <div className="lg:w-80 xl:w-96 space-y-6">
+            {/* Key Details Card */}
+            <div className="rounded-[30px] border p-8">
+              <div className="mb-3">
+                <h3 className="text-xl font-bold tracking-[0] leading-[1]">
+                  Key Details
+                </h3>
+              </div>
+              <div className="space-y-3">
+                <ul>
+                  <KeyDetail
+                    label="Location"
+                    value={estate.location?.address}
+                  />
+                  <KeyDetail
+                    label="Features"
+                    value={estate.features?.join(", ")}
+                  />
+                </ul>
+              </div>
+            </div>
+
+            {/* Social Sharing Card */}
+            <div className="rounded-[30px] border p-8">
+              <EstateShareButtons
+                url={shareUrl}
+                title={shareTitle}
+                propertyName={estate.name}
+                variant="card"
+                className=""
+              />
+            </div>
+
+            {/* Contact/CTA Card */}
+            <div className="bg-primary/20 p-8 rounded-[30px]">
+              <h3 className="text-lg font-semibold mb-3">
+                Interested in this property?
+              </h3>
+              <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
+                Contact us for more information or to schedule a viewing.
+              </p>
+              <Button
+                size={"lg"}
+                className="w-full rounded-[30px] cursor-pointer"
+              >
+                Contact Agent
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default EstateDetailsPage;
+
+// Components (keep these at the bottom of the file)
+const SummaryItem = ({
+  label,
+  value,
+  icon,
+}: {
+  label: string;
+  value: string;
+  icon: React.ReactNode;
+}) => (
+  <div className="h-full">
+    <div className="flex items-center">
+      <div className="mr-[15px] flex border p-[18px] rounded-full tracking-[0px] leading-[1.5em]">
+        {icon}
+      </div>
+      <div className="flex flex-col">
+        <h3 className="text-neutral-600 dark:text-neutral-400 font-semibold">
+          {label}
+        </h3>
+        <p className="font-medium leading-[1.5em]">{value}</p>
+      </div>
+    </div>
+  </div>
+);
+
+const KeyDetail = ({ label, value }: { label: string; value?: string }) => {
+  if (!value) return null;
+  return (
+    <li className="flex py-2">
+      <div className="pr-[15px]">
+        <Dot size={30} className="text-primary" />
+      </div>
+      <div className="text-lg leading-[1.56em]">
+        <span className="font-bold">{label}:</span>{" "}
+        <span className="text-neutral-600 dark:text-neutral-400">{value}</span>
+      </div>
+    </li>
+  );
+};
