@@ -9,8 +9,12 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import React from "react";
 
-const EstateDetailsPage = async ({ params }: { params: { slug: string } }) => {
-  const { slug } = params;
+const EstateDetailsPage = async ({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) => {
+  const { slug } = await params;
   const data = await getEstateBySlug(slug);
   const estate = data.data as IEstate;
 
