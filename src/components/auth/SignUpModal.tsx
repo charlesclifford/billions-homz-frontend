@@ -25,36 +25,22 @@ const SignUpModal = () => {
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] rounded-[30px] p-8 [&>button]:hidden">
           <DialogHeader>
             <DialogTitle className="text-center">Create an account</DialogTitle>
           </DialogHeader>
           <div className="flex flex-col space-y-4 py-4">
-            <Button
-              asChild
-              variant="outline"
-              className="h-14"
-            >
+            <Button asChild variant="outline" className="h-14 rounded-[30px]">
               <Link href="/auth/register/user">
                 <div className="text-center w-full">
                   <p className="font-semibold">I&apos;m a User</p>
-                  <p className="text-sm font-normal text-muted-foreground">
-                    Looking for properties
-                  </p>
                 </div>
               </Link>
             </Button>
-            <Button
-              asChild
-              variant="outline"
-              className="h-14"
-            >
+            <Button asChild variant="outline" className="h-14 rounded-[30px]">
               <Link href="/auth/register/realtor">
                 <div className="text-center w-full">
                   <p className="font-semibold">I&apos;m a Realtor</p>
-                  <p className="text-sm font-normal text-muted-foreground">
-                    Listing properties
-                  </p>
                 </div>
               </Link>
             </Button>

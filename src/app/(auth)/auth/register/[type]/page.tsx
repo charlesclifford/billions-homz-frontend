@@ -28,7 +28,7 @@ const RegisterPage = async ({
   }
 
   return (
-    <div className="w-full min-h-[calc(100dvh-80px)] overflow-y-auto py-12 flex items-center justify-center">
+    <div className="w-full flex items-center justify-center">
       <div className="w-full flex items-center justify-center">
         <div className="w-full max-w-md space-y-8">
           <div className="lg:text-center space-y-2">
