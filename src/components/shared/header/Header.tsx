@@ -93,7 +93,12 @@ const Header = () => {
     [user]
   );
 
-  const filteredMenu = accountOptions.filter(
+  const filteredNavMenu = menuList.filter(
+    (nav) =>
+      !nav.roles || (userRole && nav.roles.includes(user?.role as string))
+  );
+
+  const filteredAccountMenu = accountOptions.filter(
     (nav) =>
       !nav.roles || (userRole && nav.roles.includes(user?.role as string))
   );
@@ -157,7 +162,7 @@ const Header = () => {
                       <DrawerContent className="px-2 pb-2 h-[95dvh]">
                         <ScrollArea className="flex-1 overflow-auto">
                           <ul className="px-4 py-4 space-y-2">
-                            {menuList.map((item, index) => (
+                            {filteredNavMenu.map((item, index) => (
                               <li key={index} className="py-2">
                                 {item.children && item.children.length > 0 ? (
                                   <Accordion type="single" collapsible>
@@ -298,7 +303,7 @@ const Header = () => {
                           </div>
 
                           <ul className="space-y-2 pl-2">
-                            {filteredMenu.map((option, i) => (
+                            {filteredAccountMenu.map((option, i) => (
                               <li
                                 key={i}
                                 className="py-2"
@@ -334,7 +339,7 @@ const Header = () => {
 
               {/* navlinks */}
               <div className="col-span-3 hidden lg:flex justify-center">
-                <NavLinks items={menuList} />
+                <NavLinks items={filteredNavMenu} />
               </div>
 
               <div className="pr-2 col-span-1 hidden lg:flex items-center justify-end gap-2">
