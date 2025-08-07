@@ -29,7 +29,11 @@ const EstateCard = ({ estate }: { estate: IEstate }) => {
         {/* status */}
         <div className="mb-auto">
           <span className="py-2.5 px-5 font-semibold text-xs leading-[1.25] uppercase rounded-[20px] inline-flex bg-primary">
-            status
+            {estate.soldUnits === estate.totalUnits
+              ? "Sold Out"
+              : estate.soldUnits && estate.soldUnits > 0
+              ? "Selling"
+              : "Available"}
           </span>
         </div>
         {/* location */}
