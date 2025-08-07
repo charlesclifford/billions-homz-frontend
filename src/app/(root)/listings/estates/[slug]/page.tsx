@@ -52,11 +52,11 @@ const EstateDetailsPage = async ({
         <Separator className="mt-5" />
         <div className="flex flex-row mb-[50px]">
           <div className="pt-[45px] flex items-center gap-[65px]">
-            {estate.area && (
+            {estate.plotSize && (
               <SummaryItem
                 icon={<RulerDimensionLine />}
                 label="Project Area"
-                value={`${estate.area} sq. ft`}
+                value={`${estate.plotSize} sq. ft`}
               />
             )}
             <SummaryItem
