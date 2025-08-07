@@ -52,6 +52,11 @@ const navMain: ISidebarMenu[] = [
     icon: HomeIcon,
   },
   {
+    title: "Sales",
+    url: "/admin/sales",
+    icon: HomeIcon,
+  },
+  {
     title: "Realtors",
     url: "/admin/realtors",
     icon: UserCog2Icon,

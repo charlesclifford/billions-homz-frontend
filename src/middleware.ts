@@ -4,6 +4,7 @@ import { TOKEN_NAME, USER_DETAILS } from "./constants/app.constant";
 import { IUser } from "./interfaces/user.interface";
 
 const adminRoutes = ["/admin", "/admin/*"];
+const realtorRoutes = ["/realtor", "/realtor/*"];
 const privateRoutes = ["/profile"];
 const authRoutes = ["/auth/login", "/auth/register", "/auth/*"];
 
@@ -11,7 +12,10 @@ export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Skip middleware for unauthorized page to prevent redirect loops
-  if (pathname.startsWith("/admin/unauthorized")) {
+  if (
+    pathname.startsWith("/admin/unauthorized") ||
+    pathname.startsWith("/realtor/unauthorized")
+  ) {
     return NextResponse.next();
   }
 
@@ -39,8 +43,10 @@ export default async function middleware(req: NextRequest) {
   console.log(`Middleware check - Path: ${pathname}, Role: ${user?.role}`);
 
   // Redirect authenticated users from auth routes to homepage
-  if (authRoutes.some(route => pathname.startsWith(route))) {
+  if (authRoutes.some((route) => pathname.startsWith(route))) {
     if (token) {
+      // const redirectPath =
+      //   user?.role === "realtor" ? "/realtor/dashboard" : "/";
       return NextResponse.redirect(new URL("/", req.url));
     }
     return NextResponse.next();
@@ -75,6 +81,22 @@ export default async function middleware(req: NextRequest) {
     // Check for other admin routes - ADMIN or SUPER_ADMIN
     if (!["super_admin", "admin"].includes(user?.role as string)) {
       return NextResponse.redirect(new URL("/admin/unauthorized", req.url));
+    }
+
+    return NextResponse.next();
+  }
+
+  // Handle realtor routes
+  if (realtorRoutes.some((route) => pathname.startsWith(route))) {
+    if (!token) {
+      const loginUrl = new URL("/auth/login", req.url);
+      loginUrl.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(loginUrl);
+    }
+
+    // Check if user is a realtor
+    if (user?.role !== "realtor") {
+      return NextResponse.redirect(new URL("/realtor/unauthorized", req.url));
     }
 
     return NextResponse.next();

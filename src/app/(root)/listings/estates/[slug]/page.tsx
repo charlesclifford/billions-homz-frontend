@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { IEstate } from "@/interfaces/estate.interface";
 import { getEstateBySlug } from "@/lib/api/properties";
-import { CurrencyIcon, Dot, MapPin, RulerDimensionLine } from "lucide-react";
+import { CurrencyIcon, MapPin, RulerDimensionLine } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import React from "react";
@@ -52,11 +52,11 @@ const EstateDetailsPage = async ({
         <Separator className="mt-5" />
         <div className="flex flex-row mb-[50px]">
           <div className="pt-[45px] flex items-center gap-[65px]">
-            {estate.area && (
+            {estate.plotSize && (
               <SummaryItem
                 icon={<RulerDimensionLine />}
                 label="Project Area"
-                value={`${estate.area} sq. ft`}
+                value={`${estate.plotSize} sq. ft`}
               />
             )}
             <SummaryItem
@@ -68,7 +68,7 @@ const EstateDetailsPage = async ({
         </div>
 
         {/* Main Content with Sidebar */}
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-8 ">
           {/* Main Content (Left) */}
           <div className="flex-1">
             {/* Banner Image */}
@@ -124,30 +124,9 @@ const EstateDetailsPage = async ({
           </div>
 
           {/* Sidebar (Right) */}
-          <div className="lg:w-80 xl:w-96 space-y-6">
-            {/* Key Details Card */}
-            <div className="rounded-[30px] border p-8">
-              <div className="mb-3">
-                <h3 className="text-xl font-bold tracking-[0] leading-[1]">
-                  Key Details
-                </h3>
-              </div>
-              <div className="space-y-3">
-                <ul>
-                  <KeyDetail
-                    label="Location"
-                    value={estate.location?.address}
-                  />
-                  <KeyDetail
-                    label="Features"
-                    value={estate.features?.join(", ")}
-                  />
-                </ul>
-              </div>
-            </div>
-
+          <div className="lg:w-80 xl:w-96 space-y-6 relative">
             {/* Social Sharing Card */}
-            <div className="rounded-[30px] border p-8">
+            <div className="rounded-[30px] border p-8 ">
               <EstateShareButtons
                 url={shareUrl}
                 title={shareTitle}
@@ -158,7 +137,7 @@ const EstateDetailsPage = async ({
             </div>
 
             {/* Contact/CTA Card */}
-            <div className="bg-primary/20 p-8 rounded-[30px]">
+            <div className="bg-primary/20 p-8 rounded-[30px] sticky top-8">
               <h3 className="text-lg font-semibold mb-3">
                 Interested in this property?
               </h3>
@@ -205,18 +184,3 @@ const SummaryItem = ({
     </div>
   </div>
 );
-
-const KeyDetail = ({ label, value }: { label: string; value?: string }) => {
-  if (!value) return null;
-  return (
-    <li className="flex py-2">
-      <div className="pr-[15px]">
-        <Dot size={30} className="text-primary" />
-      </div>
-      <div className="text-lg leading-[1.56em]">
-        <span className="font-bold">{label}:</span>{" "}
-        <span className="text-neutral-600 dark:text-neutral-400">{value}</span>
-      </div>
-    </li>
-  );
-};

@@ -59,6 +59,7 @@
     "react-quill-new": "^3.4.6",
     "react-redux": "^9.2.0",
     "react-share": "^5.2.2",
+    "react-to-print": "^3.1.1",
     "recharts": "^2.15.3",
     "redux-persist": "^6.0.0",
     "sass": "^1.87.0",

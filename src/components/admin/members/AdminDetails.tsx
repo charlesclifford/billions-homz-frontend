@@ -112,7 +112,7 @@ const AdminDetails = ({ id }: { id: string }) => {
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button size={"icon"} variant={"outline"}>
+        <Button size={"icon"} variant={"outline"} className="cursor-pointer">
           <EyeIcon size={16} />
         </Button>
       </SheetTrigger>

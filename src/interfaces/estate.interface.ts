@@ -1,28 +1,34 @@
 import { IAdmin } from "./admin.interface";
-import { IImage } from "./user.interface";
+import { IImage, IUser } from "./user.interface";
 
 export interface IEstate {
   _id: string;
   name: string;
+  slug: string;
   description?: string;
+  estateType: "land" | "house";
   location: {
     address?: string;
     city?: string;
     state?: string;
     country?: string;
-    landmark?: string;
+    landmarks?: string[];
     coordinates?: {
       lat: number;
       lng: number;
     };
   };
-  features?: string[];
+  features: string[];
+  documents: string[];
   bannerImage?: IImage;
-  totalPlots?: number;
-  soldPlots?: number;
+  totalUnits?: number;
+  soldUnits?: number;
   createdBy?: IAdmin;
-  slug: string;
-  area?: number;
+  plotSize?: number;
   price?: number;
-  createdAt?: string
+  allowInstallment: boolean;
+  marketingNotes?: string;
+  status: "active" | "upcoming" | "sold_out";
+  assignedRealtors: IUser[];
+  createdAt?: string;
 }
