@@ -1,5 +1,6 @@
 "use client";
 import { InputWithAffix } from "@/components/shared/InputWithAffix";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -8,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -17,6 +19,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { IEstate } from "@/interfaces/estate.interface";
 import { createEstate, updateEstate } from "@/lib/api/properties";
@@ -39,18 +49,23 @@ export const SquareMetreIcon = () => (
 
 const formSchema = z.object({
   name: z.string().min(1, "Estate name is required"),
-  description: z.string().optional(),
+  description: z.string().min(1, "Description is required"),
   location: z.object({
     state: z.string().min(1, "State is required"),
     city: z.string().min(1, "City is required"),
     address: z.string().optional(),
     country: z.string(),
-    landmark: z.string().optional(),
+    landmarks: z.array(z.string()).optional(),
   }),
   features: z.array(z.string()).optional(),
-  totalPlots: z.number().min(1, "Must have at least 1 plot"),
-  area: z.number().min(0, "Area cannot be negative").optional(),
-  price: z.number().min(0, "Price cannot be negative").optional(),
+  documents: z.array(z.string()).optional(),
+  landmarks: z.array(z.string()).optional(),
+  totalUnits: z.number().min(1, "Must have at least 1 plot"),
+  plotSize: z.number().min(0, "Plot size cannot be negative").optional(),
+  price: z.number().min(0, "Price cannot be negative"),
+  allowInstallment: z.boolean().default(false).optional(),
+  marketingNotes: z.string().optional(),
+  estateType: z.string(),
 });
 
 export type EstateFormValues = z.infer<typeof formSchema>;
@@ -63,6 +78,7 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [featureInput, setFeatureInput] = useState("");
+  const [landmarkInput, setLandmarkInput] = useState("");
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -76,12 +92,16 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
         city: initialValues?.location?.city || "",
         state: initialValues?.location?.state || "",
         country: initialValues?.location?.country || "Nigeria",
-        landmark: initialValues?.location?.landmark || "",
+        landmarks: initialValues?.location?.landmarks || [],
       },
       features: initialValues?.features || [],
-      totalPlots: initialValues?.totalPlots || undefined,
-      area: initialValues?.area || undefined,
+      documents: initialValues?.documents || [],
+      totalUnits: initialValues?.totalUnits || undefined,
+      plotSize: initialValues?.plotSize || undefined,
       price: initialValues?.price || undefined,
+      allowInstallment: initialValues?.allowInstallment || false,
+      marketingNotes: initialValues?.marketingNotes || "",
+      estateType: initialValues?.estateType || "land",
     },
   });
 
@@ -94,7 +114,7 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
     }
   }, [initialValues]);
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
       "image/*": [".jpeg", ".jpg", ".png", ".webp"],
     },
@@ -128,6 +148,31 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
     form.setValue(
       "features",
       currentFeatures.filter((f) => f !== featureToRemove)
+    );
+  };
+
+  const handleAddLandmark = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      const newLandmark = landmarkInput.trim();
+      if (newLandmark) {
+        const currentLandmarks = form.getValues("location.landmarks") || [];
+        if (!currentLandmarks.includes(newLandmark)) {
+          form.setValue("location.landmarks", [
+            ...currentLandmarks,
+            newLandmark,
+          ]);
+        }
+        setLandmarkInput("");
+      }
+    }
+  };
+
+  const handleRemoveLandmark = (landmarkToRemove: string) => {
+    const currentLandmarks = form.getValues("location.landmarks") || [];
+    form.setValue(
+      "location.landmarks",
+      currentLandmarks.filter((l) => l !== landmarkToRemove)
     );
   };
 
@@ -182,17 +227,34 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
     formData.append("location[city]", values.location.city);
     formData.append("location[address]", values.location.address || "");
     formData.append("location[country]", values.location.country);
-    formData.append("location[landmark]", values.location.landmark || "");
-    formData.append("totalPlots", values.totalPlots.toString());
+    if (values.location.landmarks) {
+      values.location.landmarks.forEach((landmark) => {
+        formData.append("location[landmarks][]", landmark);
+      });
+    }
+    formData.append("totalUnits", values.totalUnits.toString());
+    formData.append("price", values.price.toString());
 
-    if (values.area) formData.append("area", values.area.toString());
-    if (values.price) formData.append("price", values.price.toString());
-
+    if (values.plotSize) {
+      formData.append("plotSize", values.plotSize.toString());
+    }
+    if (values.allowInstallment) {
+      formData.append("allowInstallment", values.allowInstallment.toString());
+    }
+    if (values.marketingNotes) {
+      formData.append("marketingNotes", values.marketingNotes);
+    }
     if (values.features) {
       values.features.forEach((feature) => {
         formData.append("features[]", feature);
       });
     }
+    if (values.documents) {
+      values.documents.forEach((doc) => {
+        formData.append("documents[]", doc);
+      });
+    }
+    formData.append("estateType", values.estateType);
 
     // Handle image upload
     if (imageFile) {
@@ -212,6 +274,31 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
   const handleRemoveImage = () => {
     setPreviewImage(null);
     setImageFile(null);
+  };
+
+  const documentOptions = [
+    "Survey Plan",
+    "Deed of Assignment",
+    "C of O",
+    "Governor's Consent",
+    "Approved Layout",
+    "Purchase Receipt",
+    "Power of Attorney",
+    "Excision",
+    "Gazette",
+    "Other",
+  ];
+
+  const handleDocumentSelect = (value: string) => {
+    const currentDocuments = form.getValues("documents") || [];
+    if (currentDocuments.includes(value)) {
+      form.setValue(
+        "documents",
+        currentDocuments.filter((doc) => doc !== value)
+      );
+    } else {
+      form.setValue("documents", [...currentDocuments, value]);
+    }
   };
 
   return (
@@ -268,6 +355,24 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                         </FormItem>
                       )}
                     />
+
+                    <FormField
+                      control={form.control}
+                      name="marketingNotes"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Marketing Notes</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Internal marketing notes..."
+                              className="resize-none min-h-[100px] focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
 
                   {/* Property Details */}
@@ -277,15 +382,15 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-4">
                       <FormField
                         control={form.control}
-                        name="totalPlots"
+                        name="totalUnits"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Total Plots</FormLabel>
+                            <FormLabel>Total Units</FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
                                 min="1"
-                                placeholder="Enter total plots"
+                                placeholder="Enter total units"
                                 className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
                                 {...field}
                                 onChange={(e) =>
@@ -300,15 +405,15 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
 
                       <FormField
                         control={form.control}
-                        name="area"
+                        name="plotSize"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Area</FormLabel>
+                            <FormLabel>Plot Size</FormLabel>
                             <FormControl>
                               <InputWithAffix
                                 type="number"
                                 min="0"
-                                placeholder="Enter area"
+                                placeholder="Enter plot size"
                                 className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm pr-10"
                                 suffix={<SquareMetreIcon />}
                                 {...field}
@@ -348,6 +453,27 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                         }}
                       />
                     </div>
+                    <FormField
+                      control={form.control}
+                      name="allowInstallment"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 py-2.5">
+                          <div className="space-y-0.5">
+                            <FormLabel>Allow Installment</FormLabel>
+                            <p className="text-sm text-muted-foreground">
+                              Show installment payment badge
+                            </p>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                              className="cursor-pointer"
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
                   </div>
 
                   {/* Features */}
@@ -364,11 +490,11 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                           <FormLabel>Features</FormLabel>
                           <FormControl>
                             <div>
-                              <div className="flex items-center gap-2 flex-wrap mb-2">
+                              <div className="flex items-center gap-2 flex-wrap mb-1">
                                 {field.value?.map((feature) => (
-                                  <div
+                                  <Badge
                                     key={feature}
-                                    className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full text-sm"
+                                    className="flex items-center gap-1"
                                   >
                                     <Tag className="h-3 w-3" />
                                     <span>{feature}</span>
@@ -377,11 +503,11 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                                       onClick={() =>
                                         handleRemoveFeature(feature)
                                       }
-                                      className="text-gray-500 hover:text-red-500"
+                                      className="ml-1 cursor-pointer"
                                     >
                                       <X className="h-3 w-3" />
                                     </button>
-                                  </div>
+                                  </Badge>
                                 ))}
                               </div>
                               <Input
@@ -467,22 +593,121 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
 
                       <FormField
                         control={form.control}
-                        name="location.landmark"
+                        name="location.landmarks"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Nearby Landmark</FormLabel>
+                            <FormLabel>Landmarks</FormLabel>
                             <FormControl>
-                              <Input
-                                placeholder="Enter landmark"
-                                className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
-                                {...field}
-                              />
+                              <div>
+                                <div className="flex items-center gap-2 flex-wrap mb-1">
+                                  {field.value?.map((landmark) => (
+                                    <Badge
+                                      key={landmark}
+                                      className="flex items-center gap-1"
+                                    >
+                                      {landmark}
+                                      <button
+                                        type="button"
+                                        onClick={() =>
+                                          handleRemoveLandmark(landmark)
+                                        }
+                                        className="ml-1 cursor-pointer"
+                                      >
+                                        <X className="h-3 w-3" />
+                                      </button>
+                                    </Badge>
+                                  ))}
+                                </div>
+                                <Input
+                                  value={landmarkInput}
+                                  onChange={(e) =>
+                                    setLandmarkInput(e.target.value)
+                                  }
+                                  onKeyDown={handleAddLandmark}
+                                  placeholder="Add landmarks (press Enter or comma)"
+                                  className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
+                                />
+                              </div>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
                     </div>
+                  </div>
+
+                  {/* Documents  */}
+                  <div className="space-y-4">
+                    <h2 className="text-lg font-semibold">
+                      Required Documents
+                    </h2>
+                    <FormField
+                      control={form.control}
+                      name="documents"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Documents (Optional)</FormLabel>
+                          <FormControl>
+                            <div>
+                              <div className="flex flex-wrap gap-2 mb-1">
+                                {field.value?.map((doc) => (
+                                  <Badge
+                                    key={doc}
+                                    className="flex items-center gap-1"
+                                  >
+                                    {doc}
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        form.setValue(
+                                          "documents",
+                                          field.value?.filter(
+                                            (d) => d !== doc
+                                          ) || []
+                                        )
+                                      }
+                                      className="ml-1"
+                                    >
+                                      <X className="h-3 w-3" />
+                                    </button>
+                                  </Badge>
+                                ))}
+                              </div>
+                              <Select
+                                onValueChange={handleDocumentSelect}
+                                value=""
+                              >
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Select documents..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {documentOptions.map((option) => (
+                                    <SelectItem
+                                      key={option}
+                                      value={option}
+                                      className="cursor-pointer"
+                                    >
+                                      <div className="flex items-center space-x-2">
+                                        <Checkbox
+                                          checked={field.value?.includes(
+                                            option
+                                          )}
+                                          className="h-4 w-4"
+                                        />
+                                        <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                          {option}
+                                        </label>
+                                      </div>
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
 
                   {/* Images */}
@@ -510,7 +735,9 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                       ) : (
                         <div
                           {...getRootProps()}
-                          className={`border-2 border-input border-dashed rounded-lg text-center cursor-pointer hover:border-primary transition-colors ${
+                          className={`border-2 border-input border-dashed rounded-lg text-center cursor-pointer hover:border-primary transition-colors  ${
+                            isDragActive ? "border-primary bg-primary/10" : ""
+                          } ${
                             form.formState.isSubmitted &&
                             ((!initialValues?._id && !imageFile) ||
                               (initialValues?._id &&
@@ -524,12 +751,20 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                           <input {...getInputProps()} />
                           <div className="flex flex-col items-center justify-center gap-2 aspect-video">
                             <ImagePlus className="h-8 w-8 text-gray-400" />
-                            <p className="text-sm text-gray-500">
-                              Drag & drop an image here, or click to select
-                            </p>
-                            <p className="text-xs text-gray-400">
-                              JPEG, PNG, WEBP (Max 5MB)
-                            </p>
+                            {isDragActive ? (
+                              <p className="text-sm text-primary font-medium">
+                                Drop the image here
+                              </p>
+                            ) : (
+                              <>
+                                <p className="text-sm text-gray-500">
+                                  Drag & drop an image here, or click to select
+                                </p>
+                                <p className="text-xs text-gray-400">
+                                  JPEG, PNG, WEBP (Max 5MB)
+                                </p>
+                              </>
+                            )}
                           </div>
                         </div>
                       )}
@@ -573,7 +808,7 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
               >
                 {createMutation.isPending || updateMutation.isPending ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className=" h-4 w-4 animate-spin" />
                     {initialValues?._id ? "Updating..." : "Creating..."}
                   </>
                 ) : initialValues?._id ? (

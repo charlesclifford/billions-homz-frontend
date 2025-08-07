@@ -211,7 +211,7 @@ const MembersTable = () => {
       cell: ({ row }) => {
         return (
           <span>
-            {moment(row.original?.createdAt).format("MMM DD, YYYY HH:mm A")}
+            {moment(row.original?.createdAt).format("MMM DD, YYYY hh:mm A")}
           </span>
         );
       },
@@ -222,7 +222,7 @@ const MembersTable = () => {
       cell: ({ row }) => {
         return row.original?.lastLogin ? (
           <span>
-            {moment(row.original?.lastLogin).format("MMM DD, YYYY HH:mm A")}
+            {moment(row.original?.lastLogin).format("MMM DD, YYYY hh:mm A")}
           </span>
         ) : (
           <span className="text-muted-foreground">Never</span>

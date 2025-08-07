@@ -25,6 +25,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import useEstates from "@/hooks/useEstates";
 import { IEstate } from "@/interfaces/estate.interface";
 import { deleteEstate } from "@/lib/api/properties";
@@ -163,7 +168,7 @@ const EstateContent = () => {
                 <TableHead>Location</TableHead>
                 <TableHead>Area</TableHead>
                 <TableHead>Price</TableHead>
-                <TableHead>Plots</TableHead>
+                <TableHead>Units</TableHead>
                 <TableHead>Features</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
@@ -224,16 +229,38 @@ const EstateContent = () => {
                           <p className="font-medium">
                             {estate.location.city || estate.location.state}
                           </p>
-                          {estate.location.landmark && (
-                            <p className="text-xs text-muted-foreground">
-                              Near {estate.location.landmark}
-                            </p>
-                          )}
+                          {estate.location.landmarks &&
+                            estate.location.landmarks.length > 0 && (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <p className="text-xs text-muted-foreground cursor-pointer">
+                                    Near {estate.location.landmarks[0]}
+                                    {estate.location.landmarks.length > 1 && (
+                                      <span>
+                                        {" "}
+                                        +{estate.location.landmarks.length -
+                                          1}{" "}
+                                        more
+                                      </span>
+                                    )}
+                                  </p>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <div className="space-y-1">
+                                    {estate.location.landmarks.map(
+                                      (landmark, index) => (
+                                        <p key={index}>{landmark}</p>
+                                      )
+                                    )}
+                                  </div>
+                                </TooltipContent>
+                              </Tooltip>
+                            )}
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      {estate.area ? `${estate.area} m²` : "-"}
+                      {estate.plotSize ? `${estate.plotSize} m²` : "-"}
                     </TableCell>
                     <TableCell>
                       {estate.price ? formatCurrency(estate.price) : "-"}
@@ -241,10 +268,10 @@ const EstateContent = () => {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <span className="font-medium">
-                          {estate.soldPlots || 0}
+                          {estate.soldUnits || 0}
                         </span>
                         <span className="text-muted-foreground">/</span>
-                        <span>{estate.totalPlots || 0}</span>
+                        <span>{estate.totalUnits || 0}</span>
                         <div className="ml-2 w-16">
                           <div className="h-1.5 bg-gray-200 rounded-full">
                             <div
@@ -252,8 +279,8 @@ const EstateContent = () => {
                               style={{
                                 width: `${Math.min(
                                   100,
-                                  ((estate.soldPlots || 0) /
-                                    (estate.totalPlots || 1)) *
+                                  ((estate.soldUnits || 0) /
+                                    (estate.totalUnits || 1)) *
                                     100
                                 )}%`,
                               }}
@@ -283,16 +310,16 @@ const EstateContent = () => {
                     <TableCell>
                       <Badge
                         variant={
-                          estate.soldPlots === estate.totalPlots
+                          estate.soldUnits === estate.totalUnits
                             ? "destructive"
-                            : estate.soldPlots && estate.soldPlots > 0
+                            : estate.soldUnits && estate.soldUnits > 0
                             ? "default"
                             : "secondary"
                         }
                       >
-                        {estate.soldPlots === estate.totalPlots
+                        {estate.soldUnits === estate.totalUnits
                           ? "Sold Out"
-                          : estate.soldPlots && estate.soldPlots > 0
+                          : estate.soldUnits && estate.soldUnits > 0
                           ? "Selling"
                           : "Available"}
                       </Badge>
