@@ -171,7 +171,7 @@ const EstateContent = () => {
                 <TableHead>Units</TableHead>
                 <TableHead>Features</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead >Actions</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

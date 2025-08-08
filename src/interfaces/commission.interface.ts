@@ -11,7 +11,7 @@ export interface IPaymentRequest {
 }
 
 export interface ICommission {
-  _id: string
+  _id: string;
   amount: number;
   rate: number;
   realtor: IRealtor;
@@ -29,5 +29,5 @@ export interface ICommission {
 export interface CommissionsFilterInput {
   page?: number;
   limit?: number;
-  commissionStatus?: string;
+  status?: "pending" | "requested" | "approved" | "rejected" | "processed";
 }

@@ -1,4 +1,5 @@
 "use client";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,10 +17,20 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import useAdminCommissions from "@/hooks/useAdminCommissions";
+import { cn } from "@/lib/utils";
 import { formatCurrency, formatRate } from "@/utils/helpers";
 import { formatDate } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+
+const statusClassMap = {
+  pending: "bg-gray-100 text-gray-800 border-gray-200",
+  requested: "bg-blue-100 text-blue-800 border-blue-200",
+  approved: "bg-green-100 text-green-800 border-green-200",
+  paid: "bg-purple-100 text-purple-800 border-purple-200",
+  rejected: "bg-red-100 text-red-800 border-red-200",
+  processed: "bg-indigo-100 text-indigo-800 border-indigo-200",
+} as const;
 
 const CommissionsContent = () => {
   const router = useRouter();
@@ -111,9 +122,16 @@ const CommissionsContent = () => {
                     </TableCell>
                     <TableCell>{formatCurrency(commission.amount)}</TableCell>
                     <TableCell>
-                      <span className="capitalize">
+                      <Badge
+                        className={cn(
+                          "capitalize border",
+                          statusClassMap[
+                            commission.paymentRequest?.status || "pending"
+                          ]
+                        )}
+                      >
                         {commission.paymentRequest?.status || "pending"}
-                      </span>
+                      </Badge>
                     </TableCell>
                     <TableCell>
                       {formatDate(
