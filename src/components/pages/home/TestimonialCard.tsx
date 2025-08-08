@@ -14,7 +14,7 @@ const TestimonialCard = ({
   };
 }) => {
   return (
-    <div className="rounded-[30px] bg-white relative h-fit">
+    <div className="rounded-[30px] bg-background relative h-fit">
       {/* icon */}
       <div className="absolute right-0 top-0 z-[2]">
         <div className="h-full">
@@ -49,7 +49,7 @@ const TestimonialCard = ({
 
       {/* content */}
       <div className="py-10 px-10">
-        <div className="font-semibold leading-[1.45em] text-[22px] text-black border-b border-b-neutral-200 pb-5 mb-5">
+        <div className="font-semibold leading-[1.45em] text-[22px] border-b border-b-neutral-200 pb-5 mb-5">
           <p>{item.quote}</p>
         </div>
         <div className="flex flex-wrap">

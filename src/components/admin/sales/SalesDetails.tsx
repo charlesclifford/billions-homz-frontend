@@ -131,7 +131,7 @@ const SalesDetails = ({ id }: { id: string }) => {
 
           <ScrollArea className="h-[calc(90vh-180px)] px-6">
             {isPending ? (
-              <div className="flex justify-center items-center h-full">
+              <div className="flex justify-center items-center h-full py-8">
                 <Loader2 className="h-8 w-8 animate-spin" />
               </div>
             ) : sale ? (
@@ -291,7 +291,7 @@ const SalesDetails = ({ id }: { id: string }) => {
                       Proof of Payment
                     </h3>
                     <div
-                      className="relative w-full max-w-md aspect-video border rounded-lg overflow-hidden bg-gray-50 cursor-pointer group"
+                      className="relative w-full max-w-md aspect-video rounded-lg overflow-hidden cursor-pointer group"
                       onClick={() => setShowImagePreview(true)}
                     >
                       <Image
@@ -302,7 +302,7 @@ const SalesDetails = ({ id }: { id: string }) => {
                       />
                       {/* Hover overlay with eye icon */}
                       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-black/50 transition-all duration-200 flex items-center justify-center opacity-0 group-hover:opacity-100">
-                        <Eye className="h-8 w-8 text-white" />
+                        <Eye className="h-6 w-6 text-white" />
                       </div>
                     </div>
                   </div>
@@ -335,6 +335,7 @@ const SalesDetails = ({ id }: { id: string }) => {
             <Button
               type="button"
               variant="outline"
+              className="cursor-pointer"
               onClick={() => setIsOpen(false)}
             >
               Close
