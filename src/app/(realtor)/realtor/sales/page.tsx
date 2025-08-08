@@ -1,11 +1,11 @@
-import SalesPipeline from "@/components/realtor/sales/SalesPipeline";
-import React from "react";
+import RealtorSalesContent from "@/components/realtor/sales/RealtorSalesTable";
+import RealtorSalesHeader from "@/components/realtor/sales/RealtorSalesHeader";
 
 const SalesPage = () => {
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Sales Pipeline</h1>
-      <SalesPipeline />
+    <div className="flex flex-col gap-4">
+      <RealtorSalesHeader />
+      <RealtorSalesContent />
     </div>
   );
 };

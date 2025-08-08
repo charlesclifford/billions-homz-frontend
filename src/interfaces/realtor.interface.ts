@@ -45,3 +45,26 @@ export interface RealtorsFilterInput {
   sortOrder?: "asc" | "desc";
   status?: string;
 }
+
+export interface IRealtorStats {
+  totalSales: number;
+  salesGrowth: number;
+  pendingCommissions: number;
+  pendingRequests: number;
+  approvedCommissions: number;
+  approvedRequests: number;
+  totalEarnings: number;
+  earningsGrowth: number;
+  salesChartData: {
+    month: string;
+    sales: number;
+    commissions: number;
+  }[];
+  recentSales: {
+    id: string;
+    estate: string;
+    buyer: string;
+    amount: number;
+    date: string;
+  }[];
+}
