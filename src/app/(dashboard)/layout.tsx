@@ -24,10 +24,10 @@ export default async function DashboardLayout({
   return (
     <SidebarProvider>
       <AdminSidebar />
-      <main className="relative w-full min-h-dvh flex flex-col">
+      <main className="flex-1 flex flex-col overflow-hidden">
         <AdminHeader />
-        <div className="w-full flex-1 px-4 lg:px-8 py-8 container mx-auto">
-          {children}
+        <div className="flex-1 overflow-y-auto p-4 md:p-6">
+          <div className="max-w-7xl mx-auto">{children}</div>
         </div>
         <AdminFooter />
       </main>
