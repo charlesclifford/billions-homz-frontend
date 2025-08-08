@@ -46,3 +46,13 @@ export const getRealtorCommissions = async (
     handleError(error);
   }
 };
+
+export const requestPayout = async (id: string) => {
+  try {
+    const response = await instance.patch(`/commissions/${id}/request`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};

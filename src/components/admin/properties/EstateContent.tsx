@@ -162,7 +162,7 @@ const EstateContent = () => {
         </CardHeader>
         <CardContent>
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-sidebar dark:bg-background">
               <TableRow>
                 <TableHead>Estate</TableHead>
                 <TableHead>Location</TableHead>
@@ -171,7 +171,7 @@ const EstateContent = () => {
                 <TableHead>Units</TableHead>
                 <TableHead>Features</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead >Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

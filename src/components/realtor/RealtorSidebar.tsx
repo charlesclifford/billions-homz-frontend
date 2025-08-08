@@ -1,14 +1,16 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import {
   CircleGaugeIcon,
-  ClipboardListIcon,
+  FileText,
   HandCoinsIcon, // For commissions
   MailIcon,
   PieChartIcon,
-  UserIcon, // For sales records
-  WalletIcon, // For earnings
+  Settings, // For sales records
+  WalletIcon
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Logo from "../shared/Logo";
@@ -23,8 +25,6 @@ import {
   useSidebar,
 } from "../ui/sidebar";
 import RealtorSidebarUser from "./RealtorSidebarUser";
-import { cn } from "@/lib/utils";
-import Image from "next/image";
 
 interface ISidebarMenu {
   title: string;
@@ -40,9 +40,9 @@ const navMain: ISidebarMenu[] = [
     icon: CircleGaugeIcon,
   },
   {
-    title: "Sales Pipeline",
+    title: "Sales",
     url: "/realtor/sales",
-    icon: ClipboardListIcon,
+    icon: FileText,
     badge: "3", // Example: Number of active deals
   },
   {
@@ -70,9 +70,9 @@ const navSecondary: ISidebarMenu[] = [
     icon: PieChartIcon,
   },
   {
-    title: "Profile",
-    url: "/realtor/profile",
-    icon: UserIcon,
+    title: "Settings",
+    url: "/realtor/settings",
+    icon: Settings,
   },
 ];
 

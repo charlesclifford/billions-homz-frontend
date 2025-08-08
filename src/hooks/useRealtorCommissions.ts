@@ -1,19 +1,20 @@
 "use client";
+
 import {
   CommissionsFilterInput,
   ICommission,
 } from "@/interfaces/commission.interface";
 import { PaginatedResponse } from "@/interfaces/user.interface";
-import { getAllCommissions } from "@/lib/api/commissions";
+import { getRealtorCommissions } from "@/lib/api/commissions";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
-const useCommissions = (params?: CommissionsFilterInput) => {
+export const useRealtorCommissions = (params?: CommissionsFilterInput) => {
   const { data, isPending, error, isError, refetch } = useQuery<
     PaginatedResponse<ICommission>
   >({
-    queryKey: ["allCommissions", params],
-    queryFn: async () => getAllCommissions(params),
+    queryKey: ["realtorCommissions", params],
+    queryFn: async () => getRealtorCommissions(params),
   });
 
   const { commissions, totalCommissions, totalPages } = useMemo(() => {
@@ -37,5 +38,3 @@ const useCommissions = (params?: CommissionsFilterInput) => {
     totalPages,
   };
 };
-
-export default useCommissions;

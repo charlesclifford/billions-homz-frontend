@@ -15,15 +15,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import useCommissions from "@/hooks/useCommissions";
-import { formatCurrency } from "@/utils/helpers";
+import useAdminCommissions from "@/hooks/useAdminCommissions";
+import { formatCurrency, formatRate } from "@/utils/helpers";
 import { formatDate } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const CommissionsContent = () => {
   const router = useRouter();
-  const { commissions, isPending, error } = useCommissions();
+  const { commissions, isPending, error } = useAdminCommissions();
 
   if (error) {
     return (
@@ -58,10 +58,10 @@ const CommissionsContent = () => {
         </CardHeader>
         <CardContent>
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-sidebar dark:bg-background">
               <TableRow>
                 <TableHead>Realtor</TableHead>
-                <TableHead>Property</TableHead>
+                <TableHead>Estate</TableHead>
                 <TableHead>Sale Amount</TableHead>
                 <TableHead>Commission Rate</TableHead>
                 <TableHead>Commission Amount</TableHead>
@@ -75,7 +75,7 @@ const CommissionsContent = () => {
                 <TableRow>
                   <TableCell colSpan={8}>
                     <div className="py-8 flex flex-col gap-2 items-center justify-center">
-                      <Loader2 className="animate-spin" />
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
                       Loading commission records...
                     </div>
                   </TableCell>
@@ -103,7 +103,12 @@ const CommissionsContent = () => {
                     <TableCell>
                       {formatCurrency(commission.sale?.amountPaid)}
                     </TableCell>
-                    <TableCell>{commission.rate}%</TableCell>
+                    <TableCell>
+                      {" "}
+                      {formatRate(commission.rate, {
+                        decimalPlaces: 0,
+                      })}
+                    </TableCell>
                     <TableCell>{formatCurrency(commission.amount)}</TableCell>
                     <TableCell>
                       <span className="capitalize">

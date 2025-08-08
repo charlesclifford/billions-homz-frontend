@@ -1,11 +1,12 @@
-import CommissionsTable from "@/components/realtor/commissions/CommissionsTable";
-import React from "react";
+import RealtorCommissionsHeader from "@/components/realtor/commissions/RealtorCommissionsHeader";
+import RealtorCommissionsTable from "@/components/realtor/commissions/RealtorCommissionsTable";
 
 const ComissionsPage = () => {
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">My Commissions</h1>
-      <CommissionsTable />
+    <div className="flex flex-col gap-4">
+      <RealtorCommissionsHeader />
+      {/* <RealtorCommissionsFilter /> */}
+      <RealtorCommissionsTable />
     </div>
   );
 };

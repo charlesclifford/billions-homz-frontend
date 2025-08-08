@@ -56,7 +56,7 @@ const SalesContent = () => {
         </CardHeader>
         <CardContent>
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-sidebar dark:bg-background">
               <TableRow>
                 <TableHead>Property</TableHead>
                 <TableHead>Buyer</TableHead>
@@ -73,7 +73,7 @@ const SalesContent = () => {
                 <TableRow>
                   <TableCell colSpan={10}>
                     <div className="py-8 flex flex-col gap-2 items-center justify-center">
-                      <Loader2 className="animate-spin" />
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
                       Loading sales records...
                     </div>
                   </TableCell>
