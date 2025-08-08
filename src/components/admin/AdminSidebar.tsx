@@ -9,8 +9,10 @@ import {
   KeyRoundIcon,
   NewspaperIcon,
   SettingsIcon,
+  ShoppingCartIcon,
   UserCog2Icon,
   Users2Icon,
+  WalletIcon,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -54,7 +56,12 @@ const navMain: ISidebarMenu[] = [
   {
     title: "Sales",
     url: "/admin/sales",
-    icon: HomeIcon,
+    icon: ShoppingCartIcon,
+  },
+  {
+    title: "Commissions",
+    url: "/admin/commissions",
+    icon: WalletIcon,
   },
   {
     title: "Realtors",
@@ -108,12 +115,12 @@ const AdminSidebar = () => {
   const isItemActive = (itemUrl: string) => {
     // Exact match
     if (pathname === itemUrl) return true;
-    
+
     // Special case for "/admin" to prevent matching all admin routes
     if (itemUrl === "/admin") {
       return pathname === "/admin";
     }
-    
+
     // Match parent routes and their nested routes
     return pathname.startsWith(`${itemUrl}/`) || pathname === itemUrl;
   };

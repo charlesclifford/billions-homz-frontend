@@ -1,12 +1,11 @@
 "use client";
-import { ISale } from "@/interfaces/sales.interface";
+import { ISale, SalesFilterInput } from "@/interfaces/sales.interface";
 import { PaginatedResponse } from "@/interfaces/user.interface";
 import { getAllSales } from "@/lib/api/sales";
-import { EstateFilterState } from "@/store/features/property/estate.slice";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
-const useSales = (params?: EstateFilterState) => {
+const useSales = (params?: SalesFilterInput) => {
   const { data, isPending, error, isError, refetch } = useQuery<
     PaginatedResponse<ISale>
   >({
