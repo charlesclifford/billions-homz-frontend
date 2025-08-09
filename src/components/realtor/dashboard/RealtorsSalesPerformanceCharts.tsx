@@ -175,12 +175,12 @@ const RealtorSalesPerformanceCharts = () => {
                   <ChartTooltip
                     content={
                       <ChartTooltipContent
-                        formatter={(value, name) => {
-                          return name === "salesAmount"
-                            ? [formatCurrency(value as number), "Sales Amount"]
-                            : [value, "Sales Count"];
-                        }}
-                        indicator="line"
+                        // formatter={(value, name) => {
+                        //   return name === "salesAmount"
+                        //     ? [formatCurrency(value as number), "Sales Amount"]
+                        //     : [value, "Sales Count"];
+                        // }}
+                        indicator="dot"
                       />
                     }
                   />
