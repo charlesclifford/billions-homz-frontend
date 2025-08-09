@@ -56,13 +56,14 @@ const SalesContent = () => {
         </CardHeader>
         <CardContent>
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-sidebar dark:bg-background">
               <TableRow>
                 <TableHead>Property</TableHead>
                 <TableHead>Buyer</TableHead>
                 <TableHead>Realtor</TableHead>
                 <TableHead>Unit</TableHead>
                 <TableHead>Amount Paid</TableHead>
+                <TableHead>Date of Purchase</TableHead>
                 <TableHead>Payment Type</TableHead>
                 <TableHead>Date Created</TableHead>
                 <TableHead>Actions</TableHead>
@@ -73,7 +74,7 @@ const SalesContent = () => {
                 <TableRow>
                   <TableCell colSpan={10}>
                     <div className="py-8 flex flex-col gap-2 items-center justify-center">
-                      <Loader2 className="animate-spin" />
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
                       Loading sales records...
                     </div>
                   </TableCell>
@@ -110,6 +111,9 @@ const SalesContent = () => {
                     </TableCell>
                     <TableCell>{sale.units}</TableCell>
                     <TableCell>{formatCurrency(sale.amountPaid)}</TableCell>
+                    <TableCell>
+                      {formatDate(sale.dateSold, "MMM dd, yyyy")}
+                    </TableCell>
                     <TableCell>
                       <span className="capitalize">{sale.paymentType}</span>
                     </TableCell>

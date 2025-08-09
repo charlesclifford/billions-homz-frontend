@@ -20,7 +20,7 @@ interface Realtorstate {
   error: string | null;
 }
 
-export const SLICE_NAME = "user";
+export const SLICE_NAME = "realtor";
 
 export const initialFilterState: RealtorsFilterState = {
   page: 1,

@@ -39,3 +39,27 @@ export interface IAdmin {
   isVerified: boolean;
   role: "admin" | "super_admin";
 }
+
+export interface IDashboardStats {
+  totalProperties: number;
+  available: number;
+  availablePercentage: number;
+  sold: {
+    total: number;
+    percentage: number;
+  };
+  totalRevenue: number;
+  requested: number;
+}
+
+export interface IDashboardSalesPerformance {
+  year: number;
+  monthlyData: MonthlyData[];
+}
+
+interface MonthlyData {
+  month: number;
+  name: string;
+  salesCount: number;
+  salesAmount: number;
+}

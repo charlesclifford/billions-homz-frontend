@@ -29,7 +29,7 @@ export const getAllRealtors = async (params?: RealtorsFilterInput) => {
 };
 
 export const getRealtorById = async (id: string) => {
-  const res = await instance.get(`/realtors/${id}`);
+  const res = await instance.get(`/realtors/single/${id}`);
   return res.data;
 };
 

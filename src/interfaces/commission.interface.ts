@@ -2,16 +2,23 @@ import { IAdmin } from "./admin.interface";
 import { IRealtor } from "./realtor.interface";
 import { ISale } from "./sales.interface";
 
+export type StatusType =
+  | "pending"
+  | "requested"
+  | "approved"
+  | "rejected"
+  | "processed";
+
 export interface IPaymentRequest {
   requestedAt?: string;
   requestNote?: string;
-  status: "pending" | "requested" | "approved" | "rejected" | "processed";
+  status: StatusType;
   rejectedReason?: string;
   processedAt?: string;
 }
 
 export interface ICommission {
-  _id: string
+  _id: string;
   amount: number;
   rate: number;
   realtor: IRealtor;
@@ -29,5 +36,5 @@ export interface ICommission {
 export interface CommissionsFilterInput {
   page?: number;
   limit?: number;
-  commissionStatus?: string;
+  status?: StatusType;
 }

@@ -1,5 +1,6 @@
-"use client"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+"use client";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -8,45 +9,42 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-
-const pendingCommissions = [
-  {
-    id: "comm-001",
-    realtor: "John Smith",
-    property: "Lakeside Villa",
-    amount: 12500,
-    status: "pending",
-    date: "2023-06-10",
-  },
-  {
-    id: "comm-002",
-    realtor: "Sarah Johnson",
-    property: "Downtown Loft",
-    amount: 8700,
-    status: "pending",
-    date: "2023-06-08",
-  },
-  {
-    id: "comm-003",
-    realtor: "Michael Chen",
-    property: "Suburban Duplex",
-    amount: 9600,
-    status: "processing",
-    date: "2023-06-05",
-  },
-  {
-    id: "comm-004",
-    realtor: "Emily Wilson",
-    property: "Mountain Retreat",
-    amount: 15300,
-    status: "pending",
-    date: "2023-06-03",
-  },
-];
+import useAdminCommissions from "@/hooks/useAdminCommissions";
+import { formatCurrency } from "@/utils/helpers";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function PendingCommissions() {
+  const router = useRouter();
+  const { commissions, isPending, error } = useAdminCommissions({
+    page: 1,
+    limit: 5,
+    status: "pending",
+  });
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Pending Commissions</CardTitle>
+        </CardHeader>
+        <CardContent className="text-center py-8">
+          <p className="text-red-500">Failed to load commissions</p>
+          <p className="text-sm text-muted-foreground mt-2">
+            {error.message || "Please try again later"}
+          </p>
+          <Button
+            variant="outline"
+            className="mt-4"
+            onClick={() => router.refresh()}
+          >
+            Retry
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -54,42 +52,52 @@ export function PendingCommissions() {
       </CardHeader>
       <CardContent>
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-sidebar dark:bg-background">
             <TableRow>
               <TableHead>Realtor</TableHead>
               <TableHead>Property</TableHead>
               <TableHead>Amount</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>
-            {pendingCommissions.map((commission) => (
-              <TableRow key={commission.id}>
-                <TableCell>{commission.realtor}</TableCell>
-                <TableCell>{commission.property}</TableCell>
-                <TableCell>${commission.amount.toLocaleString()}</TableCell>
-                <TableCell>
-                  <Badge
-                    variant={
-                      commission.status === "pending" ? "outline" : "default"
-                    }
-                  >
-                    {commission.status}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
-                      View
-                    </Button>
-                    {commission.status === "pending" && (
-                      <Button size="sm">Pay</Button>
-                    )}
+            {isPending ? (
+              <TableRow>
+                <TableCell colSpan={5}>
+                  <div className="py-8 flex flex-col gap-2 items-center justify-center">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    <p className="text-sm text-muted-foreground">
+                      Loading pending commissions...
+                    </p>
                   </div>
                 </TableCell>
               </TableRow>
-            ))}
+            ) : commissions.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-8">
+                  <p className="text-muted-foreground">
+                    No pending commissions found
+                  </p>
+                </TableCell>
+              </TableRow>
+            ) : (
+              commissions.map((commission) => (
+                <TableRow key={commission._id}>
+                  <TableCell>
+                    <span className="capitalize">
+                      {commission.realtor?.firstName}{" "}
+                      {commission.realtor?.lastName}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="capitalize">
+                      {commission.sale?.estate?.name || "N/A"}
+                    </span>
+                  </TableCell>
+                  <TableCell>{formatCurrency(commission.amount)}</TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </CardContent>

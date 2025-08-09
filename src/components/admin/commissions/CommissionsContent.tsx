@@ -1,4 +1,5 @@
 "use client";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,15 +16,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import useCommissions from "@/hooks/useCommissions";
-import { formatCurrency } from "@/utils/helpers";
+import useAdminCommissions from "@/hooks/useAdminCommissions";
+import { cn } from "@/lib/utils";
+import { formatCurrency, formatRate } from "@/utils/helpers";
 import { formatDate } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+const statusClassMap = {
+  pending: "bg-gray-100 text-gray-800 border-gray-200",
+  requested: "bg-blue-100 text-blue-800 border-blue-200",
+  approved: "bg-green-100 text-green-800 border-green-200",
+  paid: "bg-purple-100 text-purple-800 border-purple-200",
+  rejected: "bg-red-100 text-red-800 border-red-200",
+  processed: "bg-indigo-100 text-indigo-800 border-indigo-200",
+} as const;
+
 const CommissionsContent = () => {
   const router = useRouter();
-  const { commissions, isPending, error } = useCommissions();
+  const { commissions, isPending, error } = useAdminCommissions();
 
   if (error) {
     return (
@@ -58,10 +69,10 @@ const CommissionsContent = () => {
         </CardHeader>
         <CardContent>
           <Table>
-            <TableHeader>
+            <TableHeader className="bg-sidebar dark:bg-background">
               <TableRow>
                 <TableHead>Realtor</TableHead>
-                <TableHead>Property</TableHead>
+                <TableHead>Estate</TableHead>
                 <TableHead>Sale Amount</TableHead>
                 <TableHead>Commission Rate</TableHead>
                 <TableHead>Commission Amount</TableHead>
@@ -75,7 +86,7 @@ const CommissionsContent = () => {
                 <TableRow>
                   <TableCell colSpan={8}>
                     <div className="py-8 flex flex-col gap-2 items-center justify-center">
-                      <Loader2 className="animate-spin" />
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
                       Loading commission records...
                     </div>
                   </TableCell>
@@ -103,12 +114,24 @@ const CommissionsContent = () => {
                     <TableCell>
                       {formatCurrency(commission.sale?.amountPaid)}
                     </TableCell>
-                    <TableCell>{commission.rate}%</TableCell>
+                    <TableCell>
+                      {" "}
+                      {formatRate(commission.rate, {
+                        decimalPlaces: 0,
+                      })}
+                    </TableCell>
                     <TableCell>{formatCurrency(commission.amount)}</TableCell>
                     <TableCell>
-                      <span className="capitalize">
+                      <Badge
+                        className={cn(
+                          "capitalize border",
+                          statusClassMap[
+                            commission.paymentRequest?.status || "pending"
+                          ]
+                        )}
+                      >
                         {commission.paymentRequest?.status || "pending"}
-                      </span>
+                      </Badge>
                     </TableCell>
                     <TableCell>
                       {formatDate(

@@ -1,8 +1,28 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { InviteAdminFormValues } from "@/components/admin/members/UpdateAdmin";
 import { CreateAdminInput } from "@/interfaces/admin.interface";
+import { SalesPerformanceFilter } from "@/interfaces/realtor.interface";
 import { UsersFilterInput } from "@/interfaces/user.interface";
 import instance from "@/services/axios";
 import { AxiosRequestConfig } from "axios";
+
+// Handle responses and errors
+const handleResponse = (response: any) => {
+  if (response.status >= 200 && response.status < 300) {
+    return response.data;
+  }
+  throw new Error(response.data.message || "Request failed");
+};
+
+const handleError = (error: any) => {
+  if (error.response) {
+    throw new Error(error.response.data.error || "Request failed");
+  } else if (error.request) {
+    throw new Error("No response received from the server");
+  } else {
+    throw new Error(error.message || "Request failed");
+  }
+};
 
 export const getAllAdmins = async (params?: UsersFilterInput) => {
   const res = await instance.get("/admins", { params });
@@ -10,7 +30,7 @@ export const getAllAdmins = async (params?: UsersFilterInput) => {
 };
 
 export const getAdminById = async (id: string) => {
-  const res = await instance.get(`/admins/${id}`);
+  const res = await instance.get(`/admins/single/${id}`);
   return res.data;
 };
 
@@ -36,4 +56,26 @@ export const uploadAdminAvatar = async (
 ) => {
   const res = await instance.patch(`/admins/${id}/avatar`, data, options);
   return res.data;
+};
+
+export const getDashboardStats = async () => {
+  try {
+    const response = await instance.get(`/admins/dashboard-stats`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const getSalesPerformance = async (params?: SalesPerformanceFilter) => {
+  try {
+    const response = await instance.get(`/admins/sales-performance`, {
+      params,
+    });
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
 };
