@@ -67,7 +67,7 @@ export function PendingApprovals() {
           <TableBody>
             {isPending ? (
               <TableRow>
-                <TableCell colSpan={5}>
+                <TableCell colSpan={7}>
                   <div className="py-8 flex flex-col gap-2 items-center justify-center">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
                     <p className="text-sm text-muted-foreground">

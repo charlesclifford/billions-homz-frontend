@@ -26,7 +26,7 @@ const EarningsOverview = () => {
                 {formatCurrency(stats?.totalEarnings as number)}
               </p>
               <p className="text-xs text-muted-foreground">
-                +{stats?.earningsGrowth}% from last period
+                {/* +{stats?.earningsGrowth}% from last period */}
               </p>
             </>
           )}
@@ -37,7 +37,7 @@ const EarningsOverview = () => {
       <Card>
         <CardHeader>
           <CardTitle className="text-sm font-medium">
-            Pending Payments
+            Pending Earnings
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -52,7 +52,7 @@ const EarningsOverview = () => {
                 {formatCurrency(stats?.pendingCommissions as number)}
               </p>
               <p className="text-xs text-muted-foreground">
-                {stats?.pendingRequests} pending requests
+                {/* {stats?.pendingRequests} pending requests */}
               </p>
             </>
           )}
@@ -62,7 +62,7 @@ const EarningsOverview = () => {
       {/* Total Sales Card */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm font-medium">Total Sales</CardTitle>
+          <CardTitle className="text-sm font-medium">Deals Closed</CardTitle>
         </CardHeader>
         <CardContent>
           {isPending ? (
@@ -72,9 +72,9 @@ const EarningsOverview = () => {
             </div>
           ) : (
             <>
-              <p className="text-2xl font-bold">{stats?.totalSales}</p>
+              {/* <p className="text-2xl font-bold">{stats?.totalSales}</p> */}
               <p className="text-xs text-muted-foreground">
-                +{stats?.salesGrowth}% from last period
+                {/* +{stats?.salesGrowth}% from last period */}
               </p>
             </>
           )}

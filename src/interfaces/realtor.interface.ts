@@ -47,24 +47,32 @@ export interface RealtorsFilterInput {
 }
 
 export interface IRealtorStats {
-  totalSales: number;
-  salesGrowth: number;
+  availablePropertiesCount: number;
   pendingCommissions: number;
-  pendingRequests: number;
-  approvedCommissions: number;
-  approvedRequests: number;
+  soldPropertiesCount: number;
   totalEarnings: number;
-  earningsGrowth: number;
-  salesChartData: {
-    month: string;
-    sales: number;
-    commissions: number;
-  }[];
-  recentSales: {
-    id: string;
-    estate: string;
-    buyer: string;
-    amount: number;
-    date: string;
-  }[];
+}
+
+export interface IRealtorSalesPerformance {
+  year: number; // The year this data represents
+  monthlyData: MonthlySalesData[]; // Array of monthly data
+  topEstates: TopEstate[];
+}
+
+interface MonthlySalesData {
+  month: number; // 1-12 representing January-December
+  name: string; // Short month name (e.g., "Jan", "Feb")
+  salesCount: number; // Number of sales in this month
+  salesAmount: number; // Total sales amount in this month
+}
+
+interface TopEstate {
+  estateName: string; // Name of the estate
+  estateId: string; // MongoDB ID of the estate
+  count: number; // Number of sales for this estate
+  totalAmount: number; // Total sales amount for this estate
+}
+
+export interface SalesPerformanceFilter {
+  year: number;
 }

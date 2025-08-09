@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { SalesPerformanceFilter } from "@/interfaces/realtor.interface";
 import instance from "@/services/axios";
 
 // Handle responses and errors
@@ -22,7 +23,21 @@ const handleError = (error: any) => {
 
 export const getRealtorStats = async () => {
   try {
-    const response = await instance.get(`/realtors/dashboard/stats`);
+    const response = await instance.get(`/realtors/dashboard-stats`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const getRealtorSalesPerformance = async (
+  params?: SalesPerformanceFilter
+) => {
+  try {
+    const response = await instance.get(`/realtors/sales-performance`, {
+      params,
+    });
 
     return handleResponse(response);
   } catch (error) {

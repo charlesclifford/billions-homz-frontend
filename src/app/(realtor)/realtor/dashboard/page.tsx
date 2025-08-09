@@ -1,9 +1,14 @@
-import DashboardContent from "@/components/admin/realtors/DashboardContent";
+import DashboardContent from "@/components/realtor/dashboard/DashboardContent";
 
 const RealtorDashoard = () => {
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Dashboard</h1>
+      <div className="col-span-1">
+        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <p className="text-muted-foreground">
+          Overview
+        </p>
+      </div>
 
       <DashboardContent />
     </div>

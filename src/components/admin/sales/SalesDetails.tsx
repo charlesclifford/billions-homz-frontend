@@ -16,7 +16,7 @@ import { config } from "@/utils/config";
 import { formatCurrency } from "@/utils/helpers";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { Eye, Home, Landmark, Loader2, MapPin, Printer } from "lucide-react";
+import { Eye, Loader2, MapPin, Printer } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { useReactToPrint } from "react-to-print";
@@ -145,7 +145,7 @@ const SalesDetails = ({ id }: { id: string }) => {
                     </h3>
                     <div className="space-y-2">
                       <div className="flex items-start">
-                        <span className="w-32 font-medium text-neutral-600">
+                        <span className="w-36 font-medium text-neutral-600">
                           Estate:
                         </span>
                         <span className="flex-1 capitalize">
@@ -153,28 +153,25 @@ const SalesDetails = ({ id }: { id: string }) => {
                         </span>
                       </div>
                       <div className="flex items-center">
-                        <span className="w-32 font-medium text-neutral-600">
+                        <span className="w-36 font-medium text-neutral-600">
                           Type:
                         </span>
                         {sale.estate.estateType === "house" ? (
                           <span className="flex items-center gap-2">
-                            <Home className="h-4 w-4 text-gray-700" />
                             <span>House</span>
                           </span>
                         ) : (
                           <span className="flex items-center gap-2">
-                            <Landmark className="h-4 w-4 text-gray-700" />
                             <span>Land</span>
                           </span>
                         )}
                       </div>
                       {sale.estate.location.address && (
                         <div className="flex items-start">
-                          <span className="w-32 font-medium text-neutral-600">
+                          <span className="w-36 font-medium text-neutral-600">
                             Address:
                           </span>
                           <span className="flex items-start gap-2 flex-1">
-                            <MapPin className="h-4 w-4 mt-0.5 text-gray-700 flex-shrink-0" />
                             <span>{sale.estate.location.city}</span>
                           </span>
                         </div>
@@ -189,7 +186,7 @@ const SalesDetails = ({ id }: { id: string }) => {
                     </h3>
                     <div className="space-y-2">
                       <div className="flex items-center">
-                        <span className="w-32 font-medium text-neutral-600">
+                        <span className="w-36 font-medium text-neutral-600">
                           Status:
                         </span>
                         <Badge
@@ -200,13 +197,23 @@ const SalesDetails = ({ id }: { id: string }) => {
                         </Badge>
                       </div>
                       <div className="flex items-center">
-                        <span className="w-32 font-medium text-neutral-600">
-                          Date:
+                        <span className="w-36 font-medium text-neutral-600">
+                          Date Created:
                         </span>
                         <span>{format(new Date(sale.createdAt), "PPPp")}</span>
                       </div>
                       <div className="flex items-center">
-                        <span className="w-32 font-medium text-neutral-600">
+                        <span className="w-36 font-medium text-neutral-600">
+                          Date of Purchase:
+                        </span>
+                        <span>
+                          {sale.dateSold
+                            ? format(new Date(sale.dateSold), "PPP")
+                            : "Not specified"}
+                        </span>
+                      </div>
+                      <div className="flex items-center">
+                        <span className="w-36 font-medium text-neutral-600">
                           Reference:
                         </span>
                         <code className="bg-gray-100 dark:bg-card px-2 py-1 rounded text-sm">
@@ -226,20 +233,20 @@ const SalesDetails = ({ id }: { id: string }) => {
                     </h3>
                     <div className="space-y-2">
                       <div className="flex items-center">
-                        <span className="w-32 font-medium text-neutral-600">
+                        <span className="w-36 font-medium text-neutral-600">
                           Name:
                         </span>
                         <span className="">{sale.buyerName}</span>
                       </div>
                       <div className="flex items-center">
-                        <span className="w-32 font-medium text-neutral-600">
+                        <span className="w-36 font-medium text-neutral-600">
                           Phone:
                         </span>
                         <span>{sale.buyerPhone}</span>
                       </div>
                       {sale.buyerEmail && (
                         <div className="flex items-center">
-                          <span className="w-32 font-medium text-neutral-600">
+                          <span className="w-36 font-medium text-neutral-600">
                             Email:
                           </span>
                           <span>{sale.buyerEmail}</span>
@@ -255,7 +262,7 @@ const SalesDetails = ({ id }: { id: string }) => {
                     </h3>
                     <div className="space-y-2">
                       <div className="flex items-center">
-                        <span className="w-32 font-medium text-neutral-600">
+                        <span className="w-36 font-medium text-neutral-600">
                           Amount:
                         </span>
                         <span className="font-medium text-green-600">
@@ -263,19 +270,19 @@ const SalesDetails = ({ id }: { id: string }) => {
                         </span>
                       </div>
                       <div className="flex items-center">
-                        <span className="w-32 font-medium text-neutral-600">
+                        <span className="w-36 font-medium text-neutral-600">
                           Type:
                         </span>
                         <span>{paymentTypeMap[sale.paymentType]}</span>
                       </div>
                       <div className="flex items-center">
-                        <span className="w-32 font-medium text-neutral-600">
+                        <span className="w-36 font-medium text-neutral-600">
                           Method:
                         </span>
                         <span>{paymentMethodMap[sale.paymentMethod]}</span>
                       </div>
                       <div className="flex items-center">
-                        <span className="w-32 font-medium text-neutral-600">
+                        <span className="w-36 font-medium text-neutral-600">
                           Units:
                         </span>
                         <span>{sale.units}</span>
@@ -385,6 +392,16 @@ const SalesDetails = ({ id }: { id: string }) => {
                     <div className="text-left">
                       <p className="text-sm text-gray-500">Invoice Date</p>
                       <p>{format(new Date(sale.createdAt), "MMMM dd, yyyy")}</p>
+                      {sale.dateSold && (
+                        <>
+                          <p className="text-sm text-gray-500 mt-2">
+                            Purchase Date
+                          </p>
+                          <p>
+                            {format(new Date(sale.dateSold), "MMMM dd, yyyy")}
+                          </p>
+                        </>
+                      )}
                     </div>
                     <div className="text-right">
                       <p className="text-sm text-gray-500">Invoice #</p>
@@ -476,9 +493,12 @@ const SalesDetails = ({ id }: { id: string }) => {
                               {paymentTypeMap[sale.paymentType]} •{" "}
                               {paymentMethodMap[sale.paymentMethod]}
                             </p>
-                          </td>
-                          <td className="px-4 py-3 text-right font-medium">
-                            {formatCurrency(sale.amountPaid)}
+                            {sale.dateSold && (
+                              <p className="text-xs text-gray-500 mt-1">
+                                Purchased on:{" "}
+                                {format(new Date(sale.dateSold), "PPP")}
+                              </p>
+                            )}
                           </td>
                         </tr>
                         <tr className="bg-gray-50 border-t border-gray-200">

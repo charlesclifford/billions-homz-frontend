@@ -63,6 +63,7 @@ const SalesContent = () => {
                 <TableHead>Realtor</TableHead>
                 <TableHead>Unit</TableHead>
                 <TableHead>Amount Paid</TableHead>
+                <TableHead>Date of Purchase</TableHead>
                 <TableHead>Payment Type</TableHead>
                 <TableHead>Date Created</TableHead>
                 <TableHead>Actions</TableHead>
@@ -110,6 +111,9 @@ const SalesContent = () => {
                     </TableCell>
                     <TableCell>{sale.units}</TableCell>
                     <TableCell>{formatCurrency(sale.amountPaid)}</TableCell>
+                    <TableCell>
+                      {formatDate(sale.dateSold, "MMM dd, yyyy")}
+                    </TableCell>
                     <TableCell>
                       <span className="capitalize">{sale.paymentType}</span>
                     </TableCell>

@@ -47,10 +47,15 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { useDropzone } from "react-dropzone";
-import { ImagePlus, Loader2, X } from "lucide-react";
+import { CalendarIcon, ImagePlus, Loader2, X } from "lucide-react";
 import Image from "next/image";
 import { InputWithAffix } from "@/components/shared/InputWithAffix";
 import { NairaIcon } from "../properties/EstateForm";
+import { formatCurrency } from "@/utils/helpers";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { Calendar } from "@/components/ui/calendar";
 
 const formSchema = z.object({
   estate: z.string().min(1, "Estate is required"),
@@ -65,6 +70,9 @@ const formSchema = z.object({
   realtor: z.string().optional(),
   notes: z.string().optional(),
   paymentProof: z.any().optional(),
+  dateSold: z.date({
+    required_error: "Date of purchase is required",
+  }),
 });
 
 export type SalesFormValues = z.infer<typeof formSchema>;
@@ -104,6 +112,7 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
       paymentMethod: "cash",
       realtor: undefined,
       notes: "",
+      dateSold: undefined,
     },
   });
 
@@ -111,6 +120,9 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
     if (initialValues) {
       if (initialValues.paymentProof?.imageUrl) {
         setPreviewImage(initialValues.paymentProof.imageUrl);
+      }
+      if (initialValues.dateSold) {
+        form.setValue("dateSold", new Date(initialValues.dateSold));
       }
     }
   }, [initialValues, form]);
@@ -177,6 +189,8 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
       formData.append("realtor", values.realtor);
     }
 
+    formData.append("dateSold", values.dateSold.toISOString());
+
     // Append file if exists
     if (imageFile) {
       formData.append("file", imageFile);
@@ -212,6 +226,48 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
         className="space-y-6 p-4 h-full"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="dateSold"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Date of Purchase</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-full pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value ? (
+                          format(field.value, "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date("1900-01-01")
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           {/* Estate and Unit */}
           <FormField
             control={form.control}
@@ -232,7 +288,7 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
                         value={estate._id}
                         className="capitalize"
                       >
-                        {estate.name}
+                        {estate.name} ({formatCurrency(estate.price as number)})
                       </SelectItem>
                     ))}
                   </SelectContent>

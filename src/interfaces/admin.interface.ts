@@ -41,27 +41,25 @@ export interface IAdmin {
 }
 
 export interface IDashboardStats {
-  cards: {
-    totalProperties: number;
-    available: number;
-    sold: {
-      _id: string | null;
-      totalSoldUnits: number;
-    }[];
-    totalRevenue: number;
-    requested: number;
+  totalProperties: number;
+  available: number;
+  availablePercentage: number;
+  sold: {
+    total: number;
+    percentage: number;
   };
-  charts: {
-    salesPerformance: {
-      _id: {
-        month: number;
-        year: number;
-      };
-      total: number;
-    }[];
-    inventoryDistribution: {
-      _id: string;
-      count: number;
-    }[];
-  };
+  totalRevenue: number;
+  requested: number;
+}
+
+export interface IDashboardSalesPerformance {
+  year: number;
+  monthlyData: MonthlyData[];
+}
+
+interface MonthlyData {
+  month: number;
+  name: string;
+  salesCount: number;
+  salesAmount: number;
 }

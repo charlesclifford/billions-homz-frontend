@@ -33,4 +33,6 @@ export interface ISale {
 
   createdAt: string;
   updatedAt: string;
+
+  dateSold: string
 }

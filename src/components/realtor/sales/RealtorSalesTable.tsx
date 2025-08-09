@@ -96,6 +96,7 @@ const RealtorSalesTable = () => {
                 <TableHead>Buyer</TableHead>
                 <TableHead>Units</TableHead>
                 <TableHead>Amount Paid</TableHead>
+                <TableHead>Date of Purchase</TableHead>
                 <TableHead>Payment Type</TableHead>
                 <TableHead>Date Created</TableHead>
                 <TableHead>Actions</TableHead>
@@ -144,17 +145,16 @@ const RealtorSalesTable = () => {
                     <TableCell>{sale.units}</TableCell>
                     <TableCell>{formatCurrency(sale.amountPaid)}</TableCell>
                     <TableCell>
+                      {formatDate(sale.dateSold, "MMM dd, yyyy")}
+                    </TableCell>
+                    <TableCell>
                       <span className="capitalize">{sale.paymentType}</span>
                     </TableCell>
                     <TableCell>
                       {formatDate(sale.createdAt, "MMM dd, yyyy hh:mm a")}
                     </TableCell>
                     <TableCell>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => router.push(`/sales/${sale._id}`)}
-                      >
+                      <Button variant="outline" size="sm">
                         View
                       </Button>
                     </TableCell>

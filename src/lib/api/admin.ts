@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { InviteAdminFormValues } from "@/components/admin/members/UpdateAdmin";
 import { CreateAdminInput } from "@/interfaces/admin.interface";
+import { SalesPerformanceFilter } from "@/interfaces/realtor.interface";
 import { UsersFilterInput } from "@/interfaces/user.interface";
 import instance from "@/services/axios";
 import { AxiosRequestConfig } from "axios";
@@ -29,7 +30,7 @@ export const getAllAdmins = async (params?: UsersFilterInput) => {
 };
 
 export const getAdminById = async (id: string) => {
-  const res = await instance.get(`/admins/${id}`);
+  const res = await instance.get(`/admins/single/${id}`);
   return res.data;
 };
 
@@ -59,7 +60,19 @@ export const uploadAdminAvatar = async (
 
 export const getDashboardStats = async () => {
   try {
-    const response = await instance.get(`/admins/dashboard/stats`);
+    const response = await instance.get(`/admins/dashboard-stats`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const getSalesPerformance = async (params?: SalesPerformanceFilter) => {
+  try {
+    const response = await instance.get(`/admins/sales-performance`, {
+      params,
+    });
 
     return handleResponse(response);
   } catch (error) {

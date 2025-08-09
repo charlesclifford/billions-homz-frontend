@@ -266,13 +266,15 @@ const EstateContent = () => {
                       {estate.price ? formatCurrency(estate.price) : "-"}
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2">
-                        <span className="font-medium">
-                          {estate.soldUnits || 0}
-                        </span>
-                        <span className="text-muted-foreground">/</span>
-                        <span>{estate.totalUnits || 0}</span>
-                        <div className="ml-2 w-16">
+                      <div className="flex flex-col gap-1">
+                        <div>
+                          <span className="font-medium">
+                            {estate.soldUnits || 0}
+                          </span>
+                          <span className="text-muted-foreground">/</span>
+                          <span>{estate.totalUnits || 0}</span>
+                        </div>
+                        <div className="w-16">
                           <div className="h-1.5 bg-gray-200 rounded-full">
                             <div
                               className="h-1.5 bg-green-500 rounded-full"

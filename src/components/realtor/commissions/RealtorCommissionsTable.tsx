@@ -1,5 +1,6 @@
 "use client";
 
+import { getPaginationRange } from "@/components/shared/DataTable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,19 +28,33 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useRealtorCommissions } from "@/hooks/useRealtorCommissions";
+import { ICommission, StatusType } from "@/interfaces/commission.interface";
+import { cn } from "@/lib/utils";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { formatCurrency, formatRate } from "@/utils/helpers";
 import { formatDate } from "date-fns";
 import { Loader2 } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { RequestPayoutButton } from "./RequestPayoutButton";
-import { getPaginationRange } from "@/components/shared/DataTable";
-import { cn } from "@/lib/utils";
+import { setTabPage } from "@/store/features/commissions/commisson.slice";
 
-const RealtorCommissionsTable = () => {
+interface RealtorCommissionsTableProps {
+  title?: string;
+  description?: string;
+  headers: string[];
+  status: StatusType;
+}
+
+const RealtorCommissionsTable = ({
+  title,
+  description,
+  headers,
+  status,
+}: RealtorCommissionsTableProps) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const currentPage = parseInt(searchParams.get("page") || "1");
+  const dispatch = useAppDispatch();
+  const { tabPagination } = useAppSelector((state) => state.commission);
+  const currentPage = tabPagination[status]?.page || 1;
 
   const {
     commissions,
@@ -48,21 +63,29 @@ const RealtorCommissionsTable = () => {
     totalCommissions,
     totalPages,
     refetch,
-  } = useRealtorCommissions({ page: currentPage });
+  } = useRealtorCommissions({
+    page: currentPage,
+    status,
+    limit: tabPagination[status]?.limit || 10,
+  });
 
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
-      return params.toString();
-    },
-    [searchParams]
-  );
+  // const createQueryString = useCallback(
+  //   (name: string, value: string) => {
+  //     const params = new URLSearchParams(searchParams.toString());
+  //     params.set(name, value);
+  //     return params.toString();
+  //   },
+  //   [searchParams]
+  // );
+
+  // const handlePageChange = (newPage: number) => {
+  //   router.push(
+  //     `/realtor/commissions?${createQueryString(pageParam, newPage.toString())}`
+  //   );
+  // };
 
   const handlePageChange = (newPage: number) => {
-    router.push(
-      `/realtor/commissions?${createQueryString("page", newPage.toString())}`
-    );
+    dispatch(setTabPage({ status, page: newPage }));
   };
 
   if (error) {
@@ -87,35 +110,94 @@ const RealtorCommissionsTable = () => {
     );
   }
 
+  const renderTableCell = (commission: ICommission, header: string) => {
+    switch (header) {
+      case "Estate":
+        return (
+          <span className="capitalize">
+            {commission.sale.estate?.name || "N/A"}
+          </span>
+        );
+      case "Buyer":
+        return commission.sale?.buyerName || "N/A";
+      case "Sale Amount":
+        return formatCurrency(commission.sale?.amountPaid);
+      case "Commission Rate":
+        return formatRate(commission.rate, { decimalPlaces: 0 });
+      case "Commission Amount":
+        return formatCurrency(commission.amount);
+      case "Status":
+        return (
+          <Badge
+            variant={
+              commission.paymentRequest.status === "approved"
+                ? "default"
+                : commission.paymentRequest.status === "requested"
+                ? "secondary"
+                : "outline"
+            }
+            className="capitalize"
+          >
+            {commission.paymentRequest.status}
+          </Badge>
+        );
+      case "Date":
+        return formatDate(
+          commission.createdAt || new Date(),
+          "MMM dd, yyyy"
+        );
+      case "Request Date":
+        return formatDate(
+          commission.paymentRequest.requestedAt || new Date(),
+          "MMM dd, yyyy"
+        );
+      case "Payment Date":
+        return commission.paymentRequest?.processedAt
+          ? formatDate(commission.paymentRequest.processedAt, "MMM dd, yyyy")
+          : "N/A";
+      case "Action":
+        return (
+          <RequestPayoutButton
+            commissionId={commission._id}
+            disabled={commission.paymentRequest.status !== "pending"}
+          />
+        );
+      case "Details":
+        return (
+          <Button variant="ghost" size="sm">
+            View Details
+          </Button>
+        );
+      default:
+        return "N/A";
+    }
+  };
+
   return (
     <div className="space-y-4">
       <Card>
         <CardHeader className="flex flex-col ">
-          <CardTitle>My Commissions</CardTitle>
+          <CardTitle>{title}</CardTitle>
           <CardDescription>
-            {!isPending && commissions
-              ? `Showing ${commissions.length} of ${totalCommissions} commissions`
-              : "Loading your commission history..."}
+            {description ||
+              (!isPending && commissions
+                ? `Showing ${commissions.length} of ${totalCommissions} commissions`
+                : "Loading your commission history...")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader className="bg-sidebar dark:bg-background">
               <TableRow>
-                <TableHead>Estate</TableHead>
-                <TableHead>Buyer</TableHead>
-                <TableHead>Sale Amount</TableHead>
-                <TableHead>Commission Rate</TableHead>
-                <TableHead>Commission Amount</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Actions</TableHead>
+                {headers.map((header) => (
+                  <TableHead key={header}>{header}</TableHead>
+                ))}
               </TableRow>
             </TableHeader>
             <TableBody>
               {isPending ? (
                 <TableRow>
-                  <TableCell colSpan={6}>
+                  <TableCell colSpan={headers.length}>
                     <div className="py-8 flex flex-col gap-2 items-center justify-center">
                       <Loader2 className="h-8 w-8 animate-spin text-primary" />
                       <p className="text-sm text-muted-foreground">
@@ -126,7 +208,10 @@ const RealtorCommissionsTable = () => {
                 </TableRow>
               ) : commissions && commissions.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8">
+                  <TableCell
+                    colSpan={headers.length}
+                    className="text-center py-8"
+                  >
                     <div className="flex flex-col items-center gap-2">
                       <p className="text-muted-foreground">
                         No commission records found
@@ -144,47 +229,11 @@ const RealtorCommissionsTable = () => {
               ) : (
                 commissions.map((commission) => (
                   <TableRow key={commission._id}>
-                    <TableCell>
-                      <span className="capitalize">
-                        {commission.sale.estate?.name || "N/A"}
-                      </span>
-                    </TableCell>
-                    <TableCell>{commission.sale?.buyerName || "N/A"}</TableCell>
-                    <TableCell>
-                      {formatCurrency(commission.sale?.amountPaid)}
-                    </TableCell>
-                    <TableCell>
-                      {formatRate(commission.rate, { decimalPlaces: 0 })}
-                    </TableCell>
-                    <TableCell>{formatCurrency(commission.amount)}</TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          commission.paymentRequest.status === "approved"
-                            ? "default"
-                            : commission.paymentRequest.status === "requested"
-                            ? "secondary"
-                            : "outline"
-                        }
-                        className="capitalize"
-                      >
-                        {commission.paymentRequest.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {formatDate(
-                        commission.createdAt || new Date(),
-                        "MMM dd, yyyy hh:mm a"
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <RequestPayoutButton
-                        commissionId={commission._id}
-                        disabled={
-                          commission.paymentRequest.status !== "pending"
-                        }
-                      />
-                    </TableCell>
+                    {headers.map((header) => (
+                      <TableCell key={`${commission._id}-${header}`}>
+                        {renderTableCell(commission, header)}
+                      </TableCell>
+                    ))}
                   </TableRow>
                 ))
               )}
