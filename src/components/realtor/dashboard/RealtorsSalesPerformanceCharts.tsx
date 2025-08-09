@@ -171,7 +171,17 @@ const RealtorSalesPerformanceCharts = () => {
                     </linearGradient>
                   </defs>
                   <CartesianGrid vertical={false} />
-                  <XAxis dataKey="name" tickLine={false} axisLine={false} />
+                  <XAxis
+                    dataKey="name"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(value) => formatCurrency(value)}
+                  />
                   <ChartTooltip
                     content={
                       <ChartTooltipContent
@@ -185,22 +195,18 @@ const RealtorSalesPerformanceCharts = () => {
                     }
                   />
                   <Area
-                    yAxisId="left"
-                    type="monotone"
+                    type="natural"
                     dataKey="salesCount"
                     stroke="var(--color-salesCount)"
                     fill="url(#fillCount)"
                     strokeWidth={1}
-                    stackId="a"
                   />
                   <Area
-                    yAxisId="right"
-                    type="monotone"
+                    type="natural"
                     dataKey="salesAmount"
                     stroke="var(--color-salesAmount)"
                     fill="url(#fillAmount)"
                     strokeWidth={1}
-                    stackId="a"
                   />
                   <ChartLegend content={<ChartLegendContent />} />
                 </AreaChart>
