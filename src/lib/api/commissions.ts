@@ -56,3 +56,23 @@ export const requestPayout = async (id: string) => {
     handleError(error);
   }
 };
+
+export const approvePayout = async (id: string) => {
+  try {
+    const response = await instance.patch(`/commissions/${id}/approve`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const processPayout = async (id: string) => {
+  try {
+    const response = await instance.patch(`/commissions/${id}/pay`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
