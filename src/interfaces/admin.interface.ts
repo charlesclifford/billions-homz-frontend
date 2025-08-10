@@ -63,3 +63,15 @@ interface MonthlyData {
   salesCount: number;
   salesAmount: number;
 }
+
+export interface ITopEstateResponse {
+  year: number;
+  topEstates: ITopEstate[];
+}
+
+export interface ITopEstate {
+  salesCount: number;
+  totalAmount: number;
+  estateId: string;
+  estateName: string;
+}

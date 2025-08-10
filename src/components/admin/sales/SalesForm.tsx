@@ -52,7 +52,11 @@ import Image from "next/image";
 import { InputWithAffix } from "@/components/shared/InputWithAffix";
 import { NairaIcon } from "../properties/EstateForm";
 import { formatCurrency } from "@/utils/helpers";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
@@ -613,7 +617,10 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
     return (
       <Sheet open={open} onOpenChange={handleOpenChange}>
         <SheetTrigger asChild>{children}</SheetTrigger>
-        <SheetContent className="w-full sm:max-w-lg">
+        <SheetContent
+          className="w-full sm:max-w-lg"
+          onInteractOutside={(e) => e.preventDefault()}
+        >
           <SheetHeader className="border-b">
             <SheetTitle className="text-xl">
               {initialValues?._id ? "Edit Sale" : "Record New Sale"}
@@ -639,7 +646,6 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
       >
         <DialogHeader>
           <DialogTitle>
-            {" "}
             {initialValues?._id ? "Edit Sale" : "Record New Sale"}
           </DialogTitle>
           <DialogDescription>

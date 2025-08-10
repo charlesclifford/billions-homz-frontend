@@ -1,10 +1,10 @@
 import DashboardHeader from "@/components/admin/dashboard/DashboardHeader";
-import NewChart from "@/components/admin/dashboard/NewChart";
 import { PendingApprovals } from "@/components/admin/dashboard/PendingApprovals";
 import { PendingCommissions } from "@/components/admin/dashboard/PendingCommissions";
 import { SalesPerformanceChart } from "@/components/admin/dashboard/SalesPerformanceChart";
 import { RecentPropertiesTable } from "@/components/admin/dashboard/RecentPropertiesTable";
 import { StatsGrid } from "@/components/admin/dashboard/StatsGrid";
+import { TopSellingEstatesChart } from "@/components/admin/dashboard/TopSellingEstatesChart";
 
 const OverviewPage = () => {
   return (
@@ -16,7 +16,7 @@ const OverviewPage = () => {
           <SalesPerformanceChart />
         </div>
         <div className="col-span-1 lg:col-span-3">
-          <NewChart />
+          <TopSellingEstatesChart />
         </div>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

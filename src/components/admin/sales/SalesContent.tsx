@@ -24,7 +24,10 @@ import { Loader2 } from "lucide-react";
 
 const SalesContent = () => {
   const router = useRouter();
-  const { sales, isPending, error } = useSales();
+  const { sales, isPending, error } = useSales({
+    page: 1,
+    limit: 3,
+  });
 
   if (error) {
     return (

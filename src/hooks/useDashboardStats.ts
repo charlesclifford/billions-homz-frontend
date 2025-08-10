@@ -1,8 +1,16 @@
 "use client";
 
-import { IDashboardSalesPerformance, IDashboardStats } from "@/interfaces/admin.interface";
+import {
+  IDashboardSalesPerformance,
+  IDashboardStats,
+  ITopEstateResponse,
+} from "@/interfaces/admin.interface";
 import { SalesPerformanceFilter } from "@/interfaces/realtor.interface";
-import { getDashboardStats, getSalesPerformance } from "@/lib/api/admin";
+import {
+  getDashboardStats,
+  getSalesPerformance,
+  getTopSellingEstates,
+} from "@/lib/api/admin";
 import { useQuery } from "@tanstack/react-query";
 
 export function useDashboardStats() {
@@ -18,5 +26,15 @@ export function useAdminSalesPerformance(params?: SalesPerformanceFilter) {
     queryKey: ["sales-performance", params],
     queryFn: () => getSalesPerformance(params),
     select: (data) => data.data as IDashboardSalesPerformance,
+  });
+}
+
+export function useAdminTopSellingEstates(
+  params?: SalesPerformanceFilter & { limit: number }
+) {
+  return useQuery({
+    queryKey: ["top-estates", params],
+    queryFn: () => getTopSellingEstates(params),
+    select: (data) => data.data as ITopEstateResponse,
   });
 }

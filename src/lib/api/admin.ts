@@ -79,3 +79,15 @@ export const getSalesPerformance = async (params?: SalesPerformanceFilter) => {
     handleError(error);
   }
 };
+
+export const getTopSellingEstates = async (params?: SalesPerformanceFilter) => {
+  try {
+    const response = await instance.get(`/admins/stats/top-estates`, {
+      params,
+    });
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
