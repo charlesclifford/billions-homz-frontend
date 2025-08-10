@@ -1,12 +1,22 @@
 "use client";
+import { getPaginationRange } from "@/components/shared/DataTable";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import {
   Table,
   TableBody,
@@ -16,18 +26,27 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import useSales from "@/hooks/useSales";
+import { cn } from "@/lib/utils";
+import { setFilter } from "@/store/features/sales/sale.slice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { formatCurrency } from "@/utils/helpers";
 import { formatDate } from "date-fns";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import SalesDetails from "./SalesDetails";
-import { Loader2 } from "lucide-react";
 
 const SalesContent = () => {
   const router = useRouter();
-  const { sales, isPending, error } = useSales({
-    page: 1,
-    limit: 3,
-  });
+  const dispatch = useAppDispatch();
+  const { filter } = useAppSelector((state) => state.sale);
+  const currentPage = filter.page || 1;
+
+  const { sales, isPending, error, totalSales, totalPages, refetch } =
+    useSales(filter);
+
+  const handlePageChange = (newPage: number) => {
+    dispatch(setFilter({ page: newPage }));
+  };
 
   if (error) {
     return (
@@ -55,7 +74,22 @@ const SalesContent = () => {
       <Card>
         <CardHeader className="flex flex-col">
           <CardTitle>Sales Records</CardTitle>
-          <CardDescription>View and manage all property sales</CardDescription>
+          <CardDescription>
+            <p>View and manage all property sales</p>
+            <p>
+              {!isPending && sales
+                ? `
+              Showing ${Math.min(
+                (filter.page - 1) * filter.limit + 1,
+                totalSales
+              )} -
+                ${Math.min(filter.page * filter.limit, totalSales)} of
+                ${totalSales}
+             sales
+              `
+                : "Loading sales..."}
+            </p>
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
@@ -78,14 +112,27 @@ const SalesContent = () => {
                   <TableCell colSpan={10}>
                     <div className="py-8 flex flex-col gap-2 items-center justify-center">
                       <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                      Loading sales records...
+                      <p className="text-sm text-muted-foreground">
+                        Loading sales records...
+                      </p>
                     </div>
                   </TableCell>
                 </TableRow>
               ) : sales && sales.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={10} className="text-center py-8">
-                    No sales records found
+                    <div className="flex flex-col items-center gap-2">
+                      <p className="text-muted-foreground">
+                        No sales records found
+                      </p>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => refetch()}
+                      >
+                        Refresh
+                      </Button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ) : (
@@ -133,6 +180,71 @@ const SalesContent = () => {
             </TableBody>
           </Table>
         </CardContent>
+
+        {totalPages > 1 && (
+          <CardFooter>
+            <div className="text-sm text-muted-foreground text-nowrap">
+              Page {currentPage} of {totalPages}
+            </div>
+            <Pagination className="justify-end">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage > 1) {
+                        handlePageChange(currentPage - 1);
+                      }
+                    }}
+                    isActive={currentPage > 1}
+                    aria-disabled={currentPage <= 1}
+                    className={cn(
+                      "cursor-pointer",
+                      currentPage <= 1 && "pointer-events-none opacity-50"
+                    )}
+                    size={"icon"}
+                  />
+                </PaginationItem>
+                {getPaginationRange(currentPage, totalPages).map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      isActive={page === currentPage}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (typeof page === "number") {
+                          handlePageChange(page);
+                        }
+                      }}
+                      className="cursor-pointer"
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage < totalPages) {
+                        handlePageChange(currentPage + 1);
+                      }
+                    }}
+                    isActive={currentPage < totalPages}
+                    aria-disabled={currentPage >= totalPages}
+                    className={cn(
+                      "cursor-pointer",
+                      currentPage >= totalPages &&
+                        "pointer-events-none opacity-50"
+                    )}
+                    size={"icon"}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </CardFooter>
+        )}
       </Card>
     </div>
   );

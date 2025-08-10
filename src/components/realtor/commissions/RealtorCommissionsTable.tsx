@@ -142,10 +142,7 @@ const RealtorCommissionsTable = ({
           </Badge>
         );
       case "Date":
-        return formatDate(
-          commission.createdAt || new Date(),
-          "MMM dd, yyyy"
-        );
+        return formatDate(commission.createdAt || new Date(), "MMM dd, yyyy");
       case "Request Date":
         return formatDate(
           commission.paymentRequest.requestedAt || new Date(),
