@@ -23,7 +23,7 @@ const DashboardContent = () => {
           value={formatCurrency(stats?.totalEarnings as number)}
           icon={<Wallet />}
           // growth={stats?.earningsGrowth}
-          color="text-blue-600"
+          color="text-purple-600"
           onClick={() => router.push(`/realtor/earnings`)}
           loading={isPending}
         />
@@ -44,7 +44,7 @@ const DashboardContent = () => {
           loading={isPending}
         />
         <StatCard
-          title="Available Properties"
+          title="Assigned Properties"
           value={stats?.availablePropertiesCount as number}
           icon={<CheckCircle className="w-5 h-5" />}
           color="text-emerald-600"

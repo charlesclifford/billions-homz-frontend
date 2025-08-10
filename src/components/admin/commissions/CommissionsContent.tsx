@@ -5,6 +5,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -17,24 +18,48 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import useAdminCommissions from "@/hooks/useAdminCommissions";
-import { cn } from "@/lib/utils";
+import { setFilter } from "@/store/features/commissions/commisson.slice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { formatCurrency, formatRate } from "@/utils/helpers";
 import { formatDate } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { cn } from "@/lib/utils";
+import { getPaginationRange } from "@/components/shared/DataTable";
+import ApproveCommission from "./ApproveCommission";
+import ConfirmPayout from "./ConfirmPayout";
 
 const statusClassMap = {
-  pending: "bg-gray-100 text-gray-800 border-gray-200",
-  requested: "bg-blue-100 text-blue-800 border-blue-200",
-  approved: "bg-green-100 text-green-800 border-green-200",
-  paid: "bg-purple-100 text-purple-800 border-purple-200",
-  rejected: "bg-red-100 text-red-800 border-red-200",
-  processed: "bg-indigo-100 text-indigo-800 border-indigo-200",
+  pending: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300",
+  requested:
+    "bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300",
+  approved:
+    "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300",
+  paid: "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300",
+  rejected: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300",
+  processed:
+    "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/20 dark:text-indigo-300",
 } as const;
 
 const CommissionsContent = () => {
   const router = useRouter();
-  const { commissions, isPending, error } = useAdminCommissions();
+  const dispatch = useAppDispatch();
+  const { filter } = useAppSelector((state) => state.commission);
+  const currentPage = filter.page || 1;
+  const { commissions, isPending, error, totalCommissions, totalPages } =
+    useAdminCommissions({ ...filter, status: undefined });
+
+  const handlePageChange = (newPage: number) => {
+    dispatch(setFilter({ page: newPage }));
+  };
 
   if (error) {
     return (
@@ -64,7 +89,20 @@ const CommissionsContent = () => {
         <CardHeader className="flex flex-col">
           <CardTitle>Commissions Records</CardTitle>
           <CardDescription>
-            View and manage all realtor commissions
+            <p>View and manage all realtor commissions</p>
+            <p>
+              {!isPending && commissions
+                ? `
+              Showing ${Math.min(
+                (filter.page - 1) * filter.limit + 1,
+                totalCommissions
+              )} -
+                ${Math.min(filter.page * filter.limit, totalCommissions)} of
+                ${totalCommissions}
+             sales
+              `
+                : "Loading commissions..."}
+            </p>
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -115,7 +153,6 @@ const CommissionsContent = () => {
                       {formatCurrency(commission.sale?.amountPaid)}
                     </TableCell>
                     <TableCell>
-                      {" "}
                       {formatRate(commission.rate, {
                         decimalPlaces: 0,
                       })}
@@ -124,13 +161,12 @@ const CommissionsContent = () => {
                     <TableCell>
                       <Badge
                         className={cn(
-                          "capitalize border",
-                          statusClassMap[
-                            commission.paymentRequest?.status || "pending"
-                          ]
+                          statusClassMap[commission.paymentRequest?.status] ||
+                            "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
+                          "capitalize"
                         )}
                       >
-                        {commission.paymentRequest?.status || "pending"}
+                        {commission.paymentRequest?.status}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -140,10 +176,12 @@ const CommissionsContent = () => {
                       )}
                     </TableCell>
                     <TableCell>
-                      {/* TODO: Implement CommissionDetails similar to SalesDetails */}
-                      <Button variant="outline" size="sm">
-                        View
-                      </Button>
+                      {commission.paymentRequest?.status === "approved" && (
+                        <ConfirmPayout commission={commission} />
+                      )}
+                      {commission.paymentRequest?.status === "requested" && (
+                        <ApproveCommission commission={commission} />
+                      )}
                     </TableCell>
                   </TableRow>
                 ))
@@ -151,6 +189,71 @@ const CommissionsContent = () => {
             </TableBody>
           </Table>
         </CardContent>
+
+        {totalPages > 1 && (
+          <CardFooter>
+            <div className="text-sm text-muted-foreground text-nowrap">
+              Page {currentPage} of {totalPages}
+            </div>
+            <Pagination className="justify-end">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage > 1) {
+                        handlePageChange(currentPage - 1);
+                      }
+                    }}
+                    isActive={currentPage > 1}
+                    aria-disabled={currentPage <= 1}
+                    className={cn(
+                      "cursor-pointer",
+                      currentPage <= 1 && "pointer-events-none opacity-50"
+                    )}
+                    size={"icon"}
+                  />
+                </PaginationItem>
+                {getPaginationRange(currentPage, totalPages).map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      isActive={page === currentPage}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (typeof page === "number") {
+                          handlePageChange(page);
+                        }
+                      }}
+                      className="cursor-pointer"
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage < totalPages) {
+                        handlePageChange(currentPage + 1);
+                      }
+                    }}
+                    isActive={currentPage < totalPages}
+                    aria-disabled={currentPage >= totalPages}
+                    className={cn(
+                      "cursor-pointer",
+                      currentPage >= totalPages &&
+                        "pointer-events-none opacity-50"
+                    )}
+                    size={"icon"}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </CardFooter>
+        )}
       </Card>
     </div>
   );

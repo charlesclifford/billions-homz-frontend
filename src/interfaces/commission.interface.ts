@@ -31,6 +31,7 @@ export interface ICommission {
   approvalDate?: string;
 
   createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface CommissionsFilterInput {

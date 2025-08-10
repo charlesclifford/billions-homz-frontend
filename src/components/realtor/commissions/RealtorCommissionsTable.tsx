@@ -45,6 +45,18 @@ interface RealtorCommissionsTableProps {
   status: StatusType;
 }
 
+const statusClassMap = {
+  pending: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300",
+  requested:
+    "bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300",
+  approved:
+    "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300",
+  paid: "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300",
+  rejected: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300",
+  processed:
+    "bg-indigo-100 text-indigo-800 dark:bg-indigo-900/20 dark:text-indigo-300",
+} as const;
+
 const RealtorCommissionsTable = ({
   title,
   description,
@@ -129,23 +141,17 @@ const RealtorCommissionsTable = ({
       case "Status":
         return (
           <Badge
-            variant={
-              commission.paymentRequest.status === "approved"
-                ? "default"
-                : commission.paymentRequest.status === "requested"
-                ? "secondary"
-                : "outline"
-            }
-            className="capitalize"
+            className={cn(
+              statusClassMap[commission.paymentRequest?.status] ||
+                "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
+              "capitalize"
+            )}
           >
-            {commission.paymentRequest.status}
+            {commission.paymentRequest?.status}
           </Badge>
         );
       case "Date":
-        return formatDate(
-          commission.createdAt || new Date(),
-          "MMM dd, yyyy"
-        );
+        return formatDate(commission.createdAt || new Date(), "MMM dd, yyyy");
       case "Request Date":
         return formatDate(
           commission.paymentRequest.requestedAt || new Date(),
@@ -153,7 +159,10 @@ const RealtorCommissionsTable = ({
         );
       case "Payment Date":
         return commission.paymentRequest?.processedAt
-          ? formatDate(commission.paymentRequest.processedAt, "MMM dd, yyyy")
+          ? formatDate(
+              commission.paymentRequest.processedAt,
+              "MMM dd, yyyy hh:mm a"
+            )
           : "N/A";
       case "Action":
         return (

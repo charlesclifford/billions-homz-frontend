@@ -14,6 +14,7 @@ import { formatCurrency, formatRate } from "@/utils/helpers";
 import { formatDate } from "date-fns";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import ApproveCommission from "../commissions/ApproveCommission";
 
 export function PendingApprovals() {
   const router = useRouter();
@@ -112,9 +113,7 @@ export function PendingApprovals() {
                   <TableCell>
                     <div className="flex gap-2">
                       {commission.paymentRequest?.status === "requested" && (
-                        <Button size="sm" className="cursor-pointer">
-                          Approve
-                        </Button>
+                        <ApproveCommission commission={commission} />
                       )}
                     </div>
                   </TableCell>

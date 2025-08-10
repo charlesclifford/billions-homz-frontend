@@ -32,6 +32,18 @@ const statusConfig = {
       "Request Date",
     ],
   },
+  approved: {
+    label: "Approved",
+    description: "Approved payouts",
+    tableHeaders: [
+      "Estate",
+      "Buyer",
+      "Sale Amount",
+      "Commission Amount",
+      "Status",
+      "Payment Date",
+    ],
+  },
   paid: {
     label: "Paid",
     description: "Completed payouts",

@@ -3,14 +3,15 @@ import { IUser } from "@/interfaces/user.interface";
 export const formatCurrency = (
   amount: number,
   locale = "en-NG",
-  currency = "NGN"
+  currency = "NGN",
+  notation: "standard" | "scientific" | "engineering" | "compact" = "standard"
 ) => {
   return new Intl.NumberFormat(locale, {
     style: "currency",
     currency,
     // maximumFractionDigits: 2,
     minimumFractionDigits: 0,
-    // notation: "compact",
+    notation,
   }).format(amount);
 };
 
