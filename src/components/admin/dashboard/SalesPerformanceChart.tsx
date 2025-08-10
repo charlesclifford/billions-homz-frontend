@@ -23,9 +23,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAdminSalesPerformance } from "@/hooks/useDashboardStats";
+import { formatCurrency } from "@/utils/helpers";
 import { Loader2 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 export function SalesPerformanceChart() {
   const [selectedYear, setSelectedYear] = useState<number>(
@@ -146,15 +147,36 @@ export function SalesPerformanceChart() {
                 axisLine={false}
                 tickFormatter={(value) => formatCurrency(value)}
               /> */}
+              {/* Left Y-axis for Sales Count */}
+              <YAxis
+                yAxisId="left"
+                orientation="left"
+                tickLine={false}
+                axisLine={false}
+              />
+              {/* Right Y-axis for Sales Amount */}
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) => formatCurrency(value)}
+              />
               <ChartTooltip
                 content={
                   <ChartTooltipContent
                     // valueFormatter={(value) => formatCurrency(value)}
+                    // formatter={(value, name) => {
+                    //   return name === "total"
+                    //     ? [formatCurrency(Number(value)), "Total Sales (₦)"]
+                    //     : [value, "Sales Count"];
+                    // }}
                     indicator="dot"
                   />
                 }
               />
               <Area
+                yAxisId="right"
                 dataKey="total"
                 type="monotone"
                 fill="url(#fillTotal)"
@@ -162,6 +184,7 @@ export function SalesPerformanceChart() {
               />
 
               <Area
+                yAxisId="left"
                 dataKey="count"
                 type="monotone"
                 fill="url(#fillCount)"

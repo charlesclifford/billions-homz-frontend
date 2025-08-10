@@ -22,9 +22,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useRealtorSalesPerformance } from "@/hooks/useRealtorStats";
+import { formatCurrency } from "@/utils/helpers";
 import { Loader2 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 const chartConfig = {
   salesCount: {
@@ -137,6 +138,19 @@ const RealtorSalesPerformanceCharts = () => {
                 axisLine={false}
                 tickMargin={8}
               />
+              <YAxis
+                yAxisId="left"
+                orientation="left"
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) => formatCurrency(value)}
+              />
 
               <ChartTooltip
                 content={
@@ -151,6 +165,7 @@ const RealtorSalesPerformanceCharts = () => {
                 }
               />
               <Area
+                yAxisId="left"
                 dataKey="salesCount"
                 type="monotone"
                 stroke="var(--color-salesCount)"
@@ -158,6 +173,7 @@ const RealtorSalesPerformanceCharts = () => {
                 strokeWidth={1}
               />
               <Area
+                yAxisId="right"
                 dataKey="salesAmount"
                 type="monotone"
                 stroke="var(--color-salesAmount)"
