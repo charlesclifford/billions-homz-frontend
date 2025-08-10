@@ -467,7 +467,10 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
     return (
       <Sheet open={open} onOpenChange={handleOpenChange}>
         <SheetTrigger asChild>{children}</SheetTrigger>
-        <SheetContent className="w-full sm:max-w-lg">
+        <SheetContent
+          className="w-full sm:max-w-lg"
+          onInteractOutside={(e) => e.preventDefault()}
+        >
           <SheetHeader className="border-b">
             <SheetTitle className="text-xl">
               {initialValues?._id ? "Edit Post" : "Create New Post"}

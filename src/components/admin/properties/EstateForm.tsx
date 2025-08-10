@@ -276,18 +276,7 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
     setImageFile(null);
   };
 
-  const documentOptions = [
-    "Survey Plan",
-    "Deed of Assignment",
-    "C of O",
-    "Governor's Consent",
-    "Approved Layout",
-    "Purchase Receipt",
-    "Power of Attorney",
-    "Excision",
-    "Gazette",
-    "Other",
-  ];
+  const documentOptions = ["Registered Survey Plan", "Deed of Conveyance"];
 
   const handleDocumentSelect = (value: string) => {
     const currentDocuments = form.getValues("documents") || [];

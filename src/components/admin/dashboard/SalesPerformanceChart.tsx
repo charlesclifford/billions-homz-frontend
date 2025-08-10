@@ -70,7 +70,7 @@ export function SalesPerformanceChart() {
   return (
     <Card>
       <CardHeader className="flex items-center gap-2 space-y-0 border-b sm:flex-row">
-        <div className="grid flex-1 gap-1 text-center sm:text-left">
+        <div className="grid flex-1 gap-1">
           <CardTitle>Sales Performance</CardTitle>
           <CardDescription>
             Monthly sales for {salesPerformance?.year || selectedYear}

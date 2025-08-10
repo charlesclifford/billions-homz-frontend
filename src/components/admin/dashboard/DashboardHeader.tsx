@@ -1,5 +1,3 @@
-import { Button } from "@/components/ui/button";
-import React from "react";
 
 const DashboardHeader = () => {
   return (
@@ -10,10 +8,10 @@ const DashboardHeader = () => {
           Overview of your real estate platform
         </p>
       </div>
-      <div className="col-span-1 flex items-center gap-2 lg:justify-end justify-between">
+      {/* <div className="col-span-1 flex items-center gap-2 lg:justify-end justify-between">
         <Button variant="outline">Export Reports</Button>
         <Button>Add Property</Button>
-      </div>
+      </div> */}
     </div>
   );
 };

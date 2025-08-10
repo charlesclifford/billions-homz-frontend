@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useDashboardStats } from "@/hooks/useDashboardStats";
+import { formatCurrency } from "@/utils/helpers";
 
 export function StatsGrid() {
   const { data, isPending } = useDashboardStats();
@@ -33,7 +34,7 @@ export function StatsGrid() {
     },
     {
       title: "Total Revenue",
-      value: `₦${data?.totalRevenue.toLocaleString()}`,
+      value: formatCurrency(data?.totalRevenue as number),
       description: "From all sales",
     },
     {
