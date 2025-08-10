@@ -105,7 +105,7 @@ export function SalesPerformanceChart() {
           {isPending ? (
             <div className="h-full w-full flex items-center justify-center">
               <Loader2 className="mr-1 animate-spin text-primary" />
-              Loading data...
+              <p className="text-muted-foreground">Loading data...</p>
             </div>
           ) : (
             <AreaChart data={chartData}>
@@ -142,30 +142,51 @@ export function SalesPerformanceChart() {
                 axisLine={false}
                 tickMargin={8}
               />
+              {/* <YAxis
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) => formatCurrency(value)}
+              /> */}
+              {/* Left Y-axis for Sales Count */}
               <YAxis
+                yAxisId="left"
+                orientation="left"
+                tickLine={false}
+                axisLine={false}
+              />
+              {/* Right Y-axis for Sales Amount */}
+              <YAxis
+                yAxisId="right"
+                orientation="right"
                 tickLine={false}
                 axisLine={false}
                 tickFormatter={(value) => formatCurrency(value)}
               />
               <ChartTooltip
-                cursor={false}
                 content={
                   <ChartTooltipContent
                     // valueFormatter={(value) => formatCurrency(value)}
+                    // formatter={(value, name) => {
+                    //   return name === "total"
+                    //     ? [formatCurrency(Number(value)), "Total Sales (₦)"]
+                    //     : [value, "Sales Count"];
+                    // }}
                     indicator="dot"
                   />
                 }
               />
               <Area
+                yAxisId="right"
                 dataKey="total"
-                type="natural"
+                type="monotone"
                 fill="url(#fillTotal)"
                 stroke="hsl(var(--chart-1))"
               />
 
               <Area
+                yAxisId="left"
                 dataKey="count"
-                type="natural"
+                type="monotone"
                 fill="url(#fillCount)"
                 stroke="hsl(var(--chart-2))"
               />
