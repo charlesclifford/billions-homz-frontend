@@ -1,7 +1,7 @@
 "use client";
 import { useRealtorStats } from "@/hooks/useRealtorStats";
 import { formatCurrency } from "@/utils/helpers";
-import { CheckCircle, Clock, DollarSign, FileText } from "lucide-react";
+import { CheckCircle, Clock, FileText, Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
 import StatCard from "../../admin/realtors/StatCard";
 import RealtorSalesPerformanceCharts from "./RealtorsSalesPerformanceCharts";
@@ -21,7 +21,7 @@ const DashboardContent = () => {
         <StatCard
           title="Total Earnings"
           value={formatCurrency(stats?.totalEarnings as number)}
-          icon={<DollarSign className="w-5 h-5" />}
+          icon={<Wallet />}
           // growth={stats?.earningsGrowth}
           color="text-blue-600"
           onClick={() => router.push(`/realtor/earnings`)}

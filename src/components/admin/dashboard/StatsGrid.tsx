@@ -17,7 +17,7 @@ export function StatsGrid() {
     {
       title: "Total Properties",
       value: totalProperties,
-      description: "All listed properties",
+      description: "All listed estates",
     },
     {
       title: "Available",
@@ -55,7 +55,7 @@ export function StatsGrid() {
               <div className="space-y-1">
                 <Skeleton className="h-8 w-20" />
                 <Skeleton className="h-3 w-32" />
-                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-2 w-full" />
               </div>
             ) : (
               <>

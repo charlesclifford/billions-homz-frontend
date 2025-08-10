@@ -48,11 +48,11 @@ const navMain: ISidebarMenu[] = [
     url: "/admin/estates",
     icon: HomeIcon,
   },
-  {
-    title: "Properties",
-    url: "/admin/properties",
-    icon: HomeIcon,
-  },
+  // {
+  //   title: "Properties",
+  //   url: "/admin/properties",
+  //   icon: HomeIcon,
+  // },
   {
     title: "Sales",
     url: "/admin/sales",

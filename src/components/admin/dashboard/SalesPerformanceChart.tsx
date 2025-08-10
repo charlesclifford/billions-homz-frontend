@@ -23,10 +23,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAdminSalesPerformance } from "@/hooks/useDashboardStats";
-import { formatCurrency } from "@/utils/helpers";
 import { Loader2 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
 export function SalesPerformanceChart() {
   const [selectedYear, setSelectedYear] = useState<number>(
@@ -105,7 +104,7 @@ export function SalesPerformanceChart() {
           {isPending ? (
             <div className="h-full w-full flex items-center justify-center">
               <Loader2 className="mr-1 animate-spin text-primary" />
-              Loading data...
+              <p className="text-muted-foreground">Loading data...</p>
             </div>
           ) : (
             <AreaChart data={chartData}>
@@ -142,13 +141,12 @@ export function SalesPerformanceChart() {
                 axisLine={false}
                 tickMargin={8}
               />
-              <YAxis
+              {/* <YAxis
                 tickLine={false}
                 axisLine={false}
                 tickFormatter={(value) => formatCurrency(value)}
-              />
+              /> */}
               <ChartTooltip
-                cursor={false}
                 content={
                   <ChartTooltipContent
                     // valueFormatter={(value) => formatCurrency(value)}
@@ -158,14 +156,14 @@ export function SalesPerformanceChart() {
               />
               <Area
                 dataKey="total"
-                type="natural"
+                type="monotone"
                 fill="url(#fillTotal)"
                 stroke="hsl(var(--chart-1))"
               />
 
               <Area
                 dataKey="count"
-                type="natural"
+                type="monotone"
                 fill="url(#fillCount)"
                 stroke="hsl(var(--chart-2))"
               />
