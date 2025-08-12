@@ -4,9 +4,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useNotifications } from "@/hooks/useNotifications";
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/hooks";
+import { formatDistanceToNow } from "date-fns";
 import { BellIcon, Calendar, MoonIcon, SunIcon } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { WiSunrise } from "react-icons/wi";
 import { ThemeToggler } from "../shared/ThemeToggler";
@@ -17,7 +20,8 @@ const AdminHeader = () => {
   // const isTablet = useIsTablet();
   const { user } = useAppSelector((state) => state.auth);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const unreadCount = 3; // Mock unread notifications count
+
+  const { notifications, unreadCount } = useNotifications();
 
   // Update time every minute (instead of every second for better performance)
   useEffect(() => {
@@ -65,31 +69,6 @@ const AdminHeader = () => {
       };
     }, [currentTime]);
 
-  // Mock notifications data
-  const notifications = [
-    {
-      id: 1,
-      title: "New booking request",
-      description: "You have a new booking request from John Doe",
-      time: "2 hours ago",
-      read: false,
-    },
-    {
-      id: 2,
-      title: "Payment received",
-      description: "Payment for booking #1234 has been received",
-      time: "1 day ago",
-      read: true,
-    },
-    {
-      id: 3,
-      title: "System update",
-      description: "New system update available",
-      time: "3 days ago",
-      read: false,
-    },
-  ];
-
   return (
     <header className="sticky top-0 right-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b ">
       <div className="w-full flex h-16 items-center justify-between px-4 box-border">
@@ -121,11 +100,11 @@ const AdminHeader = () => {
               <PopoverTrigger asChild>
                 <button className="relative p-2 rounded-full hover:bg-accent">
                   <BellIcon size={18} className="text-muted-foreground" />
-                  {unreadCount > 0 && (
+                  {unreadCount && unreadCount > 0 ? (
                     <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center">
                       {unreadCount}
                     </Badge>
-                  )}
+                  ) : null}
                 </button>
               </PopoverTrigger>
               <PopoverContent className="w-80 p-0" align="end">
@@ -133,30 +112,45 @@ const AdminHeader = () => {
                   <h3 className="font-medium px-2 py-1">Notifications</h3>
                 </div>
                 <div className="max-h-[400px] overflow-y-auto">
-                  {notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className={cn(
-                        "p-3 border-b hover:bg-accent cursor-pointer",
-                        !notification.read && "bg-primary/5"
-                      )}
-                    >
-                      <div className="flex justify-between items-start">
-                        <h4 className="font-medium">{notification.title}</h4>
-                        <span className="text-xs text-muted-foreground">
-                          {notification.time}
-                        </span>
-                      </div>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {notification.description}
-                      </p>
+                  {notifications && notifications.length === 0 ? (
+                    <div className="p-4 text-center text-muted-foreground">
+                      No new notifications
                     </div>
-                  ))}
+                  ) : (
+                    notifications &&
+                    notifications.map((notification) => (
+                      <div
+                        key={notification._id}
+                        className={cn(
+                          "p-3 border-b hover:bg-accent cursor-pointer",
+                          !notification.isRead && "bg-primary/5"
+                        )}
+                      >
+                        <div className="flex justify-between items-start">
+                          <h4 className="font-medium">{notification.title}</h4>
+                          <span className="text-xs text-muted-foreground">
+                            {formatDistanceToNow(
+                              new Date(notification.createdAt),
+                              {
+                                addSuffix: true,
+                              }
+                            )}
+                          </span>
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {notification.message}
+                        </p>
+                      </div>
+                    ))
+                  )}
                 </div>
                 <div className="p-2 border-t text-center">
-                  <button className="text-sm text-primary hover:underline">
+                  <Link
+                    href="/admin/notifications"
+                    className="text-sm text-primary"
+                  >
                     View all notifications
-                  </button>
+                  </Link>
                 </div>
               </PopoverContent>
             </Popover>

@@ -4,8 +4,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  useNotifications
+} from "@/hooks/useNotifications";
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/hooks";
+import { formatDistanceToNow } from "date-fns";
 import { BellIcon, Calendar, MoonIcon, SunIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { WiSunrise } from "react-icons/wi";
@@ -16,7 +20,8 @@ import { SidebarTrigger } from "../ui/sidebar";
 const RealtorHeader = () => {
   const { user } = useAppSelector((state) => state.auth);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const unreadCount = 3; // Connect to actual store
+
+  const { notifications, unreadCount } = useNotifications();
 
   // Update time every minute
   useEffect(() => {
@@ -60,32 +65,6 @@ const RealtorHeader = () => {
       };
     }, [currentTime]);
 
-  // Realtor-specific notifications
-  const notifications = [
-    {
-      id: 1,
-      title: "New client inquiry",
-      description: "Sarah Johnson is interested in the Ikoyi property",
-      time: "1 hour ago",
-      read: false,
-    },
-    {
-      id: 2,
-      title: "Commission approved",
-      description:
-        "Your commission for Banana Island sale is ready for payment",
-      time: "2 days ago",
-      read: false,
-    },
-    {
-      id: 3,
-      title: "Viewing scheduled",
-      description: "James booked a viewing for tomorrow at 2pm",
-      time: "3 days ago",
-      read: true,
-    },
-  ];
-
   return (
     <header className="sticky top-0 left-0 right-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
       <div className="flex h-16 items-center justify-between px-4">
@@ -117,11 +96,11 @@ const RealtorHeader = () => {
               <PopoverTrigger asChild>
                 <button className="relative p-2 rounded-full hover:bg-accent">
                   <BellIcon size={18} className="text-muted-foreground" />
-                  {unreadCount > 0 && (
-                    <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0">
+                  {unreadCount && unreadCount > 0 ? (
+                    <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center">
                       {unreadCount}
                     </Badge>
-                  )}
+                  ) : null}
                 </button>
               </PopoverTrigger>
               <PopoverContent className="w-80 p-0" align="end">
@@ -129,25 +108,37 @@ const RealtorHeader = () => {
                   <h3 className="font-medium">Realtor Notifications</h3>
                 </div>
                 <div className="max-h-[400px] overflow-y-auto">
-                  {notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className={cn(
-                        "p-3 border-b hover:bg-accent cursor-pointer",
-                        !notification.read && "bg-primary/5"
-                      )}
-                    >
-                      <div className="flex justify-between">
-                        <h4 className="font-medium">{notification.title}</h4>
-                        <span className="text-xs text-muted-foreground">
-                          {notification.time}
-                        </span>
-                      </div>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {notification.description}
-                      </p>
+                  {notifications && notifications.length === 0 ? (
+                    <div className="p-4 text-center text-muted-foreground">
+                      No new notifications
                     </div>
-                  ))}
+                  ) : (
+                    notifications &&
+                    notifications.map((notification) => (
+                      <div
+                        key={notification._id}
+                        className={cn(
+                          "p-3 border-b hover:bg-accent cursor-pointer",
+                          !notification.isRead && "bg-primary/5"
+                        )}
+                      >
+                        <div className="flex justify-between items-start">
+                          <h4 className="font-medium">{notification.title}</h4>
+                          <span className="text-xs text-muted-foreground">
+                            {formatDistanceToNow(
+                              new Date(notification.createdAt),
+                              {
+                                addSuffix: true,
+                              }
+                            )}
+                          </span>
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {notification.message}
+                        </p>
+                      </div>
+                    ))
+                  )}
                 </div>
                 <div className="p-2 border-t text-center">
                   <button className="text-sm text-primary hover:underline">
