@@ -3,7 +3,8 @@ import StoreProvider from "./StoreProvider";
 import QueryProvider from "./QueryProvider";
 import { ThemeProvider } from "./ThemeProvider";
 import AuthGuard from "@/guards/AuthGuard";
-import 'react-phone-number-input/style.css'
+import "react-phone-number-input/style.css";
+import { SocketProvider } from "./SocketProvider";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -15,7 +16,11 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
     >
       <StoreProvider>
         <QueryProvider>
-          <AuthGuard>{children}</AuthGuard>
+          <AuthGuard>
+            <SocketProvider>
+              {children}
+              </SocketProvider>
+          </AuthGuard>
         </QueryProvider>
       </StoreProvider>
     </ThemeProvider>

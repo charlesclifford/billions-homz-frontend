@@ -3,10 +3,11 @@ import axios from "axios";
 import cookies from "js-cookie";
 
 export const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "";
+export const API_PATH = process.env.NEXT_PUBLIC_API_PATH || "";
 
 // Create Axios instance
 const instance = axios.create({
-  baseURL: BASE_URL,
+  baseURL: BASE_URL + API_PATH,
   headers: {
     "Content-Type": "application/json",
   },
