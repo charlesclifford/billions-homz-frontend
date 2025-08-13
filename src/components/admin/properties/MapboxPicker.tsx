@@ -100,27 +100,6 @@ export function MapboxPicker({
         onSelect({ lat: e.lngLat.lat, lng: e.lngLat.lng });
       });
 
-      // Move marker to user's location when found
-      geolocate.on("geolocate", (position) => {
-        const userLat = position.coords.latitude;
-        const userLng = position.coords.longitude;
-
-        if (markerRef.current) {
-          markerRef.current.setLngLat([userLng, userLat]);
-        } else if (showMarker) {
-          const marker = new mapboxgl.Marker({
-            draggable,
-            color: "var(--primary)",
-          })
-            .setLngLat([userLng, userLat])
-            .addTo(map);
-          markerRef.current = marker;
-        }
-
-        map.flyTo({ center: [userLng, userLat], zoom: zoom });
-        onSelect({ lat: userLat, lng: userLng });
-      });
-
       map.on("load", () => {
         setIsLoading(false);
         geolocate.trigger();
