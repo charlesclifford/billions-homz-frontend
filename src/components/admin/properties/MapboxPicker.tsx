@@ -24,8 +24,8 @@ interface MapboxPickerProps {
 }
 
 export function MapboxPicker({
-  lat = 9.082,
-  lng = 8.6753,
+  lat = 4.8156,
+  lng = 7.0498,
   onSelect,
   className = "",
   height = 400,
@@ -150,7 +150,7 @@ export function MapboxPicker({
 
       <div
         ref={mapContainer}
-        className={`w-full h-full `}
+        className={`w-full h-full`}
         style={{ visibility: error || isLoading ? "hidden" : "visible" }}
       />
     </div>
