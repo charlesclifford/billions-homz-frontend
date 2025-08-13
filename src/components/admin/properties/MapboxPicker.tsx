@@ -102,7 +102,6 @@ export function MapboxPicker({
 
       map.on("load", () => {
         setIsLoading(false);
-        geolocate.trigger();
       });
 
       mapRef.current = map;
