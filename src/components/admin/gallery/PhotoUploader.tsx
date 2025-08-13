@@ -460,7 +460,7 @@ const PhotoUploader = ({ children, initialValues }: FormProps) => {
             {initialValues?._id ? "Update Photo" : "Upload Photo"}
           </DialogTitle>
         </DialogHeader>
-        <ScrollArea className="h-[calc(100vh-200px)]">
+        <ScrollArea className="flex-1 min-h-[calc(100dvh-200px)]">
           {renderFormContent()}
         </ScrollArea>
         <DialogFooter>{renderFooter()}</DialogFooter>

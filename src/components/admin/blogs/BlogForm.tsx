@@ -476,7 +476,7 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
               {initialValues?._id ? "Edit Post" : "Create New Post"}
             </SheetTitle>
           </SheetHeader>
-          <ScrollArea className="h-[calc(100vh-180px)]">
+          <ScrollArea className="flex-1 min-h-[calc(100dvh-180px)]">
             {renderFormContent()}
           </ScrollArea>
           <SheetFooter className="flex flex-row justify-end gap-2 pt-4">
