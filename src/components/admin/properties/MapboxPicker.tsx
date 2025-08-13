@@ -172,7 +172,8 @@ export function MapboxPicker({
 
       <div
         ref={mapContainer}
-        className={`w-full h-full ${error || isLoading ? "hidden" : ""}`}
+        className={`w-full h-full `}
+        style={{ visibility: error || isLoading ? "hidden" : "visible" }}
       />
     </div>
   );
