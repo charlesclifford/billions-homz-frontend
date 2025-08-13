@@ -177,15 +177,18 @@ const EstateContent = () => {
             <TableBody>
               {isPending ? (
                 <TableRow>
-                  <TableCell colSpan={6}>
-                    <div className="flex items-center justify-center h-64">
-                      <Loader2 className="h-8 w-8 animate-spin" />
+                  <TableCell colSpan={8}>
+                    <div className="py-8 flex flex-col gap-2 items-center justify-center">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                      <p className="text-sm text-muted-foreground">
+                        Loading...
+                      </p>
                     </div>
                   </TableCell>
                 </TableRow>
               ) : estates && estates.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8">
+                  <TableCell colSpan={8} className="text-center py-8">
                     <div className="text-muted-foreground">
                       No estates found. Create one to get started.
                     </div>
