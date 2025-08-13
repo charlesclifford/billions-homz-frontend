@@ -129,7 +129,7 @@ const InviteAdmin = () => {
           <SheetTitle className="text-xl">Invite Admin</SheetTitle>
         </SheetHeader>
 
-        <ScrollArea className="flex-1 min-h-[calc(100vh-170px)]">
+        <ScrollArea className="flex-1 min-h-[calc(100vh-180px)]">
           <Form {...form}>
             <form
               id="admin-invite-form"
