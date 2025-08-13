@@ -41,6 +41,7 @@ import { useDropzone } from "react-dropzone";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+import { MapboxPicker } from "./MapboxPicker";
 
 export const NairaIcon = () => <span className="font-medium">₦</span>;
 export const SquareMetreIcon = () => (
@@ -56,6 +57,12 @@ const formSchema = z.object({
     address: z.string().optional(),
     country: z.string(),
     landmarks: z.array(z.string()).optional(),
+    coordinates: z
+      .object({
+        lat: z.number().min(-90).max(90),
+        lng: z.number().min(-180).max(180),
+      })
+      .optional(),
   }),
   features: z.array(z.string()).optional(),
   documents: z.array(z.string()).optional(),
@@ -93,6 +100,7 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
         state: initialValues?.location?.state || "",
         country: initialValues?.location?.country || "Nigeria",
         landmarks: initialValues?.location?.landmarks || [],
+        coordinates: initialValues?.location?.coordinates || undefined,
       },
       features: initialValues?.features || [],
       documents: initialValues?.documents || [],
@@ -231,6 +239,16 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
       values.location.landmarks.forEach((landmark) => {
         formData.append("location[landmarks][]", landmark);
       });
+    }
+    if (values.location.coordinates) {
+      formData.append(
+        "location[coordinates][lat]",
+        values.location.coordinates.lat.toString()
+      );
+      formData.append(
+        "location[coordinates][lng]",
+        values.location.coordinates.lng.toString()
+      );
     }
     formData.append("totalUnits", values.totalUnits.toString());
     formData.append("price", values.price.toString());
@@ -617,6 +635,27 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                                   className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
                                 />
                               </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="location.coordinates"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Pick Location</FormLabel>
+                            <FormControl>
+                              <MapboxPicker
+                                lat={field.value?.lat}
+                                lng={field.value?.lng}
+                                onSelect={(coords) => field.onChange(coords)}
+                                height={300}
+                                className="mt-1"
+                                zoom={12}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
