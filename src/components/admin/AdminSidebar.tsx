@@ -2,7 +2,6 @@
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/hooks";
 import {
-  BellIcon,
   CircleGaugeIcon,
   HomeIcon,
   ImageIcon,
@@ -12,7 +11,7 @@ import {
   ShoppingCartIcon,
   UserCog2Icon,
   Users2Icon,
-  WalletIcon,
+  WalletIcon
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -92,11 +91,11 @@ const navMain: ISidebarMenu[] = [
     icon: NewspaperIcon,
     roles: ["super_admin"],
   },
-  {
-    title: "Notifications",
-    url: "/admin/notifications",
-    icon: BellIcon,
-  },
+  // {
+  //   title: "Notifications",
+  //   url: "/admin/notifications",
+  //   icon: BellIcon,
+  // },
 ];
 
 const navSecondary: ISidebarMenu[] = [

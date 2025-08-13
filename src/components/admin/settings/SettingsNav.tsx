@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 
 const tabs = [
   { name: "Profile", href: "/admin/settings" },
+  { name: "Commission", href: "/admin/settings/commissions" },
   { name: "Security", href: "/admin/settings/security" },
 ];
 

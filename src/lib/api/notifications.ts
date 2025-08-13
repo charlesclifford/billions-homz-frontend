@@ -39,3 +39,23 @@ export const getUnreadNotificationCounts = async () => {
     handleError(error);
   }
 };
+
+export const markAsRead = async (id: string) => {
+  try {
+    const response = await instance.patch(`/notifications/${id}/read`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const markAllAsRead = async () => {
+  try {
+    const response = await instance.post(`/notifications/read-all`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};

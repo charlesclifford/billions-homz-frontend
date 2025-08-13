@@ -91,3 +91,26 @@ export const getTopSellingEstates = async (params?: SalesPerformanceFilter) => {
     handleError(error);
   }
 };
+
+// settings
+export const getSettings = async () => {
+  try {
+    const response = await instance.get(`/settings`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const updateSettings = async (data: {
+  commissionPercentage: number;
+}) => {
+  try {
+    const response = await instance.put(`/settings/update`, data);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
