@@ -146,7 +146,7 @@ const CommissionSettings = () => {
                   />
                 </FormControl>
                 <FormDescription>
-                  Enter a value between 0 (0%) and 1 (100%)
+                  Enter a value between 0% and 100%              
                 </FormDescription>
                 <FormMessage />
               </FormItem>
