@@ -129,3 +129,41 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .container {
+    @apply w-full;
+
+    /* Default container max-width */
+    max-width: 100%;
+
+    /* Responsive container widths */
+    @media (min-width: 576px) {
+      max-width: 540px;
+    }
+
+    @media (min-width: 768px) {
+      max-width: 720px;
+    }
+
+    @media (min-width: 992px) {
+      max-width: 960px;
+    }
+
+    /* 👇 New breakpoint for iPad landscape */
+    @media (min-width: 1024px) and (max-width: 1199px) {
+      max-width: 1100px; /* adjust as needed (980–1024px works well) */
+    }
+
+    @media (min-width: 1200px) {
+      max-width: 1140px;
+    }
+
+    @media (min-width: 1400px) {
+      max-width: 1320px;
+    }
+    @media (min-width: 2560px) {
+      max-width: 2000px;
+    }
+  }
+}
