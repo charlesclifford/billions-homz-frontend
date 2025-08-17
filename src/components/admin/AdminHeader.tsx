@@ -137,8 +137,8 @@ const AdminHeader = () => {
               onMarkAllAsRead={handleMarkAllAsRead}
               onNotificationClick={handleNotificationClick}
               emptyState={
-                <div className="p-6 text-center">
-                  <InboxIcon className="mx-auto h-8 w-8 text-muted-foreground" />
+                <div className="p-6 py-10 text-center">
+                  <InboxIcon className="mx-auto h-6 w-6 text-muted-foreground" />
                   <h4 className="mt-2 text-sm font-medium ">
                     No notifications
                   </h4>
