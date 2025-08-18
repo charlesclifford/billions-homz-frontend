@@ -7,7 +7,7 @@ import {
   CardContent,
   CardDescription,
   CardFooter,
-  CardHeader
+  CardHeader,
 } from "@/components/ui/card";
 import {
   Dialog,
@@ -206,9 +206,9 @@ const PropertiesContent = () => {
                 properties?.map((property) => (
                   <TableRow key={property._id}>
                     <TableCell>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 w-[300px] truncate">
                         {property.images[0]?.imageUrl && (
-                          <div className="relative h-10 w-16 rounded-md overflow-hidden">
+                          <div className="relative h-10 w-16 rounded-md overflow-hidden shrink-0">
                             <Image
                               src={property.images[0]?.imageUrl}
                               alt={property.title}
@@ -225,7 +225,7 @@ const PropertiesContent = () => {
                             {property.title}
                           </Link>
                           {property.description && (
-                            <p className="text-xs text-muted-foreground line-clamp-1">
+                            <p className="text-xs text-muted-foreground truncate">
                               {property.description}
                             </p>
                           )}
@@ -257,7 +257,7 @@ const PropertiesContent = () => {
                       {property.price ? formatCurrency(property.price) : "-"}
                     </TableCell>
                     <TableCell>
-                      {property.area ? `${property.area} m²` : "-"}
+                      {property.dimensions ? `${property.dimensions} m²` : "-"}
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1 max-w-[200px]">
