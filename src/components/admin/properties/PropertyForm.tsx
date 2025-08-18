@@ -889,19 +889,12 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                         }`}
                       >
                         <input {...getInputProps()} />
-                        {createMutation.isPending ||
-                        updateMutation.isPending ? (
-                          <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-                        ) : (
-                          <>
-                            <ImagePlus className="w-8 h-8 text-muted-foreground mb-2" />
-                            <p className="text-sm text-center text-muted-foreground">
-                              {isDragActive
-                                ? "Drop files here"
-                                : "Drag & drop or click"}
-                            </p>
-                          </>
-                        )}
+                        <ImagePlus className="w-8 h-8 text-muted-foreground mb-2" />
+                        <p className="text-sm text-center text-muted-foreground">
+                          {isDragActive
+                            ? "Drop files here"
+                            : "Drag & drop or click"}
+                        </p>
                       </div>
                     </div>
                     <p

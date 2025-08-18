@@ -14,7 +14,7 @@ const handleResponse = (response: any) => {
 
 const handleError = (error: any) => {
   if (error.response) {
-    throw new Error(error.response.data.error || "Request failed");
+    throw new Error(error.response.data.message || "Request failed");
   } else if (error.request) {
     throw new Error("No response received from the server");
   } else {
@@ -92,6 +92,31 @@ export const addRoom = async (id: string, data: FormData) => {
         "Content-Type": "multipart/form-data",
       },
     });
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const updateRoom = async (id: string, data: FormData) => {
+  try {
+    const response = await instance.put(`/properties/${id}/rooms`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const deleteRoom = async (
+  id: string,
+  data: { roomName: string; publicId: string }
+) => {
+  try {
+    const response = await instance.delete(`/properties/${id}/rooms`, { data });
     return handleResponse(response);
   } catch (error) {
     handleError(error);

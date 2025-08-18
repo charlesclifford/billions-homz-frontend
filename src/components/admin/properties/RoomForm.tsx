@@ -1,4 +1,3 @@
-// components/admin/properties/AddRoomForm.tsx
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -11,13 +10,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { addRoom } from "@/lib/api/properties";
+import { IRoom } from "@/interfaces/property.interface";
+import { addRoom, updateRoom } from "@/lib/api/properties";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ImagePlus, X } from "lucide-react";
+import { ImagePlus, Loader2, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -28,18 +29,34 @@ const roomSchema = z.object({
   // Note: File validation will be handled separately
 });
 
-export function AddRoomForm({ propertyId }: { propertyId: string }) {
-  const queryClient = useQueryClient();
+export function RoomForm({
+  propertyId,
+  onClose,
+  initialValues,
+}: {
+  propertyId: string;
+  onClose: () => void;
+  initialValues?: IRoom;
+}) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
 
   const form = useForm({
     resolver: zodResolver(roomSchema),
     defaultValues: {
-      name: "",
+      name: initialValues?.name || "",
     },
   });
+
+  useEffect(() => {
+    if (initialValues) {
+      if (initialValues.imageUrl) {
+        setPreview(initialValues.imageUrl);
+      }
+    }
+  }, [initialValues, form]);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
@@ -49,7 +66,7 @@ export function AddRoomForm({ propertyId }: { propertyId: string }) {
     }
   }, []);
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
       "image/*": [".jpeg", ".jpg", ".png", ".webp"],
@@ -68,12 +85,26 @@ export function AddRoomForm({ propertyId }: { propertyId: string }) {
     mutationFn: (data: FormData) => addRoom(propertyId, data),
     onSuccess: (data) => {
       toast.success(data?.message);
-      queryClient.invalidateQueries({ queryKey: ["allProperties"] });
+      onClose();
       router.refresh();
     },
     onError: (error: Error) => {
       console.error("Error adding room:", error);
       toast.error(error.message || "Failed to add room");
+    },
+  });
+
+  const updateRoomMutation = useMutation({
+    mutationFn: (data: FormData) => updateRoom(propertyId, data),
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["property", propertyId] });
+      onClose();
+      router.refresh();
+    },
+    onError: (error) => {
+      console.error("Update error:", error);
+      toast.error(error.message || "Failed to update room");
     },
   });
 
@@ -87,11 +118,15 @@ export function AddRoomForm({ propertyId }: { propertyId: string }) {
     }
 
     const formData = new FormData();
-    formData.append("name", values.name);
+    formData.append("roomName", values.name);
     formData.append("roomImage", file);
     formData.append("propertyId", propertyId);
 
-    addMutation.mutate(formData);
+    if (initialValues) {
+      updateRoomMutation.mutate(formData);
+    } else {
+      addMutation.mutate(formData);
+    }
   };
 
   return (
@@ -104,7 +139,12 @@ export function AddRoomForm({ propertyId }: { propertyId: string }) {
             <FormItem>
               <FormLabel>Room Name</FormLabel>
               <FormControl>
-                <Input placeholder="Master Bedroom" {...field} />
+                <Input
+                  placeholder="Master Bedroom"
+                  {...field}
+                  className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
+                  disabled={Boolean(initialValues)}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -114,7 +154,7 @@ export function AddRoomForm({ propertyId }: { propertyId: string }) {
         <div className="space-y-2">
           <FormLabel>Room Image</FormLabel>
           {preview ? (
-            <div className="relative aspect-square rounded-lg overflow-hidden border">
+            <div className="relative aspect-video rounded-lg overflow-hidden border">
               <Image
                 src={preview}
                 alt="Room preview"
@@ -132,7 +172,11 @@ export function AddRoomForm({ propertyId }: { propertyId: string }) {
           ) : (
             <div
               {...getRootProps()}
-              className="border-2 border-dashed rounded-lg flex flex-col items-center justify-center aspect-square cursor-pointer p-4"
+              className={cn(
+                "border-2 border-dashed rounded-lg flex flex-col items-center justify-center aspect-video cursor-pointer p-4",
+                isDragActive ? "border-primary bg-primary/10" : "",
+                form.formState.errors.root && "border-destructive"
+              )}
             >
               <input {...getInputProps()} />
               <ImagePlus className="w-8 h-8 text-muted-foreground mb-2" />
@@ -151,8 +195,18 @@ export function AddRoomForm({ propertyId }: { propertyId: string }) {
           )}
         </div>
 
-        <Button type="submit" className="w-full">
-          Add Room
+        <Button
+          type="submit"
+          className="w-full cursor-pointer"
+          disabled={addMutation.isPending || updateRoomMutation.isPending}
+        >
+          {addMutation.isPending || updateRoomMutation.isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : initialValues ? (
+            "Update Image"
+          ) : (
+            "Add Room"
+          )}
         </Button>
       </form>
     </Form>
