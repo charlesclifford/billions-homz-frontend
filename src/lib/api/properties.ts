@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { PropertyFormData } from "@/app/(dashboard)/components/properties/PropertyDetailsForm";
-import {
-  DeleteImageParams,
-  DeleteImagesParams,
-  PropertyFilterInput,
-} from "@/interfaces/property.interface";
+import { PropertyFilterInput } from "@/interfaces/property.interface";
 import instance from "@/services/axios";
 import { EstateFilterState } from "@/store/features/property/estate.slice";
 
@@ -89,18 +85,13 @@ export const deleteProperty = async (id: string) => {
   }
 };
 
-export const deleteImage = async (params: DeleteImageParams) => {
+export const addRoom = async (id: string, data: FormData) => {
   try {
-    const response = await instance.delete("/image/delete", { params });
-    return handleResponse(response);
-  } catch (error) {
-    handleError(error);
-  }
-};
-
-export const deleteImages = async (params: DeleteImagesParams) => {
-  try {
-    const response = await instance.post("/image/delete-images", params);
+    const response = await instance.post(`/properties/${id}/rooms`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return handleResponse(response);
   } catch (error) {
     handleError(error);

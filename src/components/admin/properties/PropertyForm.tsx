@@ -924,7 +924,7 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                 type="button"
                 variant="outline"
                 className="cursor-pointer"
-                onClick={() => router.push("/admin/properties")}
+                onClick={() => router.back()}
               >
                 Cancel
               </Button>
