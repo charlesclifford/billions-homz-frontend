@@ -16,7 +16,7 @@ export function StatsGrid() {
 
   const statsData = [
     {
-      title: "Total Properties",
+      title: "Total Estates",
       value: totalProperties,
       description: "All listed estates",
     },

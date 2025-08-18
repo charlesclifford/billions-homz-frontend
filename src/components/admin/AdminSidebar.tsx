@@ -2,7 +2,6 @@
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/hooks";
 import {
-  BellIcon,
   CircleGaugeIcon,
   HomeIcon,
   ImageIcon,
@@ -22,6 +21,8 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -29,6 +30,7 @@ import {
   useSidebar,
 } from "../ui/sidebar";
 import AdminSidebarUser from "./AdminSidebarUser";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface ISidebarMenu {
   title: string;
@@ -37,65 +39,80 @@ interface ISidebarMenu {
   icon?: React.ComponentType<{ size?: number; className?: string }>;
 }
 
-const navMain: ISidebarMenu[] = [
+const navGroups = [
   {
-    title: "Dashboard",
-    url: "/admin",
-    icon: CircleGaugeIcon,
+    title: "Main",
+    items: [
+      {
+        title: "Dashboard",
+        url: "/admin",
+        icon: CircleGaugeIcon,
+      },
+      {
+        title: "Estates",
+        url: "/admin/estates",
+        icon: HomeIcon,
+      },
+      {
+        title: "Properties",
+        url: "/admin/properties",
+        icon: HomeIcon,
+      },
+    ],
   },
-  {
-    title: "Estates",
-    url: "/admin/estates",
-    icon: HomeIcon,
-  },
-  // {
-  //   title: "Properties",
-  //   url: "/admin/properties",
-  //   icon: HomeIcon,
-  // },
   {
     title: "Sales",
-    url: "/admin/sales",
-    icon: ShoppingCartIcon,
-  },
-  {
-    title: "Commissions",
-    url: "/admin/commissions",
-    icon: WalletIcon,
-  },
-  {
-    title: "Realtors",
-    url: "/admin/realtors",
-    icon: UserCog2Icon,
+    items: [
+      {
+        title: "Sales",
+        url: "/admin/sales",
+        icon: ShoppingCartIcon,
+      },
+      {
+        title: "Commissions",
+        url: "/admin/commissions",
+        icon: WalletIcon,
+      },
+    ],
   },
   {
     title: "Users",
-    url: "/admin/users",
-    icon: Users2Icon,
-    roles: ["admin", "super_admin"],
+    items: [
+      {
+        title: "Realtors",
+        url: "/admin/realtors",
+        icon: UserCog2Icon,
+      },
+      {
+        title: "Users",
+        url: "/admin/users",
+        icon: Users2Icon,
+        roles: ["admin", "super_admin"],
+      },
+      {
+        title: "Admins",
+        url: "/admin/members",
+        icon: KeyRoundIcon,
+        roles: ["super_admin"],
+      },
+    ],
   },
   {
-    title: "Admins",
-    url: "/admin/members",
-    icon: KeyRoundIcon,
-    roles: ["super_admin"],
-  },
-  {
-    title: "Gallery",
-    url: "/admin/gallery",
-    icon: ImageIcon,
-    roles: ["super_admin"],
-  },
-  {
-    title: "Blogs",
-    url: "/admin/blogs",
-    icon: NewspaperIcon,
-    roles: ["super_admin"],
-  },
-  {
-    title: "Notifications",
-    url: "/admin/notifications",
-    icon: BellIcon,
+    title: "Content",
+    items: [
+      {
+        title: "Gallery",
+        url: "/admin/gallery",
+        icon: ImageIcon,
+        roles: ["admin", "super_admin"],
+      },
+      {
+        title: "Blogs",
+        url: "/admin/blogs",
+        icon: NewspaperIcon,
+        roles: ["admin", "super_admin"],
+      },
+    ],
   },
 ];
 
@@ -126,10 +143,6 @@ const AdminSidebar = () => {
   };
 
   const userRole = user?.role;
-
-  const filteredMenu = navMain.filter(
-    (nav) => !nav.roles || (userRole && nav.roles.includes(userRole))
-  );
 
   return (
     <Sidebar collapsible="icon">
@@ -163,62 +176,79 @@ const AdminSidebar = () => {
           </Link>
         </div>
       </SidebarHeader>
-      <SidebarContent className="flex-1 overflow-y-auto">
-        <SidebarMenu className="space-y-1 p-2">
-          {filteredMenu.map((item, i) => {
-            const Icon = item.icon;
-            return (
-              <SidebarMenuItem key={i}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={isItemActive(item.url)}
-                  className="w-full justify-start"
-                  tooltip={item.title}
-                  onClick={() => setOpenMobile(false)}
-                >
-                  <Link
-                    href={item.url}
-                    className="h-full w-full flex items-center px-4 py-2"
-                  >
-                    {Icon && <Icon size={18} className="mr-2" />}
-                    <span className="sidebar-collapsed:hidden">
-                      {item.title}
-                    </span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+      <SidebarContent >
+        <ScrollArea className="flex-1 min-h-[calc(100dvh-180px)]">
+          {navGroups.map((group, groupIndex) => {
+            // Filter items based on user role
+            const filteredItems = group.items.filter(
+              (nav) => !nav.roles || (userRole && nav.roles.includes(userRole))
             );
-          })}
-        </SidebarMenu>
 
-        <SidebarMenu className="space-y-1 p-2 mt-auto">
-          {navSecondary.map((item, i) => {
-            const Icon = item.icon;
+            // Skip rendering the group if it has no visible items
+            if (filteredItems.length === 0) return null;
+
             return (
-              <SidebarMenuItem key={i}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={isItemActive(item.url)}
-                  className="w-full justify-start"
-                  tooltip={item.title}
-                  onClick={() => setOpenMobile(false)}
-                >
-                  <Link
-                    href={item.url}
-                    className="h-full w-full flex items-center px-4 py-2"
-                  >
-                    {Icon && <Icon size={18} className="mr-2" />}
-                    <span className="sidebar-collapsed:hidden">
-                      {item.title}
-                    </span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              <SidebarGroup key={groupIndex}>
+                <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
+                <SidebarMenu className="space-y-1">
+                  {filteredItems.map((item, i) => {
+                    const Icon = item.icon;
+                    return (
+                      <SidebarMenuItem key={i}>
+                        <SidebarMenuButton
+                          asChild
+                          isActive={isItemActive(item.url)}
+                          className="w-full justify-start"
+                          tooltip={item.title}
+                          onClick={() => setOpenMobile(false)}
+                        >
+                          <Link
+                            href={item.url}
+                            className="h-full w-full flex items-center px-4 py-2"
+                          >
+                            {Icon && <Icon size={18} className="mr-2" />}
+                            <span className="sidebar-collapsed:hidden">
+                              {item.title}
+                            </span>
+                          </Link>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    );
+                  })}
+                </SidebarMenu>
+              </SidebarGroup>
             );
           })}
-        </SidebarMenu>
+
+          <SidebarMenu className="space-y-1 p-2 mt-auto">
+            {navSecondary.map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <SidebarMenuItem key={i}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isItemActive(item.url)}
+                    className="w-full justify-start"
+                    tooltip={item.title}
+                    onClick={() => setOpenMobile(false)}
+                  >
+                    <Link
+                      href={item.url}
+                      className="h-full w-full flex items-center px-4 py-2"
+                    >
+                      {Icon && <Icon size={18} className="mr-2" />}
+                      <span className="sidebar-collapsed:hidden">
+                        {item.title}
+                      </span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            })}
+          </SidebarMenu>
+        </ScrollArea>
       </SidebarContent>
-      <SidebarFooter className="p-2 border-t">
+      <SidebarFooter className="p-2 border-t shrink-0">
         <AdminSidebarUser />
       </SidebarFooter>
     </Sidebar>

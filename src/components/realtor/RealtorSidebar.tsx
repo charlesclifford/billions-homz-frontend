@@ -4,9 +4,7 @@ import { cn } from "@/lib/utils";
 import {
   CircleGaugeIcon,
   FileText,
-  HandCoinsIcon, // For commissions
-  MailIcon,
-  PieChartIcon,
+  HandCoinsIcon,
   Settings, // For sales records
   WalletIcon
 } from "lucide-react";
@@ -30,7 +28,6 @@ interface ISidebarMenu {
   title: string;
   url: string;
   icon?: React.ComponentType<{ size?: number; className?: string }>;
-  badge?: string; // For notification counts
 }
 
 const navMain: ISidebarMenu[] = [
@@ -43,14 +40,12 @@ const navMain: ISidebarMenu[] = [
     title: "Sales",
     url: "/realtor/sales",
     icon: FileText,
-    badge: "3", // Example: Number of active deals
   },
-  {
-    title: "Client Inquiries",
-    url: "/realtor/inquiries",
-    icon: MailIcon,
-    badge: "5", // Example: Unread messages
-  },
+  // {
+  //   title: "Client Inquiries",
+  //   url: "/realtor/inquiries",
+  //   icon: MailIcon,
+  // },
   {
     title: "Commissions",
     url: "/realtor/commissions",
@@ -64,11 +59,6 @@ const navMain: ISidebarMenu[] = [
 ];
 
 const navSecondary: ISidebarMenu[] = [
-  {
-    title: "Performance",
-    url: "/realtor/analytics",
-    icon: PieChartIcon,
-  },
   {
     title: "Settings",
     url: "/realtor/settings",
@@ -130,12 +120,9 @@ const RealtorSidebar = () => {
                   className="h-full w-full flex items-center px-4 py-2 relative"
                 >
                   {item.icon && <item.icon size={18} className="mr-2" />}
-                  <span className="sidebar-collapsed:hidden text-nowrap">{item.title}</span>
-                  {item.badge && (
-                    <span className="ml-auto bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center ">
-                      {item.badge}
-                    </span>
-                  )}
+                  <span className="sidebar-collapsed:hidden text-nowrap">
+                    {item.title}
+                  </span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

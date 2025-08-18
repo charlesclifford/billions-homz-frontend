@@ -158,7 +158,7 @@ const Footer = () => {
                       <div>
                         <a
                           href="tel:+2348149996145"
-                          className="text-[26px] lg:text-[28px] font-semibold leading-[1.5em] tracking-[-1px] lg:tracking-[-2px] relative contact-link lowercase"
+                          className="text-xl font-semibold leading-[1.5em] tracking-[-1px] lg:tracking-[-2px] relative contact-link lowercase"
                         >
                           <span>
                             <span>
@@ -170,7 +170,7 @@ const Footer = () => {
                       <div>
                         <a
                           href="mailto:billionshomzproperties@gmail.com"
-                          className="text-[26px] lg:text-[28px] font-semibold leading-[1.5em] tracking-[-1px] lg:tracking-[-2px] relative contact-link lowercase"
+                          className="text-xl font-semibold leading-[1.5em] tracking-[-1px] lg:tracking-[-2px] relative contact-link lowercase"
                         >
                           <span>
                             <span>

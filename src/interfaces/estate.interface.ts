@@ -1,5 +1,5 @@
 import { IAdmin } from "./admin.interface";
-import { IImage, IUser } from "./user.interface";
+import { IImage } from "./user.interface";
 
 export interface IEstate {
   _id: string;
@@ -29,6 +29,5 @@ export interface IEstate {
   allowInstallment: boolean;
   marketingNotes?: string;
   status: "active" | "upcoming" | "sold_out";
-  assignedRealtors: IUser[];
   createdAt?: string;
 }
