@@ -1,5 +1,6 @@
 "use client";
 
+import { config } from "@/utils/config";
 import mapboxgl from "mapbox-gl";
 import { useEffect, useRef, useState } from "react";
 
@@ -10,7 +11,8 @@ declare module "mapbox-gl" {
   }
 }
 
-mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN!;
+const { MAPBOX_ACCESS_TOKEN } = config;
+mapboxgl.accessToken = MAPBOX_ACCESS_TOKEN;
 
 interface MapboxPickerProps {
   lat?: number;
