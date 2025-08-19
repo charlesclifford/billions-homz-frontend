@@ -4,6 +4,7 @@ import { IProperty } from "@/interfaces/property.interface";
 import { Bath, BedDouble, Ruler } from "lucide-react";
 import PropertyImages from "./PropertyImages";
 import PropertyRooms from "./PropertyRooms";
+import { formatCurrency } from "@/utils/helpers";
 
 const PropertyDetails = ({ property }: { property: IProperty }) => {
   return (
@@ -53,7 +54,7 @@ const PropertyDetails = ({ property }: { property: IProperty }) => {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Price</p>
-                <p>${property.price?.toLocaleString()}</p>
+                <p>{formatCurrency(property.price)}</p>
               </div>
             </div>
           </CardContent>

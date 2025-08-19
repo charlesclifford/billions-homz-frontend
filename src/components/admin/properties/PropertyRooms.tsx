@@ -190,7 +190,7 @@ const PropertyRooms = ({ property }: { property: IProperty }) => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer bg-background/80 hover:bg-background"
+                      className="absolute top-2 right-2 lg:opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer bg-background/80 hover:bg-background"
                       onClick={() =>
                         handlePanoramaClick(room.imageUrl, room.name)
                       }
