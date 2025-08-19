@@ -147,7 +147,7 @@ const PropertyImages = ({ property }: { property: IProperty }) => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white bg-black/50 hover:bg-black/75 hidden md:flex"
+                  className="text-white bg-black/50 hover:bg-black/75 hidden md:flex cursor-pointer rounded-full"
                   onClick={toggleThumbnail}
                 >
                   <GalleryThumbnailsIcon className="size-6" />
@@ -155,7 +155,7 @@ const PropertyImages = ({ property }: { property: IProperty }) => {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="text-white bg-black/50 hover:bg-black/75"
+                  className="text-white bg-black/50 hover:bg-black/75 cursor-pointer rounded-full"
                   onClick={closeModal}
                 >
                   <XIcon className="size-6" />
