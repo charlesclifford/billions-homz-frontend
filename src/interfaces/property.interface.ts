@@ -1,48 +1,46 @@
-import { IEstate } from "./estate.interface";
+import { IAdmin } from "./admin.interface";
 import { IRealtor } from "./realtor.interface";
+import { IReview } from "./review.interface";
 
 export interface IProperty {
   _id: string;
   title: string;
+  slug: string;
   description: string;
   price: number;
   type: PropertyType;
   bedrooms?: number;
   bathrooms?: number;
-  area: number;
+  dimensions: number;
   images: IImage[];
   status: PropertyStatus;
-  realtor: string;
   features: string[];
+  documents: string[];
   views: number;
-  slug: string;
-  propertyCode: string;
   listingType: ListingType;
-  // Sales related fields
-  soldPrice?: number; // Actual sold price might differ from listing price
-  soldDate?: Date;
-  soldBy?: IRealtor;
-  commissionRate?: number; // Commission rate applied for this sale
-  commissionAmount?: number;
-  commissionPaid: boolean;
 
-  isPlot?: boolean;
-  estateId?: IEstate;
+  rooms: IRoom[];
 
   location?: {
     address?: string;
     city?: string;
     state?: string;
     country?: string;
-    landmark?: string;
+    landmarks?: string[];
     coordinates?: {
       lat: number;
       lng: number;
     };
   };
+
+  addedBy?: IAdmin;
+  soldBy?: IRealtor;
+
+  virtualTour: boolean;
+  reviews: IReview[];
 }
 
-export type PropertyType = "residential" | "commercial" | "land";
+export type PropertyType = "residential" | "commercial";
 export type PropertyStatus = "available" | "sold" | "under contract" | "rented";
 export type ListingType = "rent" | "sale" | "lease";
 
@@ -67,16 +65,10 @@ export interface IImage {
   imageUrl: string; // Cloudinary secure_url
 }
 
-export interface DeleteImageParams {
+export interface IRoom {
+  name: string;
+  imageUrl: string;
   publicId: string;
-  propertyId: string;
-  roomName?: string;
-}
-
-export interface DeleteImagesParams {
-  publicIds: string[];
-  propertyId: string;
-  roomName?: string;
 }
 
 export interface ErrorResponse {

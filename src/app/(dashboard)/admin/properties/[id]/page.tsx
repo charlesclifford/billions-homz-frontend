@@ -1,18 +1,18 @@
-import PropertyForm from "@/components/admin/properties/PropertyForm";
+import PropertyDetails from "@/components/admin/properties/PropertyDetails";
 import {
   Breadcrumb,
-  BreadcrumbList,
   BreadcrumbItem,
   BreadcrumbLink,
-  BreadcrumbSeparator,
+  BreadcrumbList,
   BreadcrumbPage,
+  BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { Button } from "@/components/ui/button";
 import { IProperty } from "@/interfaces/property.interface";
 import { getPropertyById } from "@/lib/api/properties";
 import { notFound } from "next/navigation";
-import React from "react";
 
-const PropertyEditPage = async ({
+const PropertyDetailsPage = async ({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -47,10 +47,18 @@ const PropertyEditPage = async ({
         </BreadcrumbList>
       </Breadcrumb>
 
-      <h1 className="text-2xl font-bold mb-6 capitalize">{property.title}</h1>
-      <PropertyForm initialValues={property} />
+      {/* Header with edit button */}
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold capitalize">{property.title}</h1>
+        <Button asChild>
+          <a href={`/admin/properties/${property._id}/edit`}>Edit Property</a>
+        </Button>
+      </div>
+
+      {/* Property Details */}
+      <PropertyDetails property={property} />
     </div>
   );
 };
 
-export default PropertyEditPage;
+export default PropertyDetailsPage;

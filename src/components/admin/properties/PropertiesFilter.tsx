@@ -26,13 +26,7 @@ import { RefreshCcw, SearchIcon, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 type ListingTypeFilter = "all" | "sale" | "rent" | "lease";
-type PropertyType =
-  | "apartment"
-  | "house"
-  | "land"
-  | "commercial"
-  | "villa"
-  | "all";
+type PropertyType = "residential" | "commercial" | "all";
 type SortOption =
   | "createdAt:desc"
   | "createdAt:asc"
@@ -192,11 +186,8 @@ const PropertiesFilter = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="apartment">Apartment</SelectItem>
-              <SelectItem value="house">House</SelectItem>
-              <SelectItem value="land">Land</SelectItem>
               <SelectItem value="commercial">Commercial</SelectItem>
-              <SelectItem value="villa">Villa</SelectItem>
+              <SelectItem value="residential">Residential</SelectItem>
             </SelectContent>
           </Select>
 

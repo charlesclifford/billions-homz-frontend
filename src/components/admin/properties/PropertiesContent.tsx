@@ -7,7 +7,7 @@ import {
   CardContent,
   CardDescription,
   CardFooter,
-  CardHeader
+  CardHeader,
 } from "@/components/ui/card";
 import {
   Dialog,
@@ -41,7 +41,7 @@ import { setFilter } from "@/store/features/property/property.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { formatCurrency } from "@/utils/helpers";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Edit2, Loader2, MapPin, Trash2 } from "lucide-react";
+import { Edit2, Eye, Loader2, MapPin, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -72,6 +72,11 @@ const PropertyActions = ({ property }: { property: IProperty }) => {
     <div className="flex items-center gap-2">
       <Button asChild variant="outline" size="icon" className="cursor-pointer">
         <Link href={`/admin/properties/${property._id}`}>
+          <Eye className="h-4 w-4" />
+        </Link>
+      </Button>
+      <Button asChild variant="outline" size="icon" className="cursor-pointer">
+        <Link href={`/admin/properties/${property._id}/edit`}>
           <Edit2 className="h-4 w-4" />
         </Link>
       </Button>
@@ -182,7 +187,7 @@ const PropertiesContent = () => {
                 <TableHead>Size</TableHead>
                 <TableHead>Features</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -206,9 +211,9 @@ const PropertiesContent = () => {
                 properties?.map((property) => (
                   <TableRow key={property._id}>
                     <TableCell>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 w-[300px] truncate">
                         {property.images[0]?.imageUrl && (
-                          <div className="relative h-10 w-16 rounded-md overflow-hidden">
+                          <div className="relative h-10 w-16 rounded-md overflow-hidden shrink-0">
                             <Image
                               src={property.images[0]?.imageUrl}
                               alt={property.title}
@@ -225,7 +230,7 @@ const PropertiesContent = () => {
                             {property.title}
                           </Link>
                           {property.description && (
-                            <p className="text-xs text-muted-foreground line-clamp-1">
+                            <p className="text-xs text-muted-foreground truncate">
                               {property.description}
                             </p>
                           )}
@@ -257,7 +262,7 @@ const PropertiesContent = () => {
                       {property.price ? formatCurrency(property.price) : "-"}
                     </TableCell>
                     <TableCell>
-                      {property.area ? `${property.area} m²` : "-"}
+                      {property.dimensions ? `${property.dimensions} m²` : "-"}
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1 max-w-[200px]">

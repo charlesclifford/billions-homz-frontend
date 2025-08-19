@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // import { PropertyFormData } from "@/app/(dashboard)/components/properties/PropertyDetailsForm";
-import {
-  DeleteImageParams,
-  DeleteImagesParams,
-  PropertyFilterInput,
-} from "@/interfaces/property.interface";
+import { PropertyFilterInput } from "@/interfaces/property.interface";
 import instance from "@/services/axios";
 import { EstateFilterState } from "@/store/features/property/estate.slice";
 
@@ -18,7 +14,7 @@ const handleResponse = (response: any) => {
 
 const handleError = (error: any) => {
   if (error.response) {
-    throw new Error(error.response.data.error || "Request failed");
+    throw new Error(error.response.data.message || "Request failed");
   } else if (error.request) {
     throw new Error("No response received from the server");
   } else {
@@ -89,18 +85,38 @@ export const deleteProperty = async (id: string) => {
   }
 };
 
-export const deleteImage = async (params: DeleteImageParams) => {
+export const addRoom = async (id: string, data: FormData) => {
   try {
-    const response = await instance.delete("/image/delete", { params });
+    const response = await instance.post(`/properties/${id}/rooms`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return handleResponse(response);
   } catch (error) {
     handleError(error);
   }
 };
 
-export const deleteImages = async (params: DeleteImagesParams) => {
+export const updateRoom = async (id: string, data: FormData) => {
   try {
-    const response = await instance.post("/image/delete-images", params);
+    const response = await instance.put(`/properties/${id}/rooms`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const deleteRoom = async (
+  id: string,
+  data: { roomName: string; publicId: string }
+) => {
+  try {
+    const response = await instance.delete(`/properties/${id}/rooms`, { data });
     return handleResponse(response);
   } catch (error) {
     handleError(error);

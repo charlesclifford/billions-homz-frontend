@@ -42,7 +42,7 @@ const Notifications = ({
   className = "",
   popoverAlign = "end",
   popoverWidth = "w-80",
-  height = "h-[400px]",
+  height = "h-[300px]",
   triggerClassName = "",
   badgeClassName = "",
   isLoading = false,
@@ -81,25 +81,27 @@ const Notifications = ({
         className={cn("p-0", popoverWidth, className)}
         align={popoverAlign}
       >
-        <div className="p-2 border-b">
-          <div className="flex justify-between items-center px-2 py-1">
-            <h3 className="font-medium">Notifications</h3>
-            {onMarkAllAsRead && hasUnread && (
-              <Button
-                variant="link"
-                size="sm"
-                className="h-8 text-xs text-primary cursor-pointer"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onMarkAllAsRead();
-                }}
-              >
-                Mark all read
-              </Button>
-            )}
+        {notifications.length > 0 ? (
+          <div className="p-2 border-b">
+            <div className="flex justify-between items-center px-2 py-1">
+              <h3 className="font-medium">Notifications</h3>
+              {onMarkAllAsRead && hasUnread && (
+                <Button
+                  variant="link"
+                  size="sm"
+                  className="h-8 text-xs text-primary cursor-pointer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onMarkAllAsRead();
+                  }}
+                >
+                  Mark all read
+                </Button>
+              )}
+            </div>
           </div>
-        </div>
-        <ScrollArea className={height}>
+        ) : null}
+        <ScrollArea className={cn("flex-1", height)}>
           {isLoading
             ? loadingState
             : notifications.length === 0
@@ -107,7 +109,7 @@ const Notifications = ({
             : notifications.map((notification) => (
                 <div
                   key={notification._id}
-                  className="py-2 px-3 border-b hover:bg-accent cursor-pointer"
+                  className="py-2 px-3 not-last:border-b hover:bg-accent cursor-pointer"
                   onClick={() => onNotificationClick?.(notification)}
                 >
                   <div className="flex-1">

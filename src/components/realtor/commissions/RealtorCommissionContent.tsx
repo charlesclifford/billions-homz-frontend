@@ -72,7 +72,7 @@ const RealtorCommissionContent = () => {
       onValueChange={(value) => handleTabChange(value as StatusType)}
       className="w-full"
     >
-      <TabsList className="grid w-full grid-cols-3 lg:grid-cols-8">
+      <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8">
         {Object.entries(statusConfig).map(([key, config]) => (
           <TabsTrigger key={key} value={key} className="cursor-pointer">
             {config.label}

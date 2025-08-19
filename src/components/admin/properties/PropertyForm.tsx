@@ -25,39 +25,59 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import useEstates from "@/hooks/useEstates";
 import { IProperty } from "@/interfaces/property.interface";
 import { createProperty, updateProperty } from "@/lib/api/properties";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Bath, BedDouble, ImagePlus, Loader2, Ruler, X } from "lucide-react";
+import {
+  Bath,
+  BedDouble,
+  ImagePlus,
+  Loader2,
+  Ruler,
+  Tag,
+  X,
+} from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { NairaIcon, SquareMetreIcon } from "./EstateForm";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Badge } from "@/components/ui/badge";
+import { MapboxPicker } from "./MapboxPicker";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
+import { cn } from "@/lib/utils";
 
 // Define property schema with validation
 const propertySchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters"),
   description: z.string().min(20, "Description must be at least 20 characters"),
-  type: z.enum(["residential", "commercial", "land"]),
+  type: z.enum(["residential", "commercial"]),
   listingType: z.enum(["rent", "sale", "lease"]),
   price: z.number().min(0, "Price must be positive"),
   bedrooms: z.number().min(0).optional(),
   bathrooms: z.number().min(0).optional(),
-  area: z.number().min(1, "Area must be at least 1 sq ft"),
+  dimensions: z.number().min(1, "Area must be at least 1 sq ft"),
   location: z.object({
     address: z.string().optional(),
     city: z.string().min(1, "City is required"),
     state: z.string().min(1, "State is required"),
     country: z.string(),
+    landmarks: z.array(z.string()).optional(),
+    coordinates: z
+      .object({
+        lat: z.number().min(-90).max(90),
+        lng: z.number().min(-180).max(180),
+      })
+      .optional(),
   }),
   features: z.array(z.string()).optional(),
-  estateId: z.string().optional(),
+  documents: z.array(z.string()).optional(),
+  virtualTour: z.boolean().default(false).optional(),
 });
 
 export type PropertyFormData = z.infer<typeof propertySchema>;
@@ -71,8 +91,8 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
   const router = useRouter();
   const [files, setFiles] = useState<File[]>([]);
   const [featureInput, setFeatureInput] = useState("");
-
-  const { estates, isPending: isEstatesLoading } = useEstates();
+  const [landmarkInput, setLandmarkInput] = useState("");
+  const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
 
   const form = useForm<PropertyFormData>({
     resolver: zodResolver(propertySchema),
@@ -84,17 +104,29 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
       price: initialValues?.price || undefined,
       bedrooms: initialValues?.bedrooms || undefined,
       bathrooms: initialValues?.bathrooms || undefined,
-      area: initialValues?.area || undefined,
+      dimensions: initialValues?.dimensions || undefined,
       location: {
         address: initialValues?.location?.address || "",
         city: initialValues?.location?.city || "",
         state: initialValues?.location?.state || "",
         country: initialValues?.location?.country || "Nigeria",
+        landmarks: initialValues?.location?.landmarks || [],
+        coordinates: initialValues?.location?.coordinates || undefined,
       },
       features: initialValues?.features || [],
-      estateId: initialValues?.estateId?._id || undefined,
+      documents: initialValues?.documents || [],
+      virtualTour: initialValues?.virtualTour || false,
     },
   });
+
+  // Set initial image preview if editing
+  // useEffect(() => {
+  //   if (initialValues) {
+  //     if (initialValues.images?.imageUrl) {
+
+  //     }
+  //   }
+  // }, [initialValues]);
 
   // Handle file upload with react-dropzone
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -112,6 +144,10 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
 
   const handleRemoveFile = (index: number) => {
     setFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleRemoveExistingImage = (publicId: string) => {
+    setImagesToDelete((prev) => [...prev, publicId]);
   };
 
   const handleAddFeature = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -133,6 +169,31 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
     form.setValue(
       "features",
       currentFeatures.filter((f) => f !== feature)
+    );
+  };
+
+  const handleAddLandmark = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" || e.key === ",") {
+      e.preventDefault();
+      const newLandmark = landmarkInput.trim();
+      if (newLandmark) {
+        const currentLandmarks = form.getValues("location.landmarks") || [];
+        if (!currentLandmarks.includes(newLandmark)) {
+          form.setValue("location.landmarks", [
+            ...currentLandmarks,
+            newLandmark,
+          ]);
+        }
+        setLandmarkInput("");
+      }
+    }
+  };
+
+  const handleRemoveLandmark = (landmarkToRemove: string) => {
+    const currentLandmarks = form.getValues("location.landmarks") || [];
+    form.setValue(
+      "location.landmarks",
+      currentLandmarks.filter((l) => l !== landmarkToRemove)
     );
   };
 
@@ -164,6 +225,17 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
   });
 
   const onSubmit = (values: PropertyFormData) => {
+    // Check if we have at least one image
+    const hasExistingImages = initialValues?.images?.some(
+      (img) => !imagesToDelete.includes(img.publicId)
+    );
+    const hasNewImages = files.length > 0;
+
+    if (!hasExistingImages && !hasNewImages) {
+      toast.error("Please upload at least one image");
+      return;
+    }
+
     const formData = new FormData();
 
     // Append all form data
@@ -172,7 +244,7 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
     formData.append("type", values.type);
     formData.append("listingType", values.listingType);
     formData.append("price", values.price.toString());
-    formData.append("area", values.area.toString());
+    formData.append("dimensions", values.dimensions.toString());
     if (values.bedrooms)
       formData.append("bedrooms", values.bedrooms.toString());
     if (values.bathrooms)
@@ -181,6 +253,21 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
     formData.append("location[city]", values.location.city);
     formData.append("location[state]", values.location.state);
     formData.append("location[country]", values.location.country);
+    if (values.location.landmarks) {
+      values.location.landmarks.forEach((landmark) => {
+        formData.append("location[landmarks][]", landmark);
+      });
+    }
+    if (values.location.coordinates) {
+      formData.append(
+        "location[coordinates][lat]",
+        values.location.coordinates.lat.toString()
+      );
+      formData.append(
+        "location[coordinates][lng]",
+        values.location.coordinates.lng.toString()
+      );
+    }
 
     // Append features
     if (values.features) {
@@ -189,13 +276,24 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
       });
     }
 
+    if (values.documents) {
+      values.documents.forEach((doc) => {
+        formData.append("documents[]", doc);
+      });
+    }
+
+    if (values.virtualTour) {
+      formData.append("virtualTour", values.virtualTour.toString());
+    }
+
     // Append files
     files.forEach((file) => {
       formData.append("files", file);
     });
 
-    if (values.estateId) {
-      formData.append("estateId", values.estateId);
+    // Append images to delete
+    if (imagesToDelete.length > 0) {
+      formData.append("imagesToDelete", JSON.stringify(imagesToDelete));
     }
 
     if (initialValues?._id) {
@@ -211,6 +309,33 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
       files.forEach((file) => URL.revokeObjectURL(URL.createObjectURL(file)));
     };
   }, [files]);
+
+  const documentOptions = [
+    "Registered Survey Plan",
+    "Deed of Conveyance",
+    "Certificate of Occupancy",
+    "Power of Attorney",
+    "Purchase Receipt",
+  ];
+
+  const handleDocumentSelect = (value: string) => {
+    const currentDocuments = form.getValues("documents") || [];
+    if (currentDocuments.includes(value)) {
+      form.setValue(
+        "documents",
+        currentDocuments.filter((doc) => doc !== value)
+      );
+    } else {
+      form.setValue("documents", [...currentDocuments, value]);
+    }
+  };
+
+  const hasImages = useMemo(() => {
+    const hasExisting = initialValues?.images?.some(
+      (img) => !imagesToDelete.includes(img.publicId)
+    );
+    return hasExisting || files.length > 0;
+  }, [initialValues?.images, imagesToDelete, files]);
 
   return (
     <div className="">
@@ -236,7 +361,7 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                       name="title"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Property Title*</FormLabel>
+                          <FormLabel>Property Title</FormLabel>
                           <FormControl>
                             <Input
                               placeholder="Beautiful family home"
@@ -254,7 +379,7 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                       name="description"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Description*</FormLabel>
+                          <FormLabel>Descriptio*</FormLabel>
                           <FormControl>
                             <Textarea
                               placeholder="Describe the property..."
@@ -272,13 +397,13 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                   <div className="space-y-4">
                     <h2 className="text-lg font-semibold">Property Details</h2>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-4">
                       <FormField
                         control={form.control}
                         name="type"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Property Type*</FormLabel>
+                            <FormLabel>Property Type</FormLabel>
                             <Select
                               onValueChange={field.onChange}
                               value={field.value}
@@ -287,14 +412,12 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                                 <SelectValue placeholder="Select type" />
                               </SelectTrigger>
                               <SelectContent>
-                                {["residential", "commercial", "land"].map(
-                                  (type) => (
-                                    <SelectItem key={type} value={type}>
-                                      {type.charAt(0).toUpperCase() +
-                                        type.slice(1)}
-                                    </SelectItem>
-                                  )
-                                )}
+                                {["residential", "commercial"].map((type) => (
+                                  <SelectItem key={type} value={type}>
+                                    {type.charAt(0).toUpperCase() +
+                                      type.slice(1)}
+                                  </SelectItem>
+                                ))}
                               </SelectContent>
                             </Select>
                             <FormMessage />
@@ -307,7 +430,7 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                         name="listingType"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Listing Type*</FormLabel>
+                            <FormLabel>Listing Type</FormLabel>
                             <Select
                               onValueChange={field.onChange}
                               value={field.value}
@@ -328,61 +451,15 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                           </FormItem>
                         )}
                       />
-
-                      <FormField
-                        control={form.control}
-                        name="estateId"
-                        render={({ field }) => (
-                          <FormItem className="col-span-1 md:col-span-2">
-                            <FormLabel>Estate (Optional)</FormLabel>
-                            <Select
-                              onValueChange={field.onChange}
-                              value={field.value || undefined}
-                              disabled={isEstatesLoading}
-                            >
-                              <SelectTrigger className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm w-full cursor-pointer">
-                                <SelectValue
-                                  placeholder={
-                                    isEstatesLoading
-                                      ? "Loading estates..."
-                                      : "Select estate"
-                                  }
-                                />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {isEstatesLoading ? (
-                                  <SelectItem value="loading" disabled>
-                                    Loading estates...
-                                  </SelectItem>
-                                ) : estates && estates?.length > 0 ? (
-                                  estates.map((estate) => (
-                                    <SelectItem
-                                      key={estate._id}
-                                      value={estate._id}
-                                    >
-                                      {estate.name}
-                                    </SelectItem>
-                                  ))
-                                ) : (
-                                  <SelectItem value="none" disabled>
-                                    No estates available
-                                  </SelectItem>
-                                )}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 items-start gap-4">
                       <FormField
                         control={form.control}
                         name="price"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Price*</FormLabel>
+                            <FormLabel>Price</FormLabel>
                             <FormControl>
                               <InputWithAffix
                                 type="number"
@@ -451,10 +528,10 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
 
                       <FormField
                         control={form.control}
-                        name="area"
+                        name="dimensions"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Area (sq ft)*</FormLabel>
+                            <FormLabel>Area (sq ft)</FormLabel>
                             <FormControl>
                               <InputWithAffix
                                 type="number"
@@ -474,11 +551,53 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                         )}
                       />
                     </div>
-                  </div>
-                </div>
 
-                {/* Right Column */}
-                <div className="space-y-6">
+                    {/* Features */}
+                    <FormField
+                      control={form.control}
+                      name="features"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Features</FormLabel>
+                          <FormControl>
+                            <div>
+                              <div className="flex items-center gap-2 flex-wrap mb-1">
+                                {field.value?.map((feature) => (
+                                  <Badge
+                                    key={feature}
+                                    className="flex items-center gap-1"
+                                  >
+                                    <Tag className="h-3 w-3" />
+                                    <span>{feature}</span>
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        handleRemoveFeature(feature)
+                                      }
+                                      className="ml-1 cursor-pointer"
+                                    >
+                                      <X className="h-3 w-3" />
+                                    </button>
+                                  </Badge>
+                                ))}
+                              </div>
+                              <Input
+                                value={featureInput}
+                                onChange={(e) =>
+                                  setFeatureInput(e.target.value)
+                                }
+                                onKeyDown={handleAddFeature}
+                                placeholder="Add features (press Enter or comma)"
+                                className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
+                              />
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
                   {/* Location Information */}
                   <div className="space-y-4">
                     <h2 className="text-lg font-semibold">
@@ -491,10 +610,10 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                         name="location.address"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Address*</FormLabel>
+                            <FormLabel>Address</FormLabel>
                             <FormControl>
                               <Input
-                                placeholder="123 Main Street"
+                                placeholder="Enter address"
                                 className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
                                 {...field}
                               />
@@ -509,10 +628,10 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                         name="location.city"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>City*</FormLabel>
+                            <FormLabel>City</FormLabel>
                             <FormControl>
                               <Input
-                                placeholder="New York"
+                                placeholder="Enter city"
                                 className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
                                 {...field}
                               />
@@ -527,10 +646,10 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                         name="location.state"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>State*</FormLabel>
+                            <FormLabel>State</FormLabel>
                             <FormControl>
                               <Input
-                                placeholder="NY"
+                                placeholder="Enter state"
                                 className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
                                 {...field}
                               />
@@ -539,43 +658,168 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                           </FormItem>
                         )}
                       />
+
+                      <FormField
+                        control={form.control}
+                        name="location.landmarks"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Landmarks</FormLabel>
+                            <FormControl>
+                              <div>
+                                <div className="flex items-center gap-2 flex-wrap mb-1">
+                                  {field.value?.map((landmark) => (
+                                    <Badge
+                                      key={landmark}
+                                      className="flex items-center gap-1"
+                                    >
+                                      {landmark}
+                                      <button
+                                        type="button"
+                                        onClick={() =>
+                                          handleRemoveLandmark(landmark)
+                                        }
+                                        className="ml-1 cursor-pointer"
+                                      >
+                                        <X className="h-3 w-3" />
+                                      </button>
+                                    </Badge>
+                                  ))}
+                                </div>
+                                <Input
+                                  value={landmarkInput}
+                                  onChange={(e) =>
+                                    setLandmarkInput(e.target.value)
+                                  }
+                                  onKeyDown={handleAddLandmark}
+                                  placeholder="Add landmarks (press Enter or comma)"
+                                  className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
+                                />
+                              </div>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="location.coordinates"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Pick Location</FormLabel>
+                            <FormControl>
+                              <MapboxPicker
+                                lat={field.value?.lat}
+                                lng={field.value?.lng}
+                                onSelect={(coords) => field.onChange(coords)}
+                                height={300}
+                                className="mt-1"
+                                zoom={12}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     </div>
                   </div>
+                </div>
 
-                  {/* Features */}
+                {/* Right Column */}
+                <div className="space-y-6">
+                  {/* Documents  */}
+                  <div className="space-y-4">
+                    <h2 className="text-lg font-semibold">
+                      Required Documents
+                    </h2>
+                    <FormField
+                      control={form.control}
+                      name="documents"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Documents (Optional)</FormLabel>
+                          <FormControl>
+                            <div>
+                              <div className="flex flex-wrap gap-2 mb-1">
+                                {field.value?.map((doc) => (
+                                  <Badge
+                                    key={doc}
+                                    className="flex items-center gap-1"
+                                  >
+                                    {doc}
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        form.setValue(
+                                          "documents",
+                                          field.value?.filter(
+                                            (d) => d !== doc
+                                          ) || []
+                                        )
+                                      }
+                                      className="ml-1"
+                                    >
+                                      <X className="h-3 w-3" />
+                                    </button>
+                                  </Badge>
+                                ))}
+                              </div>
+                              <Select
+                                onValueChange={handleDocumentSelect}
+                                value=""
+                              >
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Select documents..." />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {documentOptions.map((option) => (
+                                    <SelectItem
+                                      key={option}
+                                      value={option}
+                                      className="cursor-pointer"
+                                    >
+                                      <div className="flex items-center space-x-2">
+                                        <Checkbox
+                                          checked={field.value?.includes(
+                                            option
+                                          )}
+                                          className="h-4 w-4"
+                                        />
+                                        <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                          {option}
+                                        </label>
+                                      </div>
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  {/* Virtual Tour */}
                   <FormField
                     control={form.control}
-                    name="features"
+                    name="virtualTour"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Features</FormLabel>
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4 py-2.5">
+                        <div className="space-y-0.5">
+                          <FormLabel>Enable Virtual Tour</FormLabel>
+                          <p className="text-sm text-muted-foreground">
+                            Allows adding room-by-room virtual tours later
+                          </p>
+                        </div>
                         <FormControl>
-                          <div>
-                            <div className="flex items-center gap-2 flex-wrap mb-2">
-                              {field.value?.map((feature) => (
-                                <div
-                                  key={feature}
-                                  className="flex items-center gap-1 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full text-sm"
-                                >
-                                  <span>{feature}</span>
-                                  <button
-                                    type="button"
-                                    onClick={() => handleRemoveFeature(feature)}
-                                    className="text-gray-500 hover:text-red-500"
-                                  >
-                                    <X className="h-3 w-3" />
-                                  </button>
-                                </div>
-                              ))}
-                            </div>
-                            <Input
-                              placeholder="Add features (press Enter or comma)"
-                              value={featureInput}
-                              onChange={(e) => setFeatureInput(e.target.value)}
-                              onKeyDown={handleAddFeature}
-                              className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
-                            />
-                          </div>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            className="cursor-pointer"
+                          />
                         </FormControl>
                       </FormItem>
                     )}
@@ -585,6 +829,34 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                   <div className="space-y-4">
                     <h2 className="text-lg font-semibold">Property Images*</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                      {/* Existing Images */}
+                      {initialValues?.images?.map(
+                        (image, index) =>
+                          !imagesToDelete.includes(image.publicId) && (
+                            <div
+                              key={`existing-${index}`}
+                              className="relative aspect-square group rounded-lg overflow-hidden border"
+                            >
+                              <Image
+                                src={image.imageUrl}
+                                alt={`Existing image ${index + 1}`}
+                                fill
+                                className="object-cover"
+                              />
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  handleRemoveExistingImage(image.publicId)
+                                }
+                                className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
+                          )
+                      )}
+
+                      {/* new images */}
                       {files.map((file, index) => (
                         <div
                           key={index}
@@ -609,32 +881,30 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                       <div
                         {...getRootProps()}
                         className={`border-2 border-dashed rounded-lg flex flex-col items-center justify-center aspect-square cursor-pointer transition-colors ${
-                          isDragActive
-                            ? "border-primary bg-primary/10"
-                            : "border-muted"
+                          isDragActive ? "border-primary bg-primary/10" : ""
                         } ${
-                          createMutation.isPending || updateMutation.isPending
-                            ? "opacity-50 cursor-not-allowed"
+                          form.formState.isSubmitted && !hasImages
+                            ? "border-red-500"
                             : ""
                         }`}
                       >
                         <input {...getInputProps()} />
-                        {createMutation.isPending ||
-                        updateMutation.isPending ? (
-                          <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-                        ) : (
-                          <>
-                            <ImagePlus className="w-8 h-8 text-muted-foreground mb-2" />
-                            <p className="text-sm text-center text-muted-foreground">
-                              {isDragActive
-                                ? "Drop files here"
-                                : "Drag & drop or click"}
-                            </p>
-                          </>
-                        )}
+                        <ImagePlus className="w-8 h-8 text-muted-foreground mb-2" />
+                        <p className="text-sm text-center text-muted-foreground">
+                          {isDragActive
+                            ? "Drop files here"
+                            : "Drag & drop or click"}
+                        </p>
                       </div>
                     </div>
-                    <p className="text-xs text-muted-foreground">
+                    <p
+                      className={cn(
+                        "text-xs text-muted-foreground",
+                        form.formState.isSubmitted &&
+                          !hasImages &&
+                          "text-destructive"
+                      )}
+                    >
                       Upload at least 1 image (JPEG, PNG up to 4MB)
                     </p>
                   </div>
@@ -647,7 +917,7 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                 type="button"
                 variant="outline"
                 className="cursor-pointer"
-                onClick={() => router.push("/admin/properties")}
+                onClick={() => router.back()}
               >
                 Cancel
               </Button>

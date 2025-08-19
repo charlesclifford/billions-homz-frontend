@@ -66,7 +66,6 @@ const formSchema = z.object({
   }),
   features: z.array(z.string()).optional(),
   documents: z.array(z.string()).optional(),
-  landmarks: z.array(z.string()).optional(),
   totalUnits: z.number().min(1, "Must have at least 1 plot"),
   plotSize: z.number().min(0, "Plot size cannot be negative").optional(),
   price: z.number().min(0, "Price cannot be negative"),
