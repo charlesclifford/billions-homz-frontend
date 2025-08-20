@@ -4,6 +4,7 @@ import { config } from "@/utils/config";
 import mapboxgl from "mapbox-gl";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
+import { Skeleton } from "../ui/skeleton";
 
 // Extend the mapboxgl types to include the missing properties
 declare module "mapbox-gl" {
@@ -21,6 +22,13 @@ const MAP_STYLES = {
   streets: "mapbox://styles/mapbox/streets-v12",
 };
 
+export interface Location {
+  lat: number;
+  lng: number;
+  popupContent?: string;
+  id?: string
+}
+
 interface MapViewerProps {
   lat?: number;
   lng?: number;
@@ -33,10 +41,12 @@ interface MapViewerProps {
   showControls?: boolean;
   showPopup?: boolean;
   popupContent?: string | React.ReactNode;
+  locations?: Location[];
   fitBounds?: mapboxgl.LngLatBoundsLike;
   style?: "auto" | "dark" | "streets" | string;
   onLoad?: (map: mapboxgl.Map) => void;
   onClick?: (coords: { lat: number; lng: number }) => void;
+  onMarkerClick?: (location: Location, index: number) => void;
 }
 
 export function MapViewer({
@@ -51,36 +61,36 @@ export function MapViewer({
   showControls = true,
   showPopup = false,
   popupContent = "",
+  locations = [],
   fitBounds,
   style = "auto",
   onLoad,
   onClick,
+  onMarkerClick,
 }: MapViewerProps) {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
-  const markerRef = useRef<mapboxgl.Marker | null>(null);
-  const popupRef = useRef<mapboxgl.Popup | null>(null);
+  const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const popupsRef = useRef<mapboxgl.Popup[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { theme, systemTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [activePopupIndex, setActivePopupIndex] = useState<number | null>(null);
 
   const currentTheme = theme === "system" ? systemTheme : theme;
   const isDark = currentTheme === "dark";
 
   // Get the appropriate map style based on theme
   const getMapStyle = () => {
-    // If style is set to "auto", choose based on theme
     if (style === "auto") {
       return isDark ? MAP_STYLES.dark : MAP_STYLES.streets;
     }
 
-    // If a specific style is requested
     if (style === "dark" || style === "streets") {
       return MAP_STYLES[style];
     }
 
-    // Custom style URL
     return style;
   };
 
@@ -103,25 +113,138 @@ export function MapViewer({
     return popupNode;
   };
 
-  // Function to toggle popup visibility
-  const togglePopup = () => {
-    if (!popupRef.current || !markerRef.current || !mapRef.current) return;
+  // Clear all markers and popups
+  const clearMarkers = () => {
+    markersRef.current.forEach((marker) => marker.remove());
+    popupsRef.current.forEach((popup) => popup.remove());
+    markersRef.current = [];
+    popupsRef.current = [];
+  };
 
-    const markerElement = markerRef.current.getElement();
-    if (markerElement) {
-      // Check if popup is currently open
-      const isOpen = markerElement.classList.contains("mapboxgl-marker-active");
+  // Toggle popup visibility for a specific marker
+  const togglePopup = (index: number) => {
+    if (!mapRef.current || index >= popupsRef.current.length) return;
 
-      if (isOpen) {
-        popupRef.current.remove();
-        markerElement.classList.remove("mapboxgl-marker-active");
-      } else {
-        const popupNode = createPopupContent(popupContent);
-        popupRef.current.setDOMContent(popupNode);
-        popupRef.current.addTo(mapRef.current);
-        markerElement.classList.add("mapboxgl-marker-active");
+    const popup = popupsRef.current[index];
+    const marker = markersRef.current[index];
+
+    if (!popup || !marker) return;
+
+    if (activePopupIndex === index) {
+      // Close the popup
+      popup.remove();
+      marker.getElement().classList.remove("mapboxgl-marker-active");
+      setActivePopupIndex(null);
+    } else {
+      // Close any currently open popup
+      if (
+        activePopupIndex !== null &&
+        activePopupIndex < popupsRef.current.length
+      ) {
+        popupsRef.current[activePopupIndex].remove();
+        markersRef.current[activePopupIndex]
+          .getElement()
+          .classList.remove("mapboxgl-marker-active");
       }
+
+      // Open the new popup
+      popup.addTo(mapRef.current);
+      marker.getElement().classList.add("mapboxgl-marker-active");
+      setActivePopupIndex(index);
     }
+  };
+
+  // Add markers to the map
+  const addMarkers = () => {
+    if (!mapRef.current) return;
+
+    clearMarkers();
+
+    // Add single marker if no locations provided
+    if (locations.length === 0 && showMarker) {
+      const marker = new mapboxgl.Marker({
+        color: "var(--primary)",
+      })
+        .setLngLat([lng, lat])
+        .addTo(mapRef.current);
+
+      markersRef.current = [marker];
+
+      if (popupContent) {
+        const popupNode = createPopupContent(popupContent);
+        const popup = new mapboxgl.Popup({ offset: 25 })
+          .setLngLat([lng, lat])
+          .setDOMContent(popupNode);
+
+        popupsRef.current = [popup];
+
+        // Show popup initially if showPopup is true
+        if (showPopup) {
+          popup.addTo(mapRef.current);
+          marker.getElement().classList.add("mapboxgl-marker-active");
+          setActivePopupIndex(0);
+        }
+      }
+
+      // Add click event to marker
+      marker.getElement().addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (popupContent) {
+          togglePopup(0);
+        }
+        if (onMarkerClick) {
+          onMarkerClick(
+            {
+              lat,
+              lng,
+              popupContent:
+                typeof popupContent === "string" ? popupContent : "",
+            },
+            0
+          );
+        }
+      });
+
+      return;
+    }
+
+    // Add multiple markers if locations provided
+    locations.forEach((location, index) => {
+      const marker = new mapboxgl.Marker({
+        color: "var(--primary)",
+      })
+        .setLngLat([location.lng, location.lat])
+        .addTo(mapRef.current!);
+
+      markersRef.current.push(marker);
+
+      if (location.popupContent) {
+        const popupNode = createPopupContent(location.popupContent);
+        const popup = new mapboxgl.Popup({ offset: 25 })
+          .setLngLat([location.lng, location.lat])
+          .setDOMContent(popupNode);
+
+        popupsRef.current.push(popup);
+
+        // Show popup initially if showPopup is true and it's the first marker
+        if (showPopup && index === 0) {
+          popup.addTo(mapRef.current!);
+          marker.getElement().classList.add("mapboxgl-marker-active");
+          setActivePopupIndex(0);
+        }
+      }
+
+      // Add click event to marker
+      marker.getElement().addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (location.popupContent) {
+          togglePopup(index);
+        }
+        if (onMarkerClick) {
+          onMarkerClick(location, index);
+        }
+      });
+    });
   };
 
   useEffect(() => {
@@ -142,7 +265,10 @@ export function MapViewer({
       const map = new mapboxgl.Map({
         container: mapContainer.current,
         style: getMapStyle(),
-        center: [lng, lat],
+        center:
+          locations.length > 0
+            ? [locations[0].lng, locations[0].lat]
+            : [lng, lat],
         zoom: zoom,
         interactive: interactive,
         attributionControl: false,
@@ -153,53 +279,18 @@ export function MapViewer({
         map.addControl(new mapboxgl.NavigationControl(), "top-right");
 
         // Add geolocate control
-        const geolocate = new mapboxgl.GeolocateControl({
-          positionOptions: {
-            enableHighAccuracy: true,
-          },
-          trackUserLocation: true,
-          showUserHeading: true,
-        });
-        map.addControl(geolocate);
+        // const geolocate = new mapboxgl.GeolocateControl({
+        //   positionOptions: {
+        //     enableHighAccuracy: true,
+        //   },
+        //   trackUserLocation: true,
+        //   showUserHeading: true,
+        // });
+        // map.addControl(geolocate);
       }
 
       // Add fullscreen control
       map.addControl(new mapboxgl.FullscreenControl(), "top-right");
-
-      // Create popup instance (but don't add to map yet)
-      popupRef.current = new mapboxgl.Popup({
-        offset: 25,
-        closeOnClick: true,
-        closeButton: true,
-        className: "mapboxgl-popup-custom",
-      }).setLngLat([lng, lat]);
-
-      // Add marker if enabled
-      if (showMarker) {
-        const marker = new mapboxgl.Marker({
-          color: "var(--primary)",
-        })
-          .setLngLat([lng, lat])
-          .addTo(map);
-
-        markerRef.current = marker;
-
-        // Add click event to marker to toggle popup
-        marker.getElement().addEventListener("click", (e) => {
-          e.stopPropagation();
-          togglePopup();
-        });
-
-        // Add popup if enabled initially
-        if (showPopup && popupContent) {
-          const popupNode = createPopupContent(popupContent);
-          popupRef.current.setDOMContent(popupNode);
-          popupRef.current.addTo(map);
-
-          // Add active class to marker
-          marker.getElement().classList.add("mapboxgl-marker-active");
-        }
-      }
 
       // Fit bounds if provided
       if (fitBounds) {
@@ -211,29 +302,21 @@ export function MapViewer({
         map.on("click", (e) => {
           onClick({ lat: e.lngLat.lat, lng: e.lngLat.lng });
 
-          // Close popup if clicking elsewhere on the map
-          if (popupRef.current && markerRef.current) {
-            popupRef.current.remove();
-            markerRef.current
+          // Close any open popup when clicking on the map
+          if (activePopupIndex !== null) {
+            popupsRef.current[activePopupIndex].remove();
+            markersRef.current[activePopupIndex]
               .getElement()
               .classList.remove("mapboxgl-marker-active");
-          }
-        });
-      }
-
-      // Handle popup close events
-      if (popupRef.current) {
-        popupRef.current.on("close", () => {
-          if (markerRef.current) {
-            markerRef.current
-              .getElement()
-              .classList.remove("mapboxgl-marker-active");
+            setActivePopupIndex(null);
           }
         });
       }
 
       map.on("load", () => {
         setIsLoading(false);
+        // Add markers after map is loaded
+        addMarkers();
         if (onLoad) {
           onLoad(map);
         }
@@ -242,16 +325,7 @@ export function MapViewer({
       mapRef.current = map;
 
       return () => {
-        if (markerRef.current) {
-          const markerElement = markerRef.current.getElement();
-          if (markerElement) {
-            markerElement.removeEventListener("click", togglePopup);
-          }
-          markerRef.current.remove();
-        }
-        if (popupRef.current) {
-          popupRef.current.remove();
-        }
+        clearMarkers();
         map.remove();
       };
     } catch (err) {
@@ -261,48 +335,25 @@ export function MapViewer({
     }
   }, [mounted, interactive, showControls, theme]);
 
+  // Update markers when locations or showPopup changes
+  useEffect(() => {
+    if (mapRef.current) {
+      addMarkers();
+    }
+  }, [locations, showPopup, popupContent]);
+
   // Update map style when theme changes
   useEffect(() => {
-    if (mapRef.current && (style === "light" || style === "dark")) {
+    if (mapRef.current && style === "auto") {
       const newStyle = getMapStyle();
       mapRef.current.setStyle(newStyle);
+
+      // Re-add markers after style change
+      mapRef.current.once("styledata", () => {
+        addMarkers();
+      });
     }
   }, [isDark, style]);
-
-  // Update marker position when lat/lng props change
-  useEffect(() => {
-    if (mapRef.current && markerRef.current) {
-      markerRef.current.setLngLat([lng, lat]);
-
-      if (popupRef.current) {
-        popupRef.current.setLngLat([lng, lat]);
-      }
-
-      if (!fitBounds) {
-        mapRef.current.flyTo({
-          center: [lng, lat],
-          essential: true,
-        });
-      }
-    }
-  }, [lat, lng, fitBounds]);
-
-  // Update popup content
-  useEffect(() => {
-    if (popupRef.current && popupContent && mapRef.current) {
-      const popupNode = createPopupContent(popupContent);
-
-      // Only update if popup is currently open
-      if (
-        markerRef.current &&
-        markerRef.current
-          .getElement()
-          .classList.contains("mapboxgl-marker-active")
-      ) {
-        popupRef.current.setDOMContent(popupNode);
-      }
-    }
-  }, [popupContent, isDark]);
 
   const containerStyle = {
     height: typeof height === "number" ? `${height}px` : height,
@@ -319,9 +370,9 @@ export function MapViewer({
           {error}
         </div>
       ) : isLoading ? (
-        <div className="flex items-center justify-center h-full bg-muted text-muted-foreground p-4 text-sm">
+        <Skeleton className="flex items-center justify-center h-full bg-muted text-muted-foreground p-4 text-sm">
           Loading map...
-        </div>
+        </Skeleton>
       ) : null}
 
       <div
