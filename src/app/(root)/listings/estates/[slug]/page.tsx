@@ -161,7 +161,7 @@ const EstateDetailsPage = async ({
 export default EstateDetailsPage;
 
 // Components (keep these at the bottom of the file)
-const SummaryItem = ({
+export const SummaryItem = ({
   label,
   value,
   icon,

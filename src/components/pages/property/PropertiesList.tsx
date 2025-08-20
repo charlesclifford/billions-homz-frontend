@@ -26,7 +26,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 const PropertiesList = () => {
   const dispatch = useAppDispatch();
   const { filter } = useAppSelector((state) => state.property);
-  const { isPending, properties, totalPages } = useProperties(filter);
+  const { isPending, properties, totalPages } = useProperties({
+    ...filter,
+    limit: 2,
+  });
   const [showMap, setShowMap] = useState(false);
 
   const onPaginationChange = (page: number) => {
@@ -101,6 +104,7 @@ const PropertiesList = () => {
           <Grid3X3 className="w-4 h-4 text-muted-foreground" />
           <Switch
             id="map-toggle"
+            className="cursor-pointer"
             checked={showMap}
             onCheckedChange={toggleMapView}
           />
@@ -108,9 +112,9 @@ const PropertiesList = () => {
             htmlFor="map-toggle"
             className="flex items-center cursor-pointer"
           >
-            <MapPin className="w-4 h-4 mr-2" />
+            <MapPin className="w-4 h-4 mr-2 text-muted-foreground" />
             <span className="hidden sm:inline">
-              {showMap ? "Show List" : "Show Map"}
+              {showMap ? "Hide Map" : "Show Map"}
             </span>
           </Label>
         </div>
@@ -140,10 +144,13 @@ const PropertiesList = () => {
           <div className="h-[700px] rounded-[30px] overflow-hidden border transition-all duration-300">
             {isPending ? (
               <Skeleton className="h-full flex items-center justify-center bg-muted">
-                <div className="text-muted-foreground text-sm">Loading map...</div>
+                <div className="text-muted-foreground text-sm">
+                  Loading map...
+                </div>
               </Skeleton>
             ) : (
               <MapViewer
+                key={filter.page}
                 locations={mapLocations}
                 height="100%"
                 showMarker
