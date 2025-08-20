@@ -379,7 +379,7 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                       name="description"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Descriptio*</FormLabel>
+                          <FormLabel>Description</FormLabel>
                           <FormControl>
                             <Textarea
                               placeholder="Describe the property..."
@@ -827,7 +827,7 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
 
                   {/* Images */}
                   <div className="space-y-4">
-                    <h2 className="text-lg font-semibold">Property Images*</h2>
+                    <h2 className="text-lg font-semibold">Property Images</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                       {/* Existing Images */}
                       {initialValues?.images?.map(
