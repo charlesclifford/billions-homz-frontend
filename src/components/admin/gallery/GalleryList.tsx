@@ -19,15 +19,10 @@ import {
 import useGallery from "@/hooks/useGallery";
 import { PhotosFilterInput } from "@/interfaces/photos.interface";
 import { cn } from "@/lib/utils";
-import {
-  GalleryThumbnailsIcon,
-  MapPin,
-  XIcon
-} from "lucide-react";
+import { GalleryThumbnailsIcon, MapPin, XIcon } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import AdminGalleryPhoto from "./AdminGalleryPhoto";
-
 
 const GalleryList = () => {
   const [filter, setFilter] = useState<PhotosFilterInput>({
@@ -76,15 +71,12 @@ const GalleryList = () => {
     <div className="w-full relative">
       {/* Masonry Grid */}
       <>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-[30px] auto-rows-[10px] mb-8">
+        <div className="w-full grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-8">
           {photos.map((photo, i) => {
-            const rowSpan = Math.ceil((photo.height / photo.width) * 8);
-
             return (
               <AdminGalleryPhoto
                 key={photo._id}
                 photo={photo}
-                rowSpan={rowSpan}
                 onClick={() => openModal(i)}
               />
             );
@@ -134,7 +126,7 @@ const GalleryList = () => {
 
       {/* Image Modal with Carousel */}
       {selectedPhotoIndex !== null && (
-        <div className="fixed inset-0 bg-black/85 flex flex-col items-center z-50">
+        <div className="fixed inset-0 bg-black/90 flex flex-col items-center z-50">
           <header className="w-full flex items-center justify-between px-5 h-20">
             <div>
               <h4 className="text-white font-semibold leading-4">
@@ -172,23 +164,24 @@ const GalleryList = () => {
           >
             <CarouselContent
               className={cn(
-                "w-[calc(100vw-20px)] h-dvh transition-all duration-300 py-2",
+                "-ml-0 transition-all duration-300 py-2",
                 showThumbnails
-                  ? "md:h-[calc(100dvh-160px)]"
+                  ? "h-[calc(100dvh-80px)] md:h-[calc(100dvh-160px)]"
                   : "h-[calc(100dvh-80px)]"
               )}
             >
               {photos.map((photo) => (
                 <CarouselItem
                   key={photo._id}
-                  className="flex items-center justify-center"
+                  className="flex items-center justify-center px-0"
                 >
                   <div className="relative w-full h-full">
                     <Image
                       src={photo.imageUrl}
                       alt={photo.caption || "photo"}
-                      fill
-                      className="object-contain"
+                      width={500}
+                      height={500}
+                      className="w-full h-full object-contain"
                     />
                   </div>
                 </CarouselItem>

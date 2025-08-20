@@ -1,15 +1,6 @@
 "use client";
-import { IGallery } from "@/interfaces/photos.interface";
-import { Edit, Eye, Loader2, MapPin, Trash2 } from "lucide-react";
-import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { styled } from "styled-components";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deletePhoto } from "@/lib/api/gallery";
 import PhotoUploader from "@/components/admin/gallery/PhotoUploader";
-import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -18,15 +9,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { IGallery } from "@/interfaces/photos.interface";
+import { deletePhoto } from "@/lib/api/gallery";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Edit, Eye, Loader2, MapPin, Trash2 } from "lucide-react";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const AdminGalleryPhoto = ({
   photo,
   onClick,
-  rowSpan,
 }: {
   photo: IGallery;
   onClick: () => void;
-  rowSpan: number;
 }) => {
   const queryClient = useQueryClient();
   const pathname = usePathname();
@@ -61,39 +58,31 @@ const AdminGalleryPhoto = ({
   };
 
   return (
-    <PhotoContainer $rowSpan={rowSpan} className="relative group border">
-      <div className="w-full h-full flex items-center justify-center bg-gray-100 overflow-hidden">
+    <div className="relative group border w-full rounded-[30px] overflow-hidden aspect-square">
+      <div className="bg-gray-100 w-full h-full flex items-center justify-center ">
         <Image
           src={photo.imageUrl}
           alt={photo.caption || "Property image"}
-          className="w-full h-auto max-w-full max-h-full object-cover"
+          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           loading="lazy"
           width={300}
           height={300}
-          style={{
-            width: "100%",
-            height: "auto",
-            aspectRatio: `${photo.width}/${photo.height}`,
-          }}
         />
       </div>
 
       {/* Caption Overlay */}
-      {(photo.caption || photo.location) && (
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4  transition-opacity duration-300">
-          {photo.caption && (
-            <p className="text-white font-medium line-clamp-2">
-              {photo.caption}
-            </p>
-          )}
-          {photo.location && (
-            <p className="text-white/90 text-sm mt-1 flex items-center">
-              <MapPin className="h-4 w-4 mr-1" />
-              {photo.location}
-            </p>
-          )}
-        </div>
-      )}
+
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4  transition-opacity duration-300">
+        {photo.caption && (
+          <p className="text-white font-medium line-clamp-2">{photo.caption}</p>
+        )}
+        {photo.location && (
+          <p className="text-white/90 text-sm mt-1 flex items-center">
+            <MapPin className="h-4 w-4 mr-1" />
+            {photo.location}
+          </p>
+        )}
+      </div>
 
       {isAdminRoute && (
         <div className="absolute top-2 right-4 flex items-center gap-2 mt-2">
@@ -155,14 +144,10 @@ const AdminGalleryPhoto = ({
           </Dialog>
         </div>
       )}
-    </PhotoContainer>
+    </div>
   );
 };
 
 export default AdminGalleryPhoto;
 
-const PhotoContainer = styled.div<{ $rowSpan: number }>`
-  overflow: hidden;
-  border-radius: 30px;
-  grid-row-end: span ${(props) => props.$rowSpan};
-`;
+

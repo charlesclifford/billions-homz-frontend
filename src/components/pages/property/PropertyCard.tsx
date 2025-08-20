@@ -1,0 +1,191 @@
+"use client";
+
+import { AnimatedLink } from "@/components/shared/AnimatedLink";
+import { Badge } from "@/components/ui/badge";
+import {
+  Carousel,
+  CarouselApi,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { IProperty } from "@/interfaces/property.interface";
+import { cn } from "@/lib/utils";
+import { formatCurrency } from "@/utils/helpers";
+import {
+  CameraIcon,
+  Loader2,
+  MapPin
+} from "lucide-react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+
+interface PropertyCardProps {
+  property: IProperty;
+}
+
+// Helper function for property details
+// const detailItem = (
+//   icon: React.ReactNode,
+//   label: string,
+//   value: number | string
+// ) => (
+//   <div className="flex items-center gap-1 text-sm">
+//     {icon}
+//     <span className="text-muted-foreground">
+//       {value} {label}
+//     </span>
+//   </div>
+// );
+
+const PropertyCard = ({ property }: PropertyCardProps) => {
+  const [imageLoading, setImageLoading] = useState(true);
+  const [api, setApi] = useState<CarouselApi>();
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Update current index when slide changes
+  const onSelect = () => {
+    if (api) {
+      setCurrentIndex(api.selectedScrollSnap());
+    }
+  };
+
+  // Initialize carousel API
+  useEffect(() => {
+    if (api) {
+      api.on("select", onSelect);
+      return () => {
+        api.off("select", onSelect);
+      };
+    }
+  }, [api]);
+
+  return (
+    <div className="overflow-hidden transition-all duration-300 flex flex-col h-auto group">
+      {/* Image Carousel */}
+      <div className="relative w-full rounded-[30px] overflow-hidden mb-5 border">
+        {property?.images?.length > 0 ? (
+          <Carousel
+            setApi={setApi}
+            opts={{
+              loop: true,
+            }}
+            className="w-full h-full"
+          >
+            <CarouselContent className="h-full -ml-0">
+              {property.images.slice(0, 4).map((img, index) => (
+                <CarouselItem key={index} className="h-full px-0">
+                  <div className="relative w-full pt-[68.5%]">
+                    <Image
+                      src={img.imageUrl}
+                      alt={`${property.title} - Image ${index + 1}`}
+                      fill
+                      className={cn(
+                        "w-full h-full object-cover transition-opacity duration-300",
+                        imageLoading ? "opacity-0" : "opacity-100"
+                      )}
+                      onLoad={() => setImageLoading(false)}
+                    />
+                    {imageLoading && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-muted">
+                        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                      </div>
+                    )}
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+
+            {/* Navigation arrows */}
+            {property.images.length > 1 && (
+              <>
+                <CarouselPrevious className="-left-10 group-hover:left-4 transition-all duration-300 !bg-primary border-transparent cursor-pointer w-10 h-10 text-white" />
+                <CarouselNext className="-right-10 group-hover:right-4 transition-all duration-300 !bg-primary border-transparent cursor-pointer w-10 h-10 text-white" />
+              </>
+            )}
+
+            {/* Dots indicator */}
+            {property.images.length > 1 && (
+              <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex gap-2">
+                {property.images.slice(0, 4).map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => api?.scrollTo(index)}
+                    className={`w-4 h-4 rounded-full transition-all duration-300 cursor-pointer border-input ${
+                      currentIndex === index
+                        ? "bg-primary w-8"
+                        : "bg-white/70 hover:bg-white/80"
+                    }`}
+                  />
+                ))}
+              </div>
+            )}
+          </Carousel>
+        ) : (
+          <div className="w-full h-[300px] bg-muted flex items-center justify-center text-muted-foreground">
+            <CameraIcon className="w-8 h-8" />
+          </div>
+        )}
+
+        {/* Status Badge */}
+        <div className="absolute top-4 left-4 py-2.5 px-5 rounded-[20px] text-xs capitalize bg-background/80 backdrop-blur-sm">
+          {property.status}
+        </div>
+
+        {/* Image Count Badge */}
+        {property.images?.length > 0 && (
+          <Badge
+            variant="secondary"
+            className="absolute top-4 right-4 py-2.5 px-5 rounded-[20px] bg-background/80 backdrop-blur-sm"
+          >
+            <CameraIcon className="w-3 h-3 mr-1" />
+            {property.images.length}
+          </Badge>
+        )}
+      </div>
+
+      {/* Property Info */}
+      <div className="flex flex-col flex-1">
+        {/* Location */}
+        <div className="flex items-center text-sm text-muted-foreground mb-1">
+          <MapPin className="w-3 h-3 mr-1" />
+          <span className="truncate">{property.location?.city}</span>
+        </div>
+
+        {/* Title */}
+        <h3 className="font-semibold text-lg leading-tight hover:text-primary transition-colors line-clamp-2 mb-2 capitalize">
+          <AnimatedLink href={`/listings/properties/${property.slug}`}>
+            {property.title}
+          </AnimatedLink>
+        </h3>
+
+        {/* Price */}
+        <p className="text-primary font-bold text-xl mb-3">
+          {formatCurrency(property.price)}
+        </p>
+
+        {/* Property Details */}
+        {/* <div className="flex flex-wrap gap-3 text-muted-foreground">
+          {detailItem(
+            <Bed className="w-4 h-4" />,
+            "Beds",
+            property.bedrooms || 0
+          )}
+          {detailItem(
+            <Bath className="w-4 h-4" />,
+            "Baths",
+            property.bathrooms || 0
+          )}
+          {detailItem(
+            <SquareDotIcon className="w-4 h-4" />,
+            "Sq Ft",
+            property.dimensions || "N/A"
+          )}
+        </div> */}
+      </div>
+    </div>
+  );
+};
+
+export default PropertyCard;
