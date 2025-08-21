@@ -4,7 +4,13 @@ import { Separator } from "@/components/ui/separator";
 import { IProperty } from "@/interfaces/property.interface";
 import { getPropertyBySlug } from "@/lib/api/properties";
 import { formatCurrency } from "@/utils/helpers";
-import { CurrencyIcon, MapPin, RulerDimensionLine } from "lucide-react";
+import {
+  BuildingIcon,
+  CurrencyIcon,
+  LucideSquareStack,
+  MapPin,
+  RulerDimensionLine,
+} from "lucide-react";
 import { notFound } from "next/navigation";
 import { SummaryItem } from "../../estates/[slug]/page";
 
@@ -23,7 +29,8 @@ const PropertyDetailsPage = async ({
     <div>
       <PageHeader
         title=""
-        bgImage="https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/03/faq-bc.jpg"
+        bgImage={property.images[0].imageUrl}
+        className="pt-[10%] bg-fixed"
       />
 
       {/* Header Section */}
@@ -43,8 +50,23 @@ const PropertyDetailsPage = async ({
         </div>
 
         <Separator className="mt-5" />
-        <div className="flex flex-row mb-[50px]">
-          <div className="pt-[45px] flex items-center gap-[65px]">
+        <div className="mb-[50px]">
+          <div className="pt-[45px] items-center gap-4 grid md:grid-cols-3 lg:grid-cols-5">
+            <SummaryItem
+              icon={<LucideSquareStack />}
+              label="Status"
+              value={
+                property.status.charAt(0).toUpperCase() +
+                property.status.slice(1)
+              }
+            />
+            <SummaryItem
+              icon={<BuildingIcon />}
+              label="Project Type"
+              value={
+                property.type.charAt(0).toUpperCase() + property.type.slice(1)
+              }
+            />
             {property.dimensions && (
               <SummaryItem
                 icon={<RulerDimensionLine />}
@@ -54,7 +76,7 @@ const PropertyDetailsPage = async ({
             )}
             <SummaryItem
               icon={<CurrencyIcon />}
-              label="Price Range"
+              label="Price"
               value={formatCurrency(property.price)}
             />
           </div>

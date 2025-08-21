@@ -102,13 +102,15 @@ const VirtualTourTabContent = ({ property }: { property: IProperty }) => {
 
   return (
     <div>
-      <h2 className="text-[22px] font-bold leading-tight tracking-[-0.015em] pb-3 pt-5">
-        360° Virtual Tour
-      </h2>
+      <div className="flex items-center justify-between pb-3 pt-5 mb-4">
+        <h2 className="text-4xl font-bold leading-tight tracking-[-0.015em] ">
+          360° Virtual Tour
+        </h2>
+      </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Viewer takes ~65% width on large screens */}
-        <div className="w-full lg:w-[65%] aspect-video rounded-[30px] overflow-hidden bg-black border">
+        <div className="w-full lg:w-[75%] aspect-square md:aspect-video rounded-[30px] overflow-hidden bg-black border">
           {selectedRoom ? (
             <ReactPhotoSphereViewer
               src={selectedRoom.imageUrl}
@@ -142,7 +144,7 @@ const VirtualTourTabContent = ({ property }: { property: IProperty }) => {
         </div>
 
         {/* Optional sidebar / placeholder (35% width) */}
-        <div className="hidden lg:block lg:w-[35%]"></div>
+        <div className="hidden lg:block lg:w-[25%]"></div>
       </div>
     </div>
   );

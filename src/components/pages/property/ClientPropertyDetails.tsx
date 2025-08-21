@@ -3,7 +3,7 @@ import InfoTabContent from "@/components/pages/property/InfoTabContent";
 import VirtualTourTabContent from "@/components/pages/property/VirtualTourTabContent";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { IProperty } from "@/interfaces/property.interface";
-import React, { Suspense, useMemo } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import GalleryTabContent from "./GalleryTabContent";
 import LocationTabContent from "./LocationTabContent";
 
@@ -14,13 +14,33 @@ interface ITab {
 }
 
 const ClientPropertyDetails = ({ property }: { property: IProperty }) => {
+  const [activeTab, setActiveTab] = useState("info");
+  const tabsRef = useRef<HTMLDivElement>(null);
+
+  // Function to scroll to tabs
+  const scrollToTabs = useCallback(() => {
+    if (tabsRef.current) {
+      tabsRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, []);
+
   // Memoized tabs configuration
   const tabs = useMemo(() => {
     const baseTabs: ITab[] = [
       {
         title: "Info",
         key: "info",
-        content: <InfoTabContent />,
+        content: (
+          <InfoTabContent
+            property={property}
+            onTabChange={setActiveTab}
+            onViewMapClick={scrollToTabs}
+            onViewVirtualTourClick={scrollToTabs}
+          />
+        ),
       },
       {
         title: "Location",
@@ -38,17 +58,7 @@ const ClientPropertyDetails = ({ property }: { property: IProperty }) => {
       baseTabs.push({
         title: "Virtual Tour",
         key: "virtualTour",
-        content: (
-          <Suspense
-            fallback={
-              <div className="flex items-center justify-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-              </div>
-            }
-          >
-            <VirtualTourTabContent property={property} />
-          </Suspense>
-        ),
+        content: <VirtualTourTabContent property={property} />,
       });
     }
 
@@ -65,8 +75,8 @@ const ClientPropertyDetails = ({ property }: { property: IProperty }) => {
 
   return (
     <div>
-      <div>
-        <Tabs defaultValue={tabs[0].key} className="gap-0">
+      <div ref={tabsRef}>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="gap-0">
           <TabsList className="bg-transparent border-b rounded-none w-full py-0 h-10 grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 lg:grid-cols-8 xl:grid-cols-11">
             {tabs.map((tab) => (
               <TabsTrigger
@@ -81,7 +91,7 @@ const ClientPropertyDetails = ({ property }: { property: IProperty }) => {
           {/* <Separator /> */}
 
           {tabs.map((tab) => (
-            <TabsContent key={tab.key} value={tab.key}>
+            <TabsContent key={tab.key} value={tab.key} className="py-6">
               {tab.content}
             </TabsContent>
           ))}

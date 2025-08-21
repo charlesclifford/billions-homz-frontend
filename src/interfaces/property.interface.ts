@@ -38,6 +38,8 @@ export interface IProperty {
 
   virtualTour: boolean;
   reviews: IReview[];
+
+  createdAt: string
 }
 
 export type PropertyType = "residential" | "commercial";

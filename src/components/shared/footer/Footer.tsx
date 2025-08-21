@@ -9,7 +9,7 @@ const Footer = () => {
 
   return (
     <footer className="footer">
-      <div className="w-full h-full bg-[url(https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/03/footer-bg.jpg)] bg-no-repeat bg-cover bg-center flex flex-col relative before:content-[''] before:absolute before:bg-black/40 before:top-0 before:left-0 before:w-full before:h-full pb-5 lg:pb-0">
+      <div className="w-full h-full bg-fixed bg-[url(https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/03/footer-bg.jpg)] bg-no-repeat bg-cover bg-center flex flex-col relative before:content-[''] before:absolute before:bg-black/40 before:top-0 before:left-0 before:w-full before:h-full pb-5 lg:pb-0">
         <div className="h-[50px] w-full absolute top-0 left-0">
           <div className="bg-background rounded-b-[50px] h-full w-full"></div>
         </div>

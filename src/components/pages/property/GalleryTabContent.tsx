@@ -110,8 +110,8 @@ const GalleryTabContent = ({ images }: { images: IImage[] }) => {
 
   return (
     <div>
-      <div className="flex items-center justify-between pb-3 pt-5">
-        <h2 className="text-[22px] font-bold leading-tight tracking-[-0.015em]">
+      <div className="flex items-center justify-between pb-3 pt-5 mb-4">
+        <h2 className="text-4xl font-bold leading-tight tracking-[-0.015em]">
           Gallery
         </h2>
       </div>
