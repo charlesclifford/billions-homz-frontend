@@ -26,7 +26,7 @@ export interface Location {
   lat: number;
   lng: number;
   popupContent?: string;
-  id?: string
+  id?: string;
 }
 
 interface MapViewerProps {
@@ -172,7 +172,10 @@ export function MapViewer({
 
       if (popupContent) {
         const popupNode = createPopupContent(popupContent);
-        const popup = new mapboxgl.Popup({ offset: 25 })
+        const popup = new mapboxgl.Popup({
+          offset: 25,
+          className: "mapboxgl-popup-custom",
+        })
           .setLngLat([lng, lat])
           .setDOMContent(popupNode);
 
