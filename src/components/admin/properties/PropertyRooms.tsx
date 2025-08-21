@@ -36,13 +36,13 @@ type VirtualTourTuple = [typeof VirtualTourPlugin, VirtualTourPluginConfig];
 type MarkersTuple = [typeof MarkersPlugin, MarkersPluginConfig];
 type GalleryTuple = [typeof GalleryPlugin, GalleryPluginConfig];
 
-// helper: generate fake gps near a base coordinate 
+// helper: generate fake gps near a base coordinate
 const generateFakeGps = (index: number): [number, number, number] => {
-  const baseLon = -80.156; // arbitrary "property" base longitude 
-  const baseLat = 25.666; // arbitrary base latitude 
-  const lon = baseLon + index * 0.0002; // spread slightly east 
-  const lat = baseLat + index * 0.0001; // spread slightly north 
-  const alt = 3; // constant height 
+  const baseLon = -80.156; // arbitrary "property" base longitude
+  const baseLat = 25.666; // arbitrary base latitude
+  const lon = baseLon + index * 0.0002; // spread slightly east
+  const lat = baseLat + index * 0.0001; // spread slightly north
+  const alt = 3; // constant height
   return [lon, lat, alt];
 };
 
@@ -69,13 +69,14 @@ const PropertyRooms = ({ property }: { property: IProperty }) => {
             name: room.name,
             caption: room.name,
             gps,
-            links: property.rooms.filter((_,j)=> j!= i).map((r,j)=> ({
-              nodeId: r.name || `room-${j}`,
-              gps: generateFakeGps(j),
-            }))
-          }
-        }
-        ),
+            links: property.rooms
+              .filter((_, j) => j !== i)
+              .map((r, j) => ({
+                nodeId: r.name || `room-${j}`,
+                gps: generateFakeGps(j),
+              })),
+          };
+        }),
         markerStyle: {
           color: "#ff5a5f",
           hoverScale: 1.2,

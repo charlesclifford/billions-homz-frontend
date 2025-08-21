@@ -35,7 +35,7 @@ const LocationTabContent = ({ property }: { property: IProperty }) => {
           showControls
           popupContent={popupContent}
           zoom={14}
-          className="rounded-[30px]"
+          className="!rounded-[30px]"
         />
       </div>
     </div>
