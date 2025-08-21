@@ -119,15 +119,6 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
     },
   });
 
-  // Set initial image preview if editing
-  // useEffect(() => {
-  //   if (initialValues) {
-  //     if (initialValues.images?.imageUrl) {
-
-  //     }
-  //   }
-  // }, [initialValues]);
-
   // Handle file upload with react-dropzone
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setFiles((prev) => [...prev, ...acceptedFiles]);
@@ -282,9 +273,8 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
       });
     }
 
-    if (values.virtualTour) {
-      formData.append("virtualTour", values.virtualTour.toString());
-    }
+     formData.append("virtualTour", values.virtualTour ? "true" : "false");
+   
 
     // Append files
     files.forEach((file) => {
