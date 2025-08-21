@@ -106,7 +106,7 @@ const Header = () => {
   return (
     <div
       className={cn(
-        "fixed top-0 z-10 w-full transition-transform duration-500 ease-[cubic-bezier(0.33,1,0.68,1)]",
+        "fixed top-0 z-50 w-full transition-transform duration-500 ease-[cubic-bezier(0.33,1,0.68,1)]",
         isVisible ? "translate-y-0" : `-translate-y-[100%]`
       )}
     >

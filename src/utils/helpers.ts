@@ -79,3 +79,7 @@ export const formatRate = (
 
   return formatted;
 };
+
+export const formatNumberWithCommas = (value: number): string => {
+  return value === 0 ? "" : value.toLocaleString("en-US");
+};

@@ -119,15 +119,6 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
     },
   });
 
-  // Set initial image preview if editing
-  // useEffect(() => {
-  //   if (initialValues) {
-  //     if (initialValues.images?.imageUrl) {
-
-  //     }
-  //   }
-  // }, [initialValues]);
-
   // Handle file upload with react-dropzone
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setFiles((prev) => [...prev, ...acceptedFiles]);
@@ -282,9 +273,8 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
       });
     }
 
-    if (values.virtualTour) {
-      formData.append("virtualTour", values.virtualTour.toString());
-    }
+     formData.append("virtualTour", values.virtualTour ? "true" : "false");
+   
 
     // Append files
     files.forEach((file) => {
@@ -379,7 +369,7 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                       name="description"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Descriptio*</FormLabel>
+                          <FormLabel>Description</FormLabel>
                           <FormControl>
                             <Textarea
                               placeholder="Describe the property..."
@@ -827,7 +817,7 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
 
                   {/* Images */}
                   <div className="space-y-4">
-                    <h2 className="text-lg font-semibold">Property Images*</h2>
+                    <h2 className="text-lg font-semibold">Property Images</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                       {/* Existing Images */}
                       {initialValues?.images?.map(

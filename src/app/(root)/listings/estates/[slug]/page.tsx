@@ -161,7 +161,7 @@ const EstateDetailsPage = async ({
 export default EstateDetailsPage;
 
 // Components (keep these at the bottom of the file)
-const SummaryItem = ({
+export const SummaryItem = ({
   label,
   value,
   icon,
@@ -176,10 +176,10 @@ const SummaryItem = ({
         {icon}
       </div>
       <div className="flex flex-col">
-        <h3 className="text-neutral-600 dark:text-neutral-400 font-semibold">
+        <h3 className="text-muted-foreground font-semibold">
           {label}
         </h3>
-        <p className="font-medium leading-[1.5em]">{value}</p>
+        <p className="font-medium text-lg leading-[1.5em]">{value}</p>
       </div>
     </div>
   </div>

@@ -1,6 +1,5 @@
 "use client";
-import { IProperty } from "@/interfaces/property.interface";
-import React, { useState, useMemo, useCallback } from "react";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
@@ -9,43 +8,49 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { ImagePlus, Plus, Globe } from "lucide-react";
-import RoomCard from "./RoomCard";
-import { RoomForm } from "./RoomForm";
-import { ReactPhotoSphereViewer, ViewerAPI } from "react-photo-sphere-viewer";
+import { IProperty } from "@/interfaces/property.interface";
 import {
-  VirtualTourPlugin,
-  type VirtualTourPluginConfig,
-} from "@photo-sphere-viewer/virtual-tour-plugin";
+  GalleryPlugin,
+  type GalleryPluginConfig,
+} from "@photo-sphere-viewer/gallery-plugin";
 import {
   MarkersPlugin,
   type MarkersPluginConfig,
 } from "@photo-sphere-viewer/markers-plugin";
 import {
-  GalleryPlugin,
-  type GalleryPluginConfig,
-} from "@photo-sphere-viewer/gallery-plugin";
+  VirtualTourPlugin,
+  type VirtualTourPluginConfig,
+} from "@photo-sphere-viewer/virtual-tour-plugin";
+import { Globe, ImagePlus, Plus } from "lucide-react";
+import { useCallback, useMemo, useState } from "react";
+import { ReactPhotoSphereViewer } from "react-photo-sphere-viewer";
+import RoomCard from "./RoomCard";
+import { RoomForm } from "./RoomForm";
 
+import "@photo-sphere-viewer/gallery-plugin/index.css";
 import "@photo-sphere-viewer/markers-plugin/index.css";
 import "@photo-sphere-viewer/virtual-tour-plugin/index.css";
-import "@photo-sphere-viewer/gallery-plugin/index.css";
 
 // ✅ Plugin tuple types
 type VirtualTourTuple = [typeof VirtualTourPlugin, VirtualTourPluginConfig];
 type MarkersTuple = [typeof MarkersPlugin, MarkersPluginConfig];
 type GalleryTuple = [typeof GalleryPlugin, GalleryPluginConfig];
 
-// helpers
-const randomYaw = () => (Math.random() * 2 - 1) * Math.PI; // -π..π
-const randomPitch = () => Math.random() * 0.5 - 0.25; // -0.25..0.25
+// helper: generate fake gps near a base coordinate
+const generateFakeGps = (index: number): [number, number, number] => {
+  const baseLon = -80.156; // arbitrary "property" base longitude
+  const baseLat = 25.666; // arbitrary base latitude
+  const lon = baseLon + index * 0.0002; // spread slightly east
+  const lat = baseLat + index * 0.0001; // spread slightly north
+  const alt = 3; // constant height
+  return [lon, lat, alt];
+};
 
 const PropertyRooms = ({ property }: { property: IProperty }) => {
   const [isAddRoomDialogOpen, setIsAddRoomDialogOpen] = useState(false);
   const [selectedPanorama, setSelectedPanorama] = useState<string | null>(null);
   const [selectedRoomName, setSelectedRoomName] = useState<string>("");
   const [showVirtualTour, setShowVirtualTour] = useState(false);
-  const pSRef = React.createRef<ViewerAPI | null>();
 
   // 🟢 Virtual Tour config
   const virtualTourPlugin = useMemo<VirtualTourTuple | null>(() => {
@@ -53,20 +58,25 @@ const PropertyRooms = ({ property }: { property: IProperty }) => {
     return [
       VirtualTourPlugin,
       {
+        positionMode: "gps",
         renderMode: "3d",
-        nodes: property.rooms.map((room) => ({
-          id: room.name,
-          panorama: room.imageUrl,
-          name: room.name,
-          position: { yaw: randomYaw(), pitch: randomPitch() },
-          // 👇 links need positions too
-          links: property.rooms
-            .filter((r) => r.name !== room.name)
-            .map((r) => ({
-              nodeId: r.name,
-              position: { yaw: randomYaw(), pitch: randomPitch() },
-            })),
-        })),
+        nodes: property.rooms.map((room, i) => {
+          const gps = generateFakeGps(i);
+
+          return {
+            id: room.name,
+            panorama: room.imageUrl,
+            name: room.name,
+            caption: room.name,
+            gps,
+            links: property.rooms
+              .filter((_, j) => j !== i)
+              .map((r, j) => ({
+                nodeId: r.name || `room-${j}`,
+                gps: generateFakeGps(j),
+              })),
+          };
+        }),
         markerStyle: {
           color: "#ff5a5f",
           hoverScale: 1.2,
@@ -75,6 +85,7 @@ const PropertyRooms = ({ property }: { property: IProperty }) => {
           speed: "10rpm",
           fadeDuration: 1000,
         },
+        startNodeId: property.rooms[0]?.name,
       },
     ];
   }, [property.rooms]);
@@ -87,8 +98,7 @@ const PropertyRooms = ({ property }: { property: IProperty }) => {
         markers:
           property.rooms?.map((room, i) => ({
             id: `marker-${i}`,
-           longitude: randomYaw(),
-          latitude: randomPitch(),
+            gps: generateFakeGps(i),
             image: "https://cdn-icons-png.flaticon.com/512/61/61112.png",
             width: 32,
             height: 32,
@@ -153,6 +163,7 @@ const PropertyRooms = ({ property }: { property: IProperty }) => {
                 size="sm"
                 onClick={handleVirtualTourClick}
                 aria-label="Start Virtual Tour"
+                className="cursor-pointer"
               >
                 <Globe className="h-4 w-4 mr-2" />
                 Virtual Tour
@@ -190,7 +201,7 @@ const PropertyRooms = ({ property }: { property: IProperty }) => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer bg-background/80 hover:bg-background"
+                      className="absolute top-2 right-2 lg:opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer bg-background/80 hover:bg-background"
                       onClick={() =>
                         handlePanoramaClick(room.imageUrl, room.name)
                       }
@@ -236,7 +247,6 @@ const PropertyRooms = ({ property }: { property: IProperty }) => {
             </DialogHeader>
             <div className="flex-1 relative w-full">
               <ReactPhotoSphereViewer
-               ref={pSRef}
                 src={selectedPanorama}
                 height="100%"
                 width="100%"
