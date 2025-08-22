@@ -48,6 +48,7 @@
     "highlight.js": "^11.11.1",
     "iconsax-reactjs": "^0.0.8",
     "js-cookie": "^3.0.5",
+    "lottie-react": "^2.4.1",
     "lucide-react": "^0.503.0",
     "mapbox-gl": "^3.14.0",
     "moment": "^2.30.1",
