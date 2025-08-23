@@ -64,7 +64,7 @@ const serviceList: IServiceList[] = [
 
 const HeroSection = () => {
   return (
-    <div className="h-full w-full bg-[url(/images/bg/h1_bg.jpg)] bg-no-repeat bg-cover bg-center relative before:content-[''] before:absolute before:bg-black/40 before:top-0 before:left-0 before:w-full before:h-full mb-[150px]">
+    <div className="h-full w-full bg-fixed bg-top bg-[url(/images/bg/land-plot-with-nature-landscape-location-pin.jpg)] bg-no-repeat bg-cover relative before:content-[''] before:absolute before:bg-black/40 before:top-0 before:left-0 before:w-full before:h-full mb-[150px]">
       <div className="h-[50px] w-full absolute bottom-0 left-0">
         <div className="bg-background rounded-t-[50px] h-full w-full"></div>
       </div>
