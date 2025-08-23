@@ -8,7 +8,7 @@ const PropertiesPage = () => {
   return (
     <div className="w-full">
       <PageHeader
-        title="Our Properties listings"
+        title="Our Properties"
         bgImage="https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/03/faq-bc.jpg"
       />
 

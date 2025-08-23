@@ -6,7 +6,7 @@ const GalleryPage = () => {
     <div className="w-full h-full">
       <PageHeader
         title="Our Gallery"
-        bgImage="https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/03/blog-bc.jpg"
+        bgImage="/images/bg/camera-board-with-negatives.jpg"
       />
 
       <div className="container max-w-[min(100%,1290px)] mx-auto px-4 py-16">

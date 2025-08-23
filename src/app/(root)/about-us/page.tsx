@@ -8,7 +8,7 @@ const AboutPage = () => {
     <div className="w-full h-full">
       <PageHeader
         title="About Us"
-        bgImage="https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/03/about-bc.jpg"
+        bgImage="/images/bg/black-lives-matter-protesting-with-megaphones.jpg"
       />
 
       <AboutUsSection />

@@ -28,7 +28,7 @@ const PropertiesList = () => {
   const { filter } = useAppSelector((state) => state.property);
   const { isPending, properties, totalPages } = useProperties({
     ...filter,
-    limit: 2,
+    limit: 20,
   });
   const [showMap, setShowMap] = useState(false);
 
@@ -77,8 +77,8 @@ const PropertiesList = () => {
         lng: property.location!.coordinates!.lng!,
         id: property._id,
         popupContent: `
-          <div class="p-3">
-            <p class="font-semibold">${property.title}</p>
+          <div>
+            <p class="font-semibold capitalize">${property.title}</p>
             <p>${property.location?.address || ""}, ${
           property.location?.city || ""
         }</p>
@@ -121,14 +121,13 @@ const PropertiesList = () => {
       </div>
 
       {/* Cards + Map */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 transition-all duration-300">
+      <div className="flex flex-col-reverse lg:grid grid-cols-1 lg:grid-cols-3 gap-6 transition-all duration-300">
         {/* Cards section */}
         <div
-          className="grid gap-6 transition-all duration-300"
-          style={{
-            gridColumn: showMap ? "span 2" : "span 3",
-            gridTemplateColumns: showMap ? "repeat(2, 1fr)" : "repeat(3, 1fr)",
-          }}
+          className={cn(
+            "grid gap-6 transition-all duration-300",
+            showMap ? "lg:grid-cols-2 lg:col-span-2" : "lg:grid-cols-3 lg:col-span-3"
+          )}
         >
           {isPending
             ? [...Array(8)].map((_, i) => <PropertyCardSkeleton key={i} />)
@@ -141,7 +140,7 @@ const PropertiesList = () => {
 
         {/* Map section */}
         {showMap && (
-          <div className="h-[700px] rounded-[30px] overflow-hidden border transition-all duration-300">
+          <div className="col-span-1 h-[350px] lg:h-[700px] rounded-[30px] overflow-hidden border transition-all duration-300">
             {isPending ? (
               <Skeleton className="h-full flex items-center justify-center bg-muted">
                 <div className="text-muted-foreground text-sm">

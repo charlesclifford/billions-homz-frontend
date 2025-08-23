@@ -9,7 +9,7 @@ const EstatesPage = () => {
     <div className="w-full">
       <PageHeader
         title="Our Estates"
-        bgImage="https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/03/faq-bc.jpg"
+        bgImage="/images/bg/land-plot-with-nature-landscape-location-pin.jpg"
       />
 
       <div className="container max-w-[min(100%,1290px)] mx-auto px-4 mt-10">

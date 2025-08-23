@@ -8,7 +8,7 @@ const ContactUsPage = () => {
     <div className="w-full h-full">
       <PageHeader
         title="Contact us"
-        bgImage="https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/03/faq-bc.jpg"
+        bgImage="/images/bg/top-view-workspace-with-orange-background.jpg"
       />
 
       <div className="container max-w-[min(100%,1290px)] mx-auto px-4 mb-[80px] lg:mt-[100px]">

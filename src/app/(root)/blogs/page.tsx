@@ -9,7 +9,8 @@ const BlogsPage = () => {
     <div className="w-full h-full">
       <PageHeader
         title="Our Blogs"
-        bgImage="https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/03/blog-bc.jpg"
+        bgImage="/images/bg/teamwork-making-online-blog.jpg"
+        className="!bg-top"
       />
 
       <div className="w-full">

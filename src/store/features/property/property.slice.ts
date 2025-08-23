@@ -1,7 +1,7 @@
 import { IProperty } from "@/interfaces/property.interface";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface PropertyFilterState {
+export interface PropertyFilterState {
   page: number;
   limit: number;
   search?: string;
@@ -14,6 +14,7 @@ interface PropertyFilterState {
   bathrooms?: string;
   status?: string;
   listingType?: string;
+  location?: string;
 }
 
 interface PropertyState {
