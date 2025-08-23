@@ -1,4 +1,5 @@
 "use client";
+import { getPaginationRange } from "@/components/shared/DataTable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -6,9 +7,17 @@ import {
   CardContent,
   CardDescription,
   CardFooter,
-  CardHeader,
-  CardTitle,
+  CardHeader
 } from "@/components/ui/card";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -18,22 +27,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import useAdminCommissions from "@/hooks/useAdminCommissions";
+import { cn } from "@/lib/utils";
 import { setFilter } from "@/store/features/commissions/commisson.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { formatCurrency, formatRate } from "@/utils/helpers";
 import { formatDate } from "date-fns";
-import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { cn } from "@/lib/utils";
-import { getPaginationRange } from "@/components/shared/DataTable";
 import ApproveCommission from "./ApproveCommission";
 import ConfirmPayout from "./ConfirmPayout";
 
@@ -55,7 +54,7 @@ const CommissionsContent = () => {
   const { filter } = useAppSelector((state) => state.commission);
   const currentPage = filter.page || 1;
   const { commissions, isPending, error, totalCommissions, totalPages } =
-    useAdminCommissions({ ...filter, status: undefined });
+    useAdminCommissions({ ...filter });
 
   const handlePageChange = (newPage: number) => {
     dispatch(setFilter({ page: newPage }));
@@ -87,12 +86,10 @@ const CommissionsContent = () => {
     <div className="space-y-4">
       <Card>
         <CardHeader className="flex flex-col">
-          <CardTitle>Commissions Records</CardTitle>
           <CardDescription>
-            <p>View and manage all realtor commissions</p>
             <p>
-              {!isPending && commissions
-                ? `
+              {!isPending && commissions ? (
+                `
               Showing ${Math.min(
                 (filter.page - 1) * filter.limit + 1,
                 totalCommissions
@@ -101,7 +98,9 @@ const CommissionsContent = () => {
                 ${totalCommissions}
              sales
               `
-                : "Loading commissions..."}
+              ) : (
+                <Skeleton className="h-4 mt-1" />
+              )}
             </p>
           </CardDescription>
         </CardHeader>
@@ -109,6 +108,7 @@ const CommissionsContent = () => {
           <Table>
             <TableHeader className="bg-sidebar dark:bg-background">
               <TableRow>
+                <TableHead>S/N</TableHead>
                 <TableHead>Realtor</TableHead>
                 <TableHead>Estate</TableHead>
                 <TableHead>Sale Amount</TableHead>
@@ -121,14 +121,15 @@ const CommissionsContent = () => {
             </TableHeader>
             <TableBody>
               {isPending ? (
-                <TableRow>
-                  <TableCell colSpan={8}>
-                    <div className="py-8 flex flex-col gap-2 items-center justify-center">
-                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                      Loading commission records...
-                    </div>
-                  </TableCell>
-                </TableRow>
+                [...Array(5)].map((_, rowIndex) => (
+                  <TableRow key={`skeleton-${rowIndex}`}>
+                    {[...Array(9)].map((_, colIndex) => (
+                      <TableCell key={colIndex}>
+                        <Skeleton className="h-6 w-full" />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
               ) : commissions && commissions.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} className="text-center py-8">
@@ -136,8 +137,11 @@ const CommissionsContent = () => {
                   </TableCell>
                 </TableRow>
               ) : (
-                commissions?.map((commission) => (
+                commissions?.map((commission, idx) => (
                   <TableRow key={commission._id}>
+                    <TableCell>
+                      <div>{(filter.page - 1) * filter.limit + idx + 1}</div>
+                    </TableCell>
                     <TableCell>
                       <div className="capitalize">
                         {commission.realtor?.firstName}{" "}

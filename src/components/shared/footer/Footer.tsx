@@ -32,7 +32,7 @@ const Footer = () => {
             </div>
           </div>
 
-          <div className="lg:px-4">
+          <div className="">
             <div className="bg-card rounded-[20px] lg:rounded-[40px] flex flex-col mx-0 lg:mx-4 px-[15px] lg:px-[30px] pt-[30px] lg:pt-[60px] mt-20 ">
               <div className="w-full max-w-[min(100%,1290px)] mx-auto flex flex-col ">
                 <div className="grid grid-cols-1 lg:grid-cols-3 border-b border-b-border pb-[30px] lg:pb-[60px] gap-[30px] lg:gap-0">
@@ -46,7 +46,7 @@ const Footer = () => {
                       </Link>
                     </div>
                     <div className="text-center lg:text-left">
-                      <p className="text-lg leading-[28px] text-neutral-600 dark:text-neutral-400">
+                      <p className="leading-[28px] ">
                         We are creators of transformative spaces that inspire,
                         innovate, and endure.
                       </p>
@@ -158,7 +158,7 @@ const Footer = () => {
                       <div>
                         <a
                           href="tel:+2348149996145"
-                          className="text-xl font-semibold leading-[1.5em] tracking-[-1px] lg:tracking-[-2px] relative contact-link lowercase"
+                          className="text-xl lg:text-2xl font-semibold leading-[1.5em] tracking-[-1px] lg:tracking-[-2px] relative contact-link lowercase"
                         >
                           <span>
                             <span>
@@ -170,7 +170,7 @@ const Footer = () => {
                       <div>
                         <a
                           href="mailto:billionshomzproperties@gmail.com"
-                          className="text-xl font-semibold leading-[1.5em] tracking-[-1px] lg:tracking-[-2px] relative contact-link lowercase"
+                          className="text-xl lg:text-2xl font-semibold leading-[1.5em] tracking-[-1px] lg:tracking-[-2px] relative contact-link lowercase"
                         >
                           <span>
                             <span>

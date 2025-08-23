@@ -7,6 +7,7 @@ interface SaleFilterState {
   // status?: StatusType;
   startDate?: string;
   endDate?: string;
+  search?: string;
 }
 
 interface SalesSate {
@@ -53,6 +54,7 @@ const salesSlice = createSlice({
   },
 });
 
-export const { setSaleLoading, setSales, setFilter } = salesSlice.actions;
+export const { setSaleLoading, setSales, setFilter, resetFilter } =
+  salesSlice.actions;
 
 export default salesSlice.reducer;

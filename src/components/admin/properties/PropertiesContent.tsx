@@ -7,7 +7,7 @@ import {
   CardContent,
   CardDescription,
   CardFooter,
-  CardHeader,
+  CardHeader
 } from "@/components/ui/card";
 import {
   Dialog,
@@ -25,6 +25,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -167,19 +168,25 @@ const PropertiesContent = () => {
       <Card>
         <CardHeader className="flex flex-col">
           <CardDescription>
-            <div className="text-sm text-muted-foreground">
-              Showing{" "}
-              <span className=" text-primary">
-                {startItem} - {endItem} of {totalProperties}
-              </span>{" "}
-              {properties.length === 1 ? "property" : "properties"}
-            </div>
+            <p>
+              {!isPending && properties ? (
+                `
+              Showing ${startItem} -
+                ${endItem} of
+                ${totalProperties}
+             estates
+              `
+              ) : (
+                <Skeleton className="h-4 mt-1" />
+              )}
+            </p>
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>S/N</TableHead>
                 <TableHead>Property</TableHead>
                 <TableHead>Type</TableHead>
                 <TableHead>Location</TableHead>
@@ -192,13 +199,15 @@ const PropertiesContent = () => {
             </TableHeader>
             <TableBody>
               {isPending ? (
-                <TableRow>
-                  <TableCell colSpan={8}>
-                    <div className="flex items-center justify-center h-64">
-                      <Loader2 className="h-8 w-8 animate-spin" />
-                    </div>
-                  </TableCell>
-                </TableRow>
+                [...Array(5)].map((_, rowIndex) => (
+                  <TableRow key={`skeleton-${rowIndex}`}>
+                    {[...Array(9)].map((_, colIndex) => (
+                      <TableCell key={colIndex}>
+                        <Skeleton className="h-6 w-full" />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
               ) : properties && properties.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} className="text-center py-8">
@@ -208,8 +217,11 @@ const PropertiesContent = () => {
                   </TableCell>
                 </TableRow>
               ) : (
-                properties?.map((property) => (
+                properties?.map((property, idx) => (
                   <TableRow key={property._id}>
+                    <TableCell>
+                      <div>{(filter.page - 1) * filter.limit + idx + 1}</div>
+                    </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-3 w-[300px] truncate">
                         {property.images[0]?.imageUrl && (

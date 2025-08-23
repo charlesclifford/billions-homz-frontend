@@ -1,12 +1,19 @@
 import EstateContent from "@/components/admin/properties/EstateContent";
+import EstateFilter from "@/components/admin/properties/EstateFilter";
 import EstateHeader from "@/components/admin/properties/EstateHeader";
 
 const EstatesPage = () => {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="w-full">
       <EstateHeader />
 
-      <EstateContent />
+      <div className="space-y-8">
+        <EstateFilter />
+
+        <div>
+          <EstateContent />
+        </div>
+      </div>
     </div>
   );
 };

@@ -7,6 +7,7 @@ interface CommissionFilterState {
   status?: StatusType;
   startDate?: string;
   endDate?: string;
+  search?: string;
 }
 
 interface TabPagination {
@@ -28,7 +29,7 @@ export const SLICE_NAME = "commissions";
 export const initialFilterState: CommissionFilterState = {
   page: 1,
   limit: 10,
-  status: "pending",
+  // status: "pending",
 };
 
 const initialState: CommissionState = {

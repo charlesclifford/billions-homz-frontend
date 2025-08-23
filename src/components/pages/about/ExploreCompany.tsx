@@ -26,7 +26,7 @@ const exploreList: IExploreList[] = [
       href: "#",
       text: "Our Solutions",
     },
-    containerClassName: "bg-neutral-800 dark:bg-neutral-900 text-white",
+    containerClassName: "bg-neutral-800 dark:bg-card text-white",
     linkClassName: "before:!bg-white after:!bg-white",
   },
   {
@@ -50,7 +50,7 @@ const exploreList: IExploreList[] = [
       href: "#",
       text: "Discover More",
     },
-    containerClassName: "bg-neutral-800 dark:bg-neutral-900 text-white",
+    containerClassName: "bg-neutral-800 dark:bg-card text-white",
     linkClassName: "before:!bg-white after:!bg-white",
   },
 ];
