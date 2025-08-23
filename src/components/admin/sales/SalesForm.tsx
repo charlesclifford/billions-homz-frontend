@@ -47,7 +47,14 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { useDropzone } from "react-dropzone";
-import { CalendarIcon, ImagePlus, Loader2, X } from "lucide-react";
+import {
+  AlertTriangle,
+  CalendarIcon,
+  CheckCircle,
+  ImagePlus,
+  Loader2,
+  X,
+} from "lucide-react";
 import Image from "next/image";
 import { InputWithAffix } from "@/components/shared/InputWithAffix";
 import { NairaIcon } from "../properties/EstateForm";
@@ -100,6 +107,10 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
     page: 1,
     limit: 20,
   });
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingValues, setPendingValues] = useState<SalesFormValues | null>(
+    null
+  );
 
   const form = useForm<SalesFormValues>({
     resolver: zodResolver(formSchema),
@@ -173,27 +184,35 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
       return;
     }
 
+    setPendingValues(values);
+    setConfirmOpen(true);
+  };
+
+  const confirmSave = async () => {
+    if (!pendingValues) return;
+
     const formData = new FormData();
 
     // Append all form values
-    formData.append("estate", values.estate);
-    formData.append("units", String(values.units));
-    formData.append("buyerName", values.buyerName);
-    formData.append("buyerPhone", values.buyerPhone);
-    if (values.buyerEmail) formData.append("buyerEmail", values.buyerEmail);
-    if (values.buyerAddress)
-      formData.append("buyerAddress", values.buyerAddress);
+    formData.append("estate", pendingValues.estate);
+    formData.append("units", String(pendingValues.units));
+    formData.append("buyerName", pendingValues.buyerName);
+    formData.append("buyerPhone", pendingValues.buyerPhone);
+    if (pendingValues.buyerEmail)
+      formData.append("buyerEmail", pendingValues.buyerEmail);
+    if (pendingValues.buyerAddress)
+      formData.append("buyerAddress", pendingValues.buyerAddress);
 
-    formData.append("amountPaid", String(values.amountPaid));
-    formData.append("paymentType", values.paymentType);
-    formData.append("paymentMethod", values.paymentMethod);
+    formData.append("amountPaid", String(pendingValues.amountPaid));
+    formData.append("paymentType", pendingValues.paymentType);
+    formData.append("paymentMethod", pendingValues.paymentMethod);
 
-    if (values.notes) formData.append("notes", values.notes);
-    if (values.realtor && values.realtor.trim() !== "") {
-      formData.append("realtor", values.realtor);
+    if (pendingValues.notes) formData.append("notes", pendingValues.notes);
+    if (pendingValues.realtor && pendingValues.realtor.trim() !== "") {
+      formData.append("realtor", pendingValues.realtor);
     }
 
-    formData.append("dateSold", values.dateSold.toISOString());
+    formData.append("dateSold", pendingValues.dateSold.toISOString());
 
     // Append file if exists
     if (imageFile) {
@@ -201,6 +220,7 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
     }
 
     createMutation.mutate(formData);
+    setConfirmOpen(false);
   };
 
   const handleOpenChange = (isOpen: boolean) => {
@@ -222,355 +242,114 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
     setImageFile(null);
   };
 
+  // Helper function to get estate name by ID
+  const getEstateName = (estateId: string) => {
+    const estate = estates.find((e) => e._id === estateId);
+    return estate
+      ? `${estate.name} (${formatCurrency(estate.price as number)})`
+      : estateId;
+  };
+
+  // Helper function to get realtor name by ID
+  const getRealtorName = (realtorId: string) => {
+    const realtor = realtors.find((r) => r._id === realtorId);
+    return realtor ? `${realtor.firstName} ${realtor.lastName}` : realtorId;
+  };
+
   const renderFormContent = () => (
-    <Form {...form}>
-      <form
-        id="sales-form"
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6 p-4 h-full"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="dateSold"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Date of Purchase</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-full pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date < new Date("1900-01-01")
-                      }
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Estate and Unit */}
-          <FormField
-            control={form.control}
-            name="estate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Estate</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="w-full cursor-pointer capitalize">
-                      <SelectValue placeholder="Select estate" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {estates.map((estate) => (
-                      <SelectItem
-                        key={estate._id}
-                        value={estate._id}
-                        className="capitalize"
-                      >
-                        {estate.name} ({formatCurrency(estate.price as number)})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="units"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Units</FormLabel>
-                <FormControl>
-                  <Input
-                    type="number"
-                    min={1}
-                    placeholder="Units sold"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Client Information */}
-          <FormField
-            control={form.control}
-            name="buyerName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Buyer Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="John Doe" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="buyerPhone"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Buyer Contact</FormLabel>
-                <FormControl>
-                  <Input placeholder="+1234567890" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="buyerEmail"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Buyer Email (Optional)</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="client@example.com"
-                    type="email"
-                    {...field}
-                    value={field.value || ""}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="buyerAddress"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Buyer Address (Optional)</FormLabel>
-                <FormControl>
-                  <Input placeholder="123 Main St" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Financial Information */}
-
-          <FormField
-            control={form.control}
-            name="amountPaid"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Amount Paid</FormLabel>
-                <FormControl>
-                  <InputWithAffix
-                    type="number"
-                    min={1}
-                    placeholder="Enter amount"
-                    prefix={<NairaIcon />}
-                    className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
-                    {...field}
-                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Payment Information */}
-          <FormField
-            control={form.control}
-            name="paymentType"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Payment Type</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="w-full cursor-pointer">
-                      <SelectValue placeholder="Select payment type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="full">Full Payment</SelectItem>
-                    <SelectItem value="installment">Installment</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="paymentMethod"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Payment Method</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="w-full cursor-pointer">
-                      <SelectValue placeholder="Select payment method" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="cash">Cash</SelectItem>
-                    <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
-                    <SelectItem value="cheque">Cheque</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Realtor and Commission */}
-          <FormField
-            control={form.control}
-            name="realtor"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Realtor</FormLabel>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <FormControl>
-                    <SelectTrigger className="w-full cursor-pointer capitalize">
-                      <SelectValue placeholder="Select realtor" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {realtors.map((realtor) => (
-                      <SelectItem
-                        key={realtor._id}
-                        value={realtor._id}
-                        className="capitalize"
-                      >
-                        {realtor.firstName} {realtor.lastName}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Payment Proof */}
-          <div className="md:col-span-2 space-y-2">
-            <FormLabel>Proof of Payment</FormLabel>
-            {previewImage ? (
-              <div className="relative aspect-video rounded-lg border-2 border-input border-dashed">
-                <Image
-                  src={previewImage}
-                  alt="Preview"
-                  className="w-full h-full object-contain"
-                  width={800}
-                  height={450}
-                  priority
-                />
-                <button
-                  type="button"
-                  onClick={handleRemoveImage}
-                  className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full cursor-pointer"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-            ) : (
-              <div
-                {...getRootProps()}
-                className={`border-2 border-input border-dashed rounded-lg p-8 h-[200px] text-center cursor-pointer hover:border-primary transition-colors ${
-                  isDragActive ? "border-primary bg-primary/10" : ""
-                } ${
-                  form.formState.isSubmitted &&
-                  ((!initialValues?._id && !imageFile) ||
-                    (initialValues?._id &&
-                      initialValues.paymentProof?.imageUrl &&
-                      !previewImage &&
-                      !imageFile))
-                    ? "border-red-500"
-                    : ""
-                }`}
-              >
-                <input {...getInputProps()} />
-                <div className="flex flex-col items-center justify-center gap-2 h-full">
-                  <ImagePlus className="h-8 w-8 text-gray-400" />
-                  {isDragActive ? (
-                    <p className="text-sm text-primary font-medium">
-                      Drop the image here
-                    </p>
-                  ) : (
-                    <>
-                      <p className="text-sm text-gray-500">
-                        Drag & drop an image here, or click to select
-                      </p>
-                      <p className="text-xs text-gray-400">
-                        JPEG, PNG, WEBP (Max 5MB)
-                      </p>
-                    </>
-                  )}
-                </div>
-              </div>
-            )}
-            {form.formState.isSubmitted && (
-              <>
-                {!initialValues?._id && !imageFile && (
-                  <p className="text-sm font-medium text-destructive">
-                    Proof of payment is required
-                  </p>
-                )}
-                {initialValues?._id &&
-                  initialValues.paymentProof?.imageUrl &&
-                  !previewImage &&
-                  !imageFile && (
-                    <p className="text-sm font-medium text-destructive">
-                      Please provide a new image or keep the existing one
-                    </p>
-                  )}
-              </>
-            )}
-          </div>
-
-          {/* Notes */}
-          <div className="md:col-span-2">
+    <>
+      <Form {...form}>
+        <form
+          id="sales-form"
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6 p-4 h-full"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
             <FormField
               control={form.control}
-              name="notes"
+              name="dateSold"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Date of Purchase</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full pl-3 text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          {field.value ? (
+                            format(field.value, "PPP")
+                          ) : (
+                            <span>Pick a date</span>
+                          )}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        disabled={(date) =>
+                          date > new Date() || date < new Date("1900-01-01")
+                        }
+                        captionLayout="dropdown"
+                        autoFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Estate and Unit */}
+            <FormField
+              control={form.control}
+              name="estate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Notes (Optional)</FormLabel>
+                  <FormLabel>Estate</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full cursor-pointer capitalize">
+                        <SelectValue placeholder="Select estate" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {estates.map((estate) => (
+                        <SelectItem
+                          key={estate._id}
+                          value={estate._id}
+                          className="capitalize cursor-pointer"
+                        >
+                          {estate.name} (
+                          {formatCurrency(estate.price as number)})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="units"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Units</FormLabel>
                   <FormControl>
-                    <Textarea
-                      placeholder="Additional notes about the sale..."
-                      className="resize-none"
+                    <Input
+                      type="number"
+                      min={1}
+                      placeholder="Units sold"
                       {...field}
                     />
                   </FormControl>
@@ -578,10 +357,455 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
                 </FormItem>
               )}
             />
+
+            {/* Client Information */}
+            <FormField
+              control={form.control}
+              name="buyerName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Buyer Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="John Doe" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="buyerPhone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Buyer Contact</FormLabel>
+                  <FormControl>
+                    <Input placeholder="+1234567890" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="buyerEmail"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Buyer Email (Optional)</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="client@example.com"
+                      type="email"
+                      {...field}
+                      value={field.value || ""}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="buyerAddress"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Buyer Address (Optional)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="123 Main St" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Financial Information */}
+
+            <FormField
+              control={form.control}
+              name="amountPaid"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Amount Paid</FormLabel>
+                  <FormControl>
+                    <InputWithAffix
+                      type="number"
+                      min={1}
+                      placeholder="Enter amount"
+                      prefix={<NairaIcon />}
+                      className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Payment Information */}
+            <FormField
+              control={form.control}
+              name="paymentType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Payment Type</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full cursor-pointer">
+                        <SelectValue placeholder="Select payment type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="full">Full Payment</SelectItem>
+                      <SelectItem value="installment">Installment</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="paymentMethod"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Payment Method</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full cursor-pointer">
+                        <SelectValue placeholder="Select payment method" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="cash">Cash</SelectItem>
+                      <SelectItem value="bank_transfer">
+                        Bank Transfer
+                      </SelectItem>
+                      <SelectItem value="cheque">Cheque</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Realtor and Commission */}
+            <FormField
+              control={form.control}
+              name="realtor"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Realtor</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full cursor-pointer capitalize">
+                        <SelectValue placeholder="Select realtor" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {realtors.map((realtor) => (
+                        <SelectItem
+                          key={realtor._id}
+                          value={realtor._id}
+                          className="capitalize"
+                        >
+                          {realtor.firstName} {realtor.lastName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Payment Proof */}
+            <div className="md:col-span-2 space-y-2">
+              <FormLabel>Proof of Payment</FormLabel>
+              {previewImage ? (
+                <div className="relative aspect-video rounded-lg border-2 border-input border-dashed">
+                  <Image
+                    src={previewImage}
+                    alt="Preview"
+                    className="w-full h-full object-contain"
+                    width={800}
+                    height={450}
+                    priority
+                  />
+                  <button
+                    type="button"
+                    onClick={handleRemoveImage}
+                    className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full cursor-pointer"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
+                <div
+                  {...getRootProps()}
+                  className={`border-2 border-input border-dashed rounded-lg p-8 h-[200px] text-center cursor-pointer hover:border-primary transition-colors ${
+                    isDragActive ? "border-primary bg-primary/10" : ""
+                  } ${
+                    form.formState.isSubmitted &&
+                    ((!initialValues?._id && !imageFile) ||
+                      (initialValues?._id &&
+                        initialValues.paymentProof?.imageUrl &&
+                        !previewImage &&
+                        !imageFile))
+                      ? "border-red-500"
+                      : ""
+                  }`}
+                >
+                  <input {...getInputProps()} />
+                  <div className="flex flex-col items-center justify-center gap-2 h-full">
+                    <ImagePlus className="h-8 w-8 text-gray-400" />
+                    {isDragActive ? (
+                      <p className="text-sm text-primary font-medium">
+                        Drop the image here
+                      </p>
+                    ) : (
+                      <>
+                        <p className="text-sm text-gray-500">
+                          Drag & drop an image here, or click to select
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          JPEG, PNG, WEBP (Max 5MB)
+                        </p>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+              {form.formState.isSubmitted && (
+                <>
+                  {!initialValues?._id && !imageFile && (
+                    <p className="text-sm font-medium text-destructive">
+                      Proof of payment is required
+                    </p>
+                  )}
+                  {initialValues?._id &&
+                    initialValues.paymentProof?.imageUrl &&
+                    !previewImage &&
+                    !imageFile && (
+                      <p className="text-sm font-medium text-destructive">
+                        Please provide a new image or keep the existing one
+                      </p>
+                    )}
+                </>
+              )}
+            </div>
+
+            {/* Notes */}
+            <div className="md:col-span-2">
+              <FormField
+                control={form.control}
+                name="notes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Notes (Optional)</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Additional notes about the sale..."
+                        className="resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
-        </div>
-      </form>
-    </Form>
+        </form>
+      </Form>
+
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent className="!max-w-2xl max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle className="text-xl flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-amber-500" />
+              Confirm Sale Details
+            </DialogTitle>
+            <DialogDescription>
+              Please review all information carefully. Sales records cannot be
+              edited or deleted once created.
+            </DialogDescription>
+          </DialogHeader>
+
+          <ScrollArea className="flex-1 h-[calc(80vh-240px)]">
+            <div className="space-y-4 py-4">
+              {pendingValues && (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <h4 className="font-semibold text-sm text-muted-foreground">
+                        Date of Purchase
+                      </h4>
+                      <p>{format(pendingValues.dateSold, "PPP")}</p>
+                    </div>
+
+                    <div>
+                      <h4 className="font-semibold text-sm text-muted-foreground">
+                        Estate
+                      </h4>
+                      <p className="capitalize">{getEstateName(pendingValues.estate)}</p>
+                    </div>
+
+                    <div>
+                      <h4 className="font-semibold text-sm text-muted-foreground">
+                        Units
+                      </h4>
+                      <p>{pendingValues.units}</p>
+                    </div>
+
+                    <div>
+                      <h4 className="font-semibold text-sm text-muted-foreground capitalize">
+                        Buyer Name
+                      </h4>
+                      <p>{pendingValues.buyerName}</p>
+                    </div>
+
+                    <div>
+                      <h4 className="font-semibold text-sm text-muted-foreground">
+                        Buyer Contact
+                      </h4>
+                      <p>{pendingValues.buyerPhone}</p>
+                    </div>
+
+                    {pendingValues.buyerEmail && (
+                      <div>
+                        <h4 className="font-semibold text-sm text-muted-foreground">
+                          Buyer Email
+                        </h4>
+                        <p>{pendingValues.buyerEmail}</p>
+                      </div>
+                    )}
+
+                    {pendingValues.buyerAddress && (
+                      <div className="md:col-span-2">
+                        <h4 className="font-semibold text-sm text-muted-foreground">
+                          Buyer Address
+                        </h4>
+                        <p>{pendingValues.buyerAddress}</p>
+                      </div>
+                    )}
+
+                    <div>
+                      <h4 className="font-semibold text-sm text-muted-foreground">
+                        Amount Paid
+                      </h4>
+                      <p>{formatCurrency(pendingValues.amountPaid)}</p>
+                    </div>
+
+                    <div>
+                      <h4 className="font-semibold text-sm text-muted-foreground">
+                        Payment Type
+                      </h4>
+                      <p className="capitalize">{pendingValues.paymentType}</p>
+                    </div>
+
+                    <div>
+                      <h4 className="font-semibold text-sm text-muted-foreground">
+                        Payment Method
+                      </h4>
+                      <p className="capitalize">
+                        {pendingValues.paymentMethod.replace("_", " ")}
+                      </p>
+                    </div>
+
+                    {pendingValues.realtor && (
+                      <div>
+                        <h4 className="font-semibold text-sm text-muted-foreground">
+                          Realtor
+                        </h4>
+                        <p className="capitalize">{getRealtorName(pendingValues.realtor)}</p>
+                      </div>
+                    )}
+
+                    {pendingValues.notes && (
+                      <div className="md:col-span-2">
+                        <h4 className="font-semibold text-sm text-muted-foreground">
+                          Notes
+                        </h4>
+                        <p>{pendingValues.notes}</p>
+                      </div>
+                    )}
+
+                    <div className="md:col-span-2">
+                      <h4 className="font-semibold text-sm text-muted-foreground">
+                        Proof of Payment
+                      </h4>
+                      {previewImage && (
+                        <div className="mt-2 aspect-video rounded-lg border">
+                          <Image
+                            src={previewImage}
+                            alt="Payment proof preview"
+                            className="w-full h-full object-contain"
+                            width={400}
+                            height={225}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mt-4">
+                    <div className="flex items-start gap-2">
+                      <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <h4 className="font-semibold text-amber-800">
+                          Important Notice
+                        </h4>
+                        <p className="text-amber-700 text-sm mt-1">
+                          Sales records are permanent and cannot be edited or
+                          deleted once created. Please ensure all information is
+                          correct before confirming.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </ScrollArea>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setConfirmOpen(false)}
+              disabled={createMutation.isPending}
+              className="cursor-pointer"
+            >
+              Go Back and Edit
+            </Button>
+            <Button
+              type="button"
+              onClick={confirmSave}
+              disabled={createMutation.isPending}
+              className="cursor-pointer"
+            >
+              {createMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Creating Sale...
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Confirm
+                </>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 
   const renderFooter = () => (
@@ -595,6 +819,7 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
       >
         Cancel
       </Button>
+
       <Button
         type="submit"
         form="sales-form"
@@ -607,7 +832,7 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
             {"Saving..."}
           </>
         ) : (
-          "Save"
+          "Review and Confirm"
         )}
       </Button>
     </>

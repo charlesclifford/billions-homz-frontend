@@ -10,9 +10,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import useUsers from "@/hooks/useUsers";
-import { initialFilterState, resetFilter, setFilter } from "@/store/features/user/user.slice";
+import {
+  initialFilterState,
+  resetFilter,
+  setFilter,
+} from "@/store/features/user/user.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { endOfDay, startOfDay } from "date-fns";
 import { RefreshCcw, SearchIcon, X } from "lucide-react";
@@ -71,14 +79,15 @@ const UsersFilter = () => {
   // Handle date range changes
   const handleDateRangeChange = (range: DateRange | undefined) => {
     setDateRange(range);
-    dispatch(
-      setFilter({
-        startDate: range?.from
-          ? startOfDay(range.from).toISOString()
-          : undefined,
-        endDate: range?.to ? endOfDay(range.to).toISOString() : undefined,
-      })
-    );
+    // Only dispatch when both from & to are selected
+    if (range?.from && range?.to) {
+      dispatch(
+        setFilter({
+          startDate: startOfDay(range.from).toISOString(),
+          endDate: endOfDay(range.to).toISOString(),
+        })
+      );
+    }
   };
 
   // Reset all filters
@@ -116,7 +125,7 @@ const UsersFilter = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Search Input */}
         <div className="relative col-span-1 flex gap-2">
-        <Tooltip>
+          <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 size={"icon"}
