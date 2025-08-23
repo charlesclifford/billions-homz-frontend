@@ -54,7 +54,7 @@ const CommissionsContent = () => {
   const { filter } = useAppSelector((state) => state.commission);
   const currentPage = filter.page || 1;
   const { commissions, isPending, error, totalCommissions, totalPages } =
-    useAdminCommissions({ ...filter, status: undefined });
+    useAdminCommissions({ ...filter });
 
   const handlePageChange = (newPage: number) => {
     dispatch(setFilter({ page: newPage }));

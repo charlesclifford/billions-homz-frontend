@@ -60,7 +60,10 @@ const CommissionFilter = () => {
   };
 
   const handleStatusChange = (value: FilterStatusType) => {
-    dispatch(setFilter({ status: value === "all" ? undefined : value }));
+    const statusValue = value as FilterStatusType;
+    dispatch(
+      setFilter({ status: statusValue === "all" ? undefined : statusValue })
+    );
   };
 
   // Handle date range changes
