@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/pagination";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { MapPin, Grid3X3 } from "lucide-react";
+import { MapPin, Grid3X3, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 import useProperties from "@/hooks/useProperties";
 import PropertyCardSkeleton from "./PropertyCardSkeleton";
@@ -26,10 +26,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 const PropertiesList = () => {
   const dispatch = useAppDispatch();
   const { filter } = useAppSelector((state) => state.property);
-  const { isPending, properties, totalPages } = useProperties({
-    ...filter,
-    limit: 20,
-  });
+  const { isPending, properties, totalPages } = useProperties(filter);
   const [showMap, setShowMap] = useState(false);
 
   const onPaginationChange = (page: number) => {
@@ -100,24 +97,27 @@ const PropertiesList = () => {
         <h2 className="text-2xl font-bold">
           {/* Properties ({properties?.length || 0}) */}
         </h2>
-        <div className="flex items-center space-x-2 ml-auto">
-          <Grid3X3 className="w-4 h-4 text-muted-foreground" />
-          <Switch
-            id="map-toggle"
-            className="cursor-pointer"
-            checked={showMap}
-            onCheckedChange={toggleMapView}
-          />
-          <Label
-            htmlFor="map-toggle"
-            className="flex items-center cursor-pointer"
-          >
-            <MapPin className="w-4 h-4 mr-2 text-muted-foreground" />
-            <span className="hidden sm:inline">
-              {showMap ? "Hide Map" : "Show Map"}
-            </span>
-          </Label>
-        </div>
+        {/* Show toggle only when there are properties */}
+        {properties && properties.length > 0 && (
+          <div className="flex items-center space-x-2 ml-auto">
+            <Grid3X3 className="w-4 h-4 text-muted-foreground" />
+            <Switch
+              id="map-toggle"
+              className="cursor-pointer"
+              checked={showMap}
+              onCheckedChange={toggleMapView}
+            />
+            <Label
+              htmlFor="map-toggle"
+              className="flex items-center cursor-pointer"
+            >
+              <MapPin className="w-4 h-4 mr-2 text-muted-foreground" />
+              <span className="hidden sm:inline">
+                {showMap ? "Hide Map" : "Show Map"}
+              </span>
+            </Label>
+          </div>
+        )}
       </div>
 
       {/* Cards + Map */}
@@ -126,16 +126,29 @@ const PropertiesList = () => {
         <div
           className={cn(
             "grid gap-6 transition-all duration-300",
-            showMap ? "lg:grid-cols-2 lg:col-span-2" : "lg:grid-cols-3 lg:col-span-3"
+            showMap
+              ? "lg:grid-cols-2 lg:col-span-2"
+              : "lg:grid-cols-3 lg:col-span-3"
           )}
         >
-          {isPending
-            ? [...Array(8)].map((_, i) => <PropertyCardSkeleton key={i} />)
-            : properties?.map((p) => (
-                <div key={p._id} id={`property-${p._id}`}>
-                  <PropertyCard property={p} />
-                </div>
-              ))}
+          {isPending ? (
+            [...Array(8)].map((_, i) => <PropertyCardSkeleton key={i} />)
+          ) : properties && properties.length > 0 ? (
+            properties.map((p) => (
+              <div key={p._id} id={`property-${p._id}`}>
+                <PropertyCard property={p} />
+              </div>
+            ))
+          ) : (
+            // ✅ Empty state
+            <div className="col-span-full flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
+              <Home className="w-12 h-12 mb-4 text-primary" />
+              <h3 className="text-lg font-semibold">No properties found</h3>
+              <p className="text-sm">
+                Try adjusting your filters or check back later.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Map section */}

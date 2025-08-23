@@ -52,7 +52,7 @@ const LocationComboBox = ({
           role="combobox"
           aria-expanded={open}
           className={cn(
-            "w-[250px] justify-between rounded-[30px] py-[15px] px-[30px] h-14",
+            "w-[250px] justify-between rounded-[30px] py-[15px] px-[30px] h-14 bg-gray-100 focus-visible:ring-0 cursor-pointer font-normal shadow-none",
             !value && "text-muted-foreground"
           )}
         >

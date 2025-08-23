@@ -14,6 +14,7 @@ import { setFilter } from "@/store/features/property/estate.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import EstateCard from "./EstateCard";
 import EstateCardSkeleton from "./EstateCardSkeleton";
+import { Home } from "lucide-react";
 
 const EstatesList = () => {
   const dispatch = useAppDispatch();
@@ -21,26 +22,29 @@ const EstatesList = () => {
   const { estates, isPending, totalPages } = useEstates(filter);
 
   const onPaginationChange = (page: number) => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
     dispatch(setFilter({ page }));
   };
-
-  if (isPending) {
-    return (
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-[30px]">
-        {[...Array(3)].map((_, i) => (
-          <EstateCardSkeleton key={i} />
-        ))}
-      </div>
-    );
-  }
 
   return (
     <div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-[30px]">
-        {estates?.map((estate) => (
-          <EstateCard key={estate._id} estate={estate} />
-        ))}
+        {isPending ? (
+          [...Array(3)].map((_, i) => <EstateCardSkeleton key={i} />)
+        ) : estates && estates.length > 0 ? (
+          estates?.map((estate) => (
+            <EstateCard key={estate._id} estate={estate} />
+          ))
+        ) : (
+          // ✅ Empty state
+          <div className="col-span-full flex flex-col items-center justify-center py-20 text-center text-muted-foreground">
+            <Home className="w-12 h-12 mb-4 text-primary" />
+            <h3 className="text-lg font-semibold">No estates found</h3>
+            <p className="text-sm">
+              Try adjusting your filters or check back later.
+            </p>
+          </div>
+        )}
       </div>
 
       {estates && estates?.length > 0 && totalPages > 1 && (
@@ -63,7 +67,8 @@ const EstatesList = () => {
                   isActive={page === filter.page}
                   className={cn(
                     "cursor-pointer rounded-full w-[50px] h-[50px] hover:bg-primary hover:text-white",
-                    page === filter.page && "bg-primary dark:bg-primary text-white"
+                    page === filter.page &&
+                      "bg-primary dark:bg-primary text-white"
                   )}
                   onClick={() => onPaginationChange(page)}
                 >
