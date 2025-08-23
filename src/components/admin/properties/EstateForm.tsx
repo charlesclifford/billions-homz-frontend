@@ -42,6 +42,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 import { MapboxPicker } from "./MapboxPicker";
+import { formatNumberWithCommas } from "@/utils/helpers";
 
 export const NairaIcon = () => <span className="font-medium">₦</span>;
 export const SquareMetreIcon = () => (
@@ -442,15 +443,32 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                               <FormLabel>Price</FormLabel>
                               <FormControl>
                                 <InputWithAffix
-                                  type="number"
+                                  type="text"
+                                  inputMode="numeric"
                                   min="0"
                                   placeholder="Enter price"
                                   prefix={<NairaIcon />}
                                   className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
-                                  {...field}
-                                  onChange={(e) =>
-                                    field.onChange(parseFloat(e.target.value))
-                                  }
+                                  value={formatNumberWithCommas(
+                                    field.value || 0
+                                  )}
+                                  onChange={(e) => {
+                                    // Remove commas and non-numeric characters, then parse as number
+                                    const rawValue = e.target.value.replace(
+                                      /[^\d]/g,
+                                      ""
+                                    );
+                                    const numericValue = rawValue
+                                      ? parseInt(rawValue, 10)
+                                      : 0;
+                                    field.onChange(numericValue);
+                                  }}
+                                  onBlur={field.onBlur}
+                                  onFocus={(e) => {
+                                    // Select all text on focus for easy editing
+                                    e.target.select();
+                                  }}
+                                  ref={field.ref}
                                 />
                               </FormControl>
                               <FormMessage />

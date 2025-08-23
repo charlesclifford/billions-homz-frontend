@@ -98,7 +98,7 @@ export function RecentPropertiesTable() {
                       {estate.soldUnits === estate.totalUnits
                         ? "Sold Out"
                         : estate.soldUnits && estate.soldUnits > 0
-                        ? "Selling"
+                        ? "Now Selling"
                         : "Available"}
                     </Badge>
                   </TableCell>

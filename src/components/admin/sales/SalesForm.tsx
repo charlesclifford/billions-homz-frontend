@@ -58,7 +58,7 @@ import {
 import Image from "next/image";
 import { InputWithAffix } from "@/components/shared/InputWithAffix";
 import { NairaIcon } from "../properties/EstateForm";
-import { formatCurrency } from "@/utils/helpers";
+import { formatCurrency, formatNumberWithCommas } from "@/utils/helpers";
 import {
   Popover,
   PopoverContent,
@@ -147,7 +147,19 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
       "image/*": [".jpeg", ".jpg", ".png", ".webp"],
     },
     maxFiles: 1,
-    onDrop: (acceptedFiles) => {
+    maxSize: 5 * 1024 * 1024, // 5MB limit
+    onDrop: (acceptedFiles, fileRejections) => {
+      // Handle file rejections (too large, wrong type, etc.)
+      if (fileRejections.length > 0) {
+        const rejection = fileRejections[0];
+        if (rejection.errors[0]?.code === "file-too-large") {
+          toast.error("File is too large. Maximum size is 5MB.");
+        } else {
+          toast.error("Invalid file type. Please use JPEG, PNG, or WEBP.");
+        }
+        return;
+      }
+
       const file = acceptedFiles[0];
       if (file) {
         setImageFile(file);
@@ -326,7 +338,12 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
                         <SelectItem
                           key={estate._id}
                           value={estate._id}
-                          className="capitalize cursor-pointer"
+                          className={cn(
+                            "capitalize cursor-pointer",
+                            estate.soldUnits === estate.totalUnits &&
+                              "line-through"
+                          )}
+                          disabled={estate.soldUnits === estate.totalUnits}
                         >
                           {estate.name} (
                           {formatCurrency(estate.price as number)})
@@ -430,15 +447,26 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
                   <FormLabel>Amount Paid</FormLabel>
                   <FormControl>
                     <InputWithAffix
-                      type="number"
-                      min={1}
+                      type="text"
+                      inputMode="numeric"
                       placeholder="Enter amount"
                       prefix={<NairaIcon />}
                       className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
-                      {...field}
-                      onChange={(e) =>
-                        field.onChange(parseFloat(e.target.value))
-                      }
+                      value={formatNumberWithCommas(field.value || 0)}
+                      onChange={(e) => {
+                        // Remove commas and non-numeric characters, then parse as number
+                        const rawValue = e.target.value.replace(/[^\d]/g, "");
+                        const numericValue = rawValue
+                          ? parseInt(rawValue, 10)
+                          : 0;
+                        field.onChange(numericValue);
+                      }}
+                      onBlur={field.onBlur}
+                      onFocus={(e) => {
+                        // Select all text on focus for easy editing
+                        e.target.select();
+                      }}
+                      ref={field.ref}
                     />
                   </FormControl>
                   <FormMessage />
@@ -653,7 +681,9 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
                       <h4 className="font-semibold text-sm text-muted-foreground">
                         Estate
                       </h4>
-                      <p className="capitalize">{getEstateName(pendingValues.estate)}</p>
+                      <p className="capitalize">
+                        {getEstateName(pendingValues.estate)}
+                      </p>
                     </div>
 
                     <div>
@@ -723,7 +753,9 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
                         <h4 className="font-semibold text-sm text-muted-foreground">
                           Realtor
                         </h4>
-                        <p className="capitalize">{getRealtorName(pendingValues.realtor)}</p>
+                        <p className="capitalize">
+                          {getRealtorName(pendingValues.realtor)}
+                        </p>
                       </div>
                     )}
 
@@ -758,10 +790,10 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
                     <div className="flex items-start gap-2">
                       <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
                       <div>
-                        <h4 className="font-semibold text-amber-800">
+                        <h4 className="font-semibold text-sm text-amber-800">
                           Important Notice
                         </h4>
-                        <p className="text-amber-700 text-sm mt-1">
+                        <p className="text-amber-700 text-xs mt-1">
                           Sales records are permanent and cannot be edited or
                           deleted once created. Please ensure all information is
                           correct before confirming.
@@ -792,12 +824,12 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
             >
               {createMutation.isPending ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Creating Sale...
                 </>
               ) : (
                 <>
-                  <CheckCircle className="h-4 w-4 mr-2" />
+                  <CheckCircle className="h-4 w-4" />
                   Confirm
                 </>
               )}

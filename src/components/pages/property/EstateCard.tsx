@@ -28,11 +28,20 @@ const EstateCard = ({ estate }: { estate: IEstate }) => {
       <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-end p-8 z-[3] text-white">
         {/* status */}
         <div className="mb-auto">
-          <span className="py-2.5 px-5 font-semibold text-xs leading-[1.25] uppercase rounded-[20px] inline-flex bg-primary">
+          <span
+            className={cn(
+              "py-2.5 px-5 font-semibold text-xs leading-[1.25] uppercase rounded-[20px] inline-flex",
+              estate.soldUnits === estate.totalUnits
+                ? "bg-red-500/80 backdrop-blur-sm"
+                : estate.soldUnits && estate.soldUnits > 0
+                ? "bg-primary/80 backdrop-blur-sm"
+                : "bg-background/80 backdrop-blur-sm"
+            )}
+          >
             {estate.soldUnits === estate.totalUnits
               ? "Sold Out"
               : estate.soldUnits && estate.soldUnits > 0
-              ? "Selling"
+              ? "Now Selling"
               : "Available"}
           </span>
         </div>

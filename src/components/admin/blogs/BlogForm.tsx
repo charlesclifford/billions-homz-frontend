@@ -110,7 +110,19 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
       "image/*": [".jpeg", ".jpg", ".png", ".webp"],
     },
     maxFiles: 1,
-    onDrop: (acceptedFiles) => {
+    maxSize: 5 * 1024 * 1024, // 5MB limit
+    onDrop: (acceptedFiles, fileRejections) => {
+      // Handle file rejections (too large, wrong type, etc.)
+      if (fileRejections.length > 0) {
+        const rejection = fileRejections[0];
+        if (rejection.errors[0]?.code === "file-too-large") {
+          toast.error("File is too large. Maximum size is 5MB.");
+        } else {
+          toast.error("Invalid file type. Please use JPEG, PNG, or WEBP.");
+        }
+        return;
+      }
+
       const file = acceptedFiles[0];
       if (file) {
         setImageFile(file);
