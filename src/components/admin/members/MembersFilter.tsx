@@ -198,13 +198,13 @@ const MembersFilter = () => {
           onValueChange={(value) => handleStatusChange(value as StatusFilter)}
         >
           <TabsList className="grid w-full grid-cols-3 h-full">
-            <TabsTrigger value="all" className="py-1.5 px-2">
+            <TabsTrigger value="all" className="py-1.5 px-2 cursor-pointer">
               All Admins
             </TabsTrigger>
-            <TabsTrigger value="active" className="py-1.5 px-2">
+            <TabsTrigger value="active" className="py-1.5 px-2 cursor-pointer">
               Active Admins
             </TabsTrigger>
-            <TabsTrigger value="blocked" className="py-1.5 px-2">
+            <TabsTrigger value="blocked" className="py-1.5 px-2 cursor-pointer">
               Blocked Admins
             </TabsTrigger>
           </TabsList>

@@ -7,6 +7,7 @@ interface CommissionFilterState {
   status?: StatusType;
   startDate?: string;
   endDate?: string;
+  search?: string;
 }
 
 interface TabPagination {

@@ -7,8 +7,7 @@ import {
   CardContent,
   CardDescription,
   CardFooter,
-  CardHeader,
-  CardTitle,
+  CardHeader
 } from "@/components/ui/card";
 import {
   Pagination,
@@ -87,9 +86,7 @@ const CommissionsContent = () => {
     <div className="space-y-4">
       <Card>
         <CardHeader className="flex flex-col">
-          <CardTitle>Commissions Records</CardTitle>
           <CardDescription>
-            <p>View and manage all realtor commissions</p>
             <p>
               {!isPending && commissions ? (
                 `
@@ -126,7 +123,7 @@ const CommissionsContent = () => {
               {isPending ? (
                 [...Array(5)].map((_, rowIndex) => (
                   <TableRow key={`skeleton-${rowIndex}`}>
-                    {[...Array(8)].map((_, colIndex) => (
+                    {[...Array(9)].map((_, colIndex) => (
                       <TableCell key={colIndex}>
                         <Skeleton className="h-6 w-full" />
                       </TableCell>

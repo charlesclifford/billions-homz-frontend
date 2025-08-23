@@ -201,7 +201,7 @@ const PropertiesContent = () => {
               {isPending ? (
                 [...Array(5)].map((_, rowIndex) => (
                   <TableRow key={`skeleton-${rowIndex}`}>
-                    {[...Array(8)].map((_, colIndex) => (
+                    {[...Array(9)].map((_, colIndex) => (
                       <TableCell key={colIndex}>
                         <Skeleton className="h-6 w-full" />
                       </TableCell>

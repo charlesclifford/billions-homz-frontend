@@ -5,8 +5,7 @@ import {
   CircleGaugeIcon,
   FileText,
   HandCoinsIcon,
-  Settings, // For sales records
-  WalletIcon
+  Settings
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -51,11 +50,11 @@ const navMain: ISidebarMenu[] = [
     url: "/realtor/commissions",
     icon: HandCoinsIcon,
   },
-  {
-    title: "Earnings",
-    url: "/realtor/earnings",
-    icon: WalletIcon,
-  },
+  // {
+  //   title: "Earnings",
+  //   url: "/realtor/earnings",
+  //   icon: WalletIcon,
+  // },
 ];
 
 const navSecondary: ISidebarMenu[] = [

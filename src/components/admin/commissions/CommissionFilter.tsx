@@ -1,0 +1,172 @@
+"use client";
+import React, { useEffect, useState } from "react";
+import DateRangePicker from "@/components/shared/DateRangePicker";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { endOfDay, startOfDay } from "date-fns";
+import { RefreshCcw, SearchIcon, X } from "lucide-react";
+import { DateRange } from "react-day-picker";
+import useAdminCommissions from "@/hooks/useAdminCommissions";
+import {
+  initialFilterState,
+  resetFilter,
+  setFilter,
+} from "@/store/features/commissions/commisson.slice";
+import { StatusType } from "@/interfaces/commission.interface";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+type FilterStatusType = StatusType | "all";
+
+const CommissionFilter = () => {
+  const dispatch = useAppDispatch();
+  const { filter } = useAppSelector((state) => state.commission);
+  const { refetch } = useAdminCommissions(initialFilterState);
+  const [localSearch, setLocalSearch] = useState("");
+  const [dateRange, setDateRange] = useState<DateRange | undefined>({
+    from: filter.startDate ? new Date(filter.startDate) : undefined,
+    to: filter.endDate ? new Date(filter.endDate) : undefined,
+  });
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      dispatch(setFilter({ search: localSearch }));
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [localSearch, dispatch]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setLocalSearch(value);
+  };
+
+  const handleClearSearch = () => {
+    setLocalSearch("");
+    dispatch(setFilter({ search: undefined }));
+  };
+
+  const handleStatusChange = (value: FilterStatusType) => {
+    dispatch(setFilter({ status: value === "all" ? undefined : value }));
+  };
+
+  // Handle date range changes
+  const handleDateRangeChange = (range: DateRange | undefined) => {
+    setDateRange(range);
+    dispatch(
+      setFilter({
+        startDate: range?.from
+          ? startOfDay(range.from).toISOString()
+          : undefined,
+        endDate: range?.to ? endOfDay(range.to).toISOString() : undefined,
+      })
+    );
+  };
+
+  // Sync local search with Redux state on mount
+  useEffect(() => {
+    setLocalSearch(filter.search as string);
+    setDateRange({
+      from: filter.startDate ? new Date(filter.startDate) : undefined,
+      to: filter.endDate ? new Date(filter.endDate) : undefined,
+    });
+  }, [filter.search, filter.startDate, filter.endDate]);
+
+  const handleResetFilters = () => {
+    dispatch(resetFilter());
+    setLocalSearch("");
+    setDateRange(undefined);
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Search and Filters Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Search Input */}
+        <div className="relative col-span-1 flex gap-2">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size={"icon"}
+                className="cursor-pointer"
+                aria-label="Refresh results"
+                onClick={() => refetch()}
+              >
+                <RefreshCcw />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Refresh</TooltipContent>
+          </Tooltip>
+          <div className="flex items-center w-full relative">
+            <SearchIcon className="mx-2 absolute text-neutral-400 dark:text-neutral-500" />
+            <Input
+              className="focus:!ring-0  px-12 rounded-sm"
+              placeholder="Search by realtor, estate..."
+              value={localSearch}
+              onChange={handleSearchChange}
+            />
+            {localSearch && (
+              <button
+                onClick={handleClearSearch}
+                className="absolute right-2 text-neutral-400 dark:text-neutral-500 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
+                aria-label="Clear search"
+              >
+                <X size={18} />
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="col-span-1 lg:col-span-1 lg:flex gap-4 items-center  grid grid-cols-1 justify-end">
+          <div className="lg:w-[280px] w-full">
+            <DateRangePicker
+              dateRange={dateRange}
+              onDateRangeChange={handleDateRangeChange}
+              placeholder="Filter by date range"
+              className=" rounded-sm"
+            />
+          </div>
+
+          <Select
+            value={filter.status || "all"}
+            onValueChange={handleStatusChange}
+          >
+            <SelectTrigger className="lg:w-[180px] w-full rounded-sm">
+              <SelectValue placeholder="Select status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="requested">Requested</SelectItem>
+              <SelectItem value="approved">Approved</SelectItem>
+              <SelectItem value="paid">Paid</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Button
+            variant="secondary"
+            className="rounded-sm cursor-pointer"
+            onClick={handleResetFilters}
+          >
+            Reset Filters
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CommissionFilter;

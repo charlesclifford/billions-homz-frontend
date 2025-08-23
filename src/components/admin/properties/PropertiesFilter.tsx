@@ -226,16 +226,16 @@ const PropertiesFilter = () => {
         }
       >
         <TabsList className="grid w-full grid-cols-4 h-full">
-          <TabsTrigger value="all" className="py-1.5 px-2">
+          <TabsTrigger value="all" className="py-1.5 px-2 cursor-pointer">
             All
           </TabsTrigger>
-          <TabsTrigger value="sale" className="py-1.5 px-2">
+          <TabsTrigger value="sale" className="py-1.5 px-2 cursor-pointer">
             For Sale
           </TabsTrigger>
-          <TabsTrigger value="rent" className="py-1.5 px-2">
+          <TabsTrigger value="rent" className="py-1.5 px-2 cursor-pointer">
             For Rent
           </TabsTrigger>
-          <TabsTrigger value="lease" className="py-1.5 px-2">
+          <TabsTrigger value="lease" className="py-1.5 px-2 cursor-pointer">
             For Lease
           </TabsTrigger>
         </TabsList>

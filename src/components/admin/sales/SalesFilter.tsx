@@ -80,7 +80,7 @@ const SalesFilter = () => {
   return (
     <div className="space-y-4">
       {/* Search and Filters Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Search Input */}
         <div className="relative col-span-1 flex gap-2">
           <Tooltip>
@@ -116,7 +116,7 @@ const SalesFilter = () => {
           </div>
         </div>
 
-        <div className="col-span-1 lg:col-span-2 lg:flex gap-4 items-center  grid grid-cols-1 justify-end">
+        <div className="col-span-1 lg:col-span-1 lg:flex gap-4 items-center  grid grid-cols-1 justify-end">
           <div className="lg:w-[280px] w-full">
             <DateRangePicker
               dateRange={dateRange}

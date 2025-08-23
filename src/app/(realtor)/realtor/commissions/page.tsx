@@ -5,7 +5,6 @@ const ComissionsPage = () => {
   return (
     <div className="flex flex-col gap-4">
       <RealtorCommissionsHeader />
-      {/* <RealtorCommissionsFilter /> */}
       <RealtorCommissionContent />
     </div>
   );
