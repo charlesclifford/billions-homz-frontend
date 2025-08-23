@@ -1,4 +1,5 @@
 "use client";
+import { getPaginationRange } from "@/components/shared/DataTable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -6,8 +7,7 @@ import {
   CardContent,
   CardDescription,
   CardFooter,
-  CardHeader,
-  CardTitle,
+  CardHeader
 } from "@/components/ui/card";
 import {
   Dialog,
@@ -17,6 +17,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -33,6 +42,9 @@ import {
 import useEstates from "@/hooks/useEstates";
 import { IEstate } from "@/interfaces/estate.interface";
 import { deleteEstate } from "@/lib/api/properties";
+import { cn } from "@/lib/utils";
+import { setFilter } from "@/store/features/property/estate.slice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { formatCurrency } from "@/utils/helpers";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Edit2, Loader2, MapPin, Trash2 } from "lucide-react";
@@ -127,7 +139,17 @@ const ActionsComp = ({ item }: { item: IEstate }) => {
 };
 
 const EstateContent = () => {
-  const { isPending, estates, isError, error } = useEstates();
+  const dispatch = useAppDispatch();
+  const { filter } = useAppSelector((state) => state.estate);
+  const currentPage = filter.page || 1;
+  const { isPending, estates, isError, error, totalPages, totalEstates } =
+    useEstates({
+      ...filter,
+    });
+
+  const handlePageChange = (newPage: number) => {
+    dispatch(setFilter({ page: newPage }));
+  };
 
   if (isError) {
     return (
@@ -155,15 +177,29 @@ const EstateContent = () => {
     <div className="">
       <Card>
         <CardHeader className="flex flex-col">
-          <CardTitle>Estate List</CardTitle>
           <CardDescription>
-            Manage all your properties and plots
+            <p>
+              {!isPending && estates ? (
+                `
+              Showing ${Math.min(
+                (filter.page - 1) * filter.limit + 1,
+                totalEstates
+              )} -
+                ${Math.min(filter.page * filter.limit, totalEstates)} of
+                ${totalEstates}
+             estates
+              `
+              ) : (
+                <Skeleton className="h-4 mt-1" />
+              )}
+            </p>
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader className="bg-sidebar dark:bg-background">
               <TableRow>
+                <TableHead>S/N</TableHead>
                 <TableHead>Estate</TableHead>
                 <TableHead>Location</TableHead>
                 <TableHead>Area</TableHead>
@@ -176,16 +212,16 @@ const EstateContent = () => {
             </TableHeader>
             <TableBody>
               {isPending ? (
-                <TableRow>
-                  <TableCell colSpan={8}>
-                    <div className="py-8 flex flex-col gap-2 items-center justify-center">
-                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                      <p className="text-sm text-muted-foreground">
-                        Loading...
-                      </p>
-                    </div>
-                  </TableCell>
-                </TableRow>
+                // Skeleton loading state
+                [...Array(5)].map((_, rowIndex) => (
+                  <TableRow key={`skeleton-${rowIndex}`}>
+                    {[...Array(8)].map((_, colIndex) => (
+                      <TableCell key={colIndex}>
+                        <Skeleton className="h-6 w-full" />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
               ) : estates && estates.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={8} className="text-center py-8">
@@ -196,8 +232,11 @@ const EstateContent = () => {
                 </TableRow>
               ) : (
                 estates &&
-                estates.map((estate) => (
+                estates.map((estate, idx) => (
                   <TableRow key={estate._id}>
+                    <TableCell>
+                      <div>{(filter.page - 1) * filter.limit + idx + 1}</div>
+                    </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-3">
                         {estate.bannerImage?.imageUrl && (
@@ -338,13 +377,69 @@ const EstateContent = () => {
             </TableBody>
           </Table>
         </CardContent>
-        {estates && estates.length > 0 && (
-          <CardFooter className="flex justify-between">
-            <div className="text-sm text-muted-foreground">
-              Showing {estates.length}{" "}
-              {estates.length === 1 ? "estate" : "estates"}
+
+        {totalPages > 1 && (
+          <CardFooter>
+            <div className="text-sm text-muted-foreground text-nowrap">
+              Page {currentPage} of {totalPages}
             </div>
-            {/* Pagination would go here */}
+            <Pagination className="justify-end">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage > 1) {
+                        handlePageChange(currentPage - 1);
+                      }
+                    }}
+                    isActive={currentPage > 1}
+                    aria-disabled={currentPage <= 1}
+                    className={cn(
+                      "cursor-pointer",
+                      currentPage <= 1 && "pointer-events-none opacity-50"
+                    )}
+                    size={"icon"}
+                  />
+                </PaginationItem>
+                {getPaginationRange(currentPage, totalPages).map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      isActive={page === currentPage}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (typeof page === "number") {
+                          handlePageChange(page);
+                        }
+                      }}
+                      className="cursor-pointer"
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (currentPage < totalPages) {
+                        handlePageChange(currentPage + 1);
+                      }
+                    }}
+                    isActive={currentPage < totalPages}
+                    aria-disabled={currentPage >= totalPages}
+                    className={cn(
+                      "cursor-pointer",
+                      currentPage >= totalPages &&
+                        "pointer-events-none opacity-50"
+                    )}
+                    size={"icon"}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </CardFooter>
         )}
       </Card>

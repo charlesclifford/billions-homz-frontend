@@ -1,15 +1,20 @@
-import SalesContent from '@/components/admin/sales/SalesContent'
-import SalesHeader from '@/components/admin/sales/SalesHeader'
-import React from 'react'
+import SalesContent from "@/components/admin/sales/SalesContent";
+import SalesFilter from "@/components/admin/sales/SalesFilter";
+import SalesHeader from "@/components/admin/sales/SalesHeader";
+import React from "react";
 
 const SalesPage = () => {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="w-full">
       <SalesHeader />
-
-      <SalesContent />
+      <div className="space-y-8">
+        <SalesFilter />
+        <div className="w-full">
+          <SalesContent />
+        </div>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default SalesPage
+export default SalesPage;
