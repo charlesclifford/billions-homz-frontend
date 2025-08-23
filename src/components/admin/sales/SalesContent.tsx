@@ -17,6 +17,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -31,7 +32,6 @@ import { setFilter } from "@/store/features/sales/sale.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { formatCurrency } from "@/utils/helpers";
 import { formatDate } from "date-fns";
-import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import SalesDetails from "./SalesDetails";
 
@@ -77,8 +77,8 @@ const SalesContent = () => {
           <CardDescription>
             <p>View and manage all property sales</p>
             <p>
-              {!isPending && sales
-                ? `
+              {!isPending && sales ? (
+                `
               Showing ${Math.min(
                 (filter.page - 1) * filter.limit + 1,
                 totalSales
@@ -87,7 +87,9 @@ const SalesContent = () => {
                 ${totalSales}
              sales
               `
-                : "Loading sales..."}
+              ) : (
+                <Skeleton className="h-4 mt-1" />
+              )}
             </p>
           </CardDescription>
         </CardHeader>
@@ -95,6 +97,7 @@ const SalesContent = () => {
           <Table>
             <TableHeader className="bg-sidebar dark:bg-background">
               <TableRow>
+                <TableHead>S/N</TableHead>
                 <TableHead>Property</TableHead>
                 <TableHead>Buyer</TableHead>
                 <TableHead>Realtor</TableHead>
@@ -108,16 +111,15 @@ const SalesContent = () => {
             </TableHeader>
             <TableBody>
               {isPending ? (
-                <TableRow>
-                  <TableCell colSpan={10}>
-                    <div className="py-8 flex flex-col gap-2 items-center justify-center">
-                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                      <p className="text-sm text-muted-foreground">
-                        Loading sales records...
-                      </p>
-                    </div>
-                  </TableCell>
-                </TableRow>
+                [...Array(5)].map((_, rowIndex) => (
+                  <TableRow key={`skeleton-${rowIndex}`}>
+                    {[...Array(9)].map((_, colIndex) => (
+                      <TableCell key={colIndex}>
+                        <Skeleton className="h-6 w-full" />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
               ) : sales && sales.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={10} className="text-center py-8">
@@ -136,8 +138,11 @@ const SalesContent = () => {
                   </TableCell>
                 </TableRow>
               ) : (
-                sales?.map((sale) => (
+                sales?.map((sale, idx) => (
                   <TableRow key={sale._id}>
+                    <TableCell>
+                      <div>{(filter.page - 1) * filter.limit + idx + 1}</div>
+                    </TableCell>
                     <TableCell>
                       <div className="capitalize">
                         {sale.estate?.name || "Unknown Property"}

@@ -5,8 +5,11 @@ export interface EstateFilterState {
   page: number;
   limit: number;
   location?: string;
+  search?: string;
   minPrice?: number;
   maxPrice?: number;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
 }
 
 interface EstateState {
@@ -50,7 +53,10 @@ const estateSlice = createSlice({
     setFilter(state, action: PayloadAction<Partial<EstateFilterState>>) {
       state.filter = { ...state.filter, ...action.payload };
       // Reset to first page when filters change (except page/limit)
-      if (action.payload.location !== undefined) {
+      if (
+        action.payload.location !== undefined ||
+        action.payload.search !== undefined
+      ) {
         state.filter.page = 1;
       }
     },
