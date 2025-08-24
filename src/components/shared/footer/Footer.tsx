@@ -116,7 +116,7 @@ const Footer = () => {
             variants={scaleUp}
             transition={{ delay: 0.4 }}
           >
-            <div className="bg-card rounded-[20px] lg:rounded-[40px] flex flex-col mx-0 lg:mx-4 px-[15px] lg:px-[30px] pt-[30px] lg:pt-[60px] mt-20 ">
+            <div className="bg-card rounded-[20px] lg:rounded-[40px] flex flex-col px-[15px] lg:px-[30px] pt-[30px] lg:pt-[60px] mt-20 ">
               <div className="w-full max-w-[min(100%,1290px)] mx-auto flex flex-col ">
                 <motion.div
                   className="grid grid-cols-1 lg:grid-cols-3 border-b border-b-border pb-[30px] lg:pb-[60px] gap-[30px] lg:gap-0"

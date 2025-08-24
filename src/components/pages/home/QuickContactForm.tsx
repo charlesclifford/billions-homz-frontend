@@ -140,7 +140,7 @@ const QuickContactForm = () => {
                   defaultValue={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger className="focus-visible:ring-0 shadow-none px-[30px] py-[15px] bg-gray-100 rounded-[30px] text-base leading-[1.75] w-full !h-12 transition-all duration-300 focus:bg-white focus:ring-2 focus:ring-primary/20">
+                    <SelectTrigger className="focus-visible:ring-0 shadow-none px-[30px] py-[15px] bg-gray-100 rounded-[30px] text-sm leading-[1.75] w-full !h-12 transition-all duration-300 focus:bg-white focus:ring-2 focus:ring-primary/20">
                       <SelectValue placeholder="Select an inquiry type" />
                     </SelectTrigger>
                   </FormControl>
