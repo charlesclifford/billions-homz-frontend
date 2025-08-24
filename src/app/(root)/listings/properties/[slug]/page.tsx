@@ -30,7 +30,7 @@ const PropertyDetailsPage = async ({
       <PageHeader
         title=""
         bgImage={property.images[0].imageUrl}
-        className="pt-[10%] bg-fixed"
+        containerClassName="pt-[10%]"
       />
 
       {/* Header Section */}
