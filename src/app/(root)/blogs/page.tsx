@@ -3,15 +3,12 @@ import FeaturedPost from "@/components/pages/blogs/FeaturedPost";
 import PageHeader from "@/components/shared/PageHeader";
 import { Separator } from "@/components/ui/separator";
 import React from "react";
+import bgImg from "../../../../public/images/bg/teamwork-making-online-blog.jpg";
 
 const BlogsPage = () => {
   return (
     <div className="w-full h-full">
-      <PageHeader
-        title="Our Blogs"
-        bgImage="/images/bg/teamwork-making-online-blog.jpg"
-        className="!bg-top"
-      />
+      <PageHeader title="Our Blogs" bgImage={bgImg} imageClassName="object-top" />
 
       <div className="w-full">
         <div className="mb-[60px] mt-10">

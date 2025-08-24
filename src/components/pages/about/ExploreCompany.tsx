@@ -1,8 +1,10 @@
+"use client";
 import SmallTitle from "@/components/shared/SmallTitle";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import { motion } from "framer-motion";
 
 export interface IExploreList {
   id: string;
@@ -55,12 +57,69 @@ const exploreList: IExploreList[] = [
   },
 ];
 
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const titleVariants = {
+  hidden: { y: 30, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.7,
+      ease: "easeOut",
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { y: 50, opacity: 0, scale: 0.95 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    scale: 1,
+    transition: {
+      type: "spring",
+      damping: 15,
+      stiffness: 100,
+      duration: 0.7,
+    },
+  },
+};
+
+const contentVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+    },
+  },
+};
+
 const ExploreCompany = () => {
   return (
     <div className="footer about-section w-full">
       <div className="w-full container max-w-[min(100%,1290px)] mx-auto px-4 py-[150px] flex flex-col">
-        <div className="grid grid-cols-1 lg:grid-cols-[40%_auto]">
-          <div>
+        <motion.div
+          className="grid grid-cols-1 lg:grid-cols-[40%_auto]"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={containerVariants}
+        >
+          <motion.div variants={titleVariants}>
             <SmallTitle text="Explore company" />
 
             <div className="mt-[30px] mb-[45px]">
@@ -68,11 +127,17 @@ const ExploreCompany = () => {
                 Learn more about us
               </h2>
             </div>
-          </div>
+          </motion.div>
           <div></div>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-[30px]">
+        <motion.div
+          className="grid grid-cols-1 lg:grid-cols-3 gap-[30px]"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+        >
           {exploreList.map((item, i) => {
             const {
               id,
@@ -83,13 +148,18 @@ const ExploreCompany = () => {
               linkClassName,
             } = item;
             return (
-              <div
+              <motion.div
                 key={i}
                 className={cn(
                   "rounded-[30px] rounded-br-none min-h-[500px] p-[40px] pb-[60px] flex flex-col gap-[25px] justify-between relative",
                   "br-primary group/card",
                   containerClassName
                 )}
+                variants={cardVariants}
+                whileHover={{
+                  // y: -10,
+                  transition: { duration: 0.3 },
+                }}
               >
                 <div className="absolute right-0 bottom-0 z-[3]">
                   <div className="h-full">
@@ -119,15 +189,19 @@ const ExploreCompany = () => {
                   </div>
                 </div>
 
-                <div className="">
+                <motion.div className="" variants={contentVariants}>
                   <div className={cn("pb-[15px] border-b border-b-white")}>
                     <h6 className="text-[12px] font-semibold leading-[1] tracking-[0]">
                       {id}.
                     </h6>
                   </div>
-                </div>
+                </motion.div>
 
-                <div className="flex flex-col">
+                <motion.div
+                  className="flex flex-col"
+                  variants={contentVariants}
+                  transition={{ delay: 0.1 }}
+                >
                   <div className="relative">
                     <div className="mb-2.5">
                       <h5 className="leading-[1] text-[36px] tracking-[-1px] font-bold">
@@ -142,30 +216,33 @@ const ExploreCompany = () => {
                     </div>
                   </div>
 
-                  <div>
+                  <motion.div
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.2 }}
+                  >
                     <div className="">
                       <Link
                         href={link.href}
                         className={cn(
-                          "relative text-sm font-bold leading-[1.7] capitalize contact-link",
+                          "relative text-sm font-bold leading-[1.7] capitalize contact-link hover:underline hover:underline-offset-4 transition-all duration-300",
                           linkClassName
                         )}
                       >
                         {link.text}
                       </Link>
                     </div>
-                  </div>
-                </div>
+                  </motion.div>
+                </motion.div>
 
-                <div className="absolute bottom-0 right-0 w-[60px] h-[60px] ">
+                <div className="absolute bottom-0 right-0 w-[60px] h-[60px]">
                   <div className="rounded-tl-[30px] w-full h-full bg-background"></div>
                   <div className="border-shape w-[30px] h-[30px] absolute top-[-29.5px] right-[-0.5] -rotate-90 bg-background"></div>
                   <div className="border-shape w-[30px] h-[30px] absolute left-[-29.5px] bottom-[-0.5] -rotate-90 bg-background"></div>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </div>
   );

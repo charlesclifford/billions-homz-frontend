@@ -3,14 +3,12 @@ import EstatesList from "@/components/pages/property/EstatesList";
 import PageHeader from "@/components/shared/PageHeader";
 import { Separator } from "@/components/ui/separator";
 import React from "react";
+import bgImg from "../../../../../public/images/bg/land-plot-with-nature-landscape-location-pin.jpg";
 
 const EstatesPage = () => {
   return (
     <div className="w-full">
-      <PageHeader
-        title="Our Estates"
-        bgImage="/images/bg/land-plot-with-nature-landscape-location-pin.jpg"
-      />
+      <PageHeader title="Our Estates" bgImage={bgImg} />
 
       <div className="container max-w-[min(100%,1290px)] mx-auto px-4 mt-10">
         <EstateListFilter />

@@ -129,15 +129,9 @@ const HeroSection = () => {
 
       {/* Content container with relative positioning */}
       <div className="relative z-10 min-h-screen pb-1">
-        {/* Bottom curve with animation */}
-        <motion.div
-          className="absolute bottom-0 left-0 w-full h-[50px]"
-          initial={{ opacity: 0, scaleX: 0.8 }}
-          animate={{ opacity: 1, scaleX: 1 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
-        >
+        <div className="absolute bottom-0 left-0 w-full h-[50px]">
           <div className="bg-background rounded-t-[50px] h-full w-full"></div>
-        </motion.div>
+        </div>
 
         {/* Content */}
         <div className="container max-w-[min(100%,1290px)] mx-auto px-4 pt-[200px] lg:pt-[245px]">

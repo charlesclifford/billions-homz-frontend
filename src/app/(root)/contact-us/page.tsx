@@ -2,14 +2,12 @@ import ContactForm from "@/components/pages/contact/ContactForm";
 import ContactInfoSection from "@/components/pages/contact/ContactInfoSection";
 import PageHeader from "@/components/shared/PageHeader";
 import React from "react";
+import bgImg from "../../../../public/images/bg/top-view-workspace-with-orange-background.jpg";
 
 const ContactUsPage = () => {
   return (
     <div className="w-full h-full">
-      <PageHeader
-        title="Contact us"
-        bgImage="/images/bg/top-view-workspace-with-orange-background.jpg"
-      />
+      <PageHeader title="Contact us" bgImage={bgImg} />
 
       <div className="container max-w-[min(100%,1290px)] mx-auto px-4 mb-[80px] lg:mt-[100px]">
         <ContactInfoSection />

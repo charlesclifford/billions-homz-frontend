@@ -147,16 +147,16 @@ const TestimonialSection = () => {
             opts={{
               align: "start",
               loop: true,
-              slidesToScroll: "auto",
+              slidesToScroll: 1,
             }}
             className="w-full"
             plugins={[plugin.current]}
           >
-            <CarouselContent>
+            <CarouselContent className="-ml-0">
               {testimonials.map((item, index) => (
                 <CarouselItem
                   key={item.id}
-                  className="md:basis-1/2 lg:basis-1/3"
+                  className="px-2 md:basis-1/2 lg:basis-1/3"
                 >
                   <motion.div
                     initial="hidden"
