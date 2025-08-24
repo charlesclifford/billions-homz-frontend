@@ -132,7 +132,7 @@ const TeamSection = () => {
         </motion.div>
 
         <motion.div
-          className="grid grid-cols-1 lg:grid-cols-3 gap-[30px] mb-[30px] z-[2]"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[30px] mb-[30px] z-[2]"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -195,7 +195,7 @@ const TeamSection = () => {
                   <p className="font-semibold uppercase mb-1.5 leading-[1] text-white text-xs">
                     {position}
                   </p>
-                  <h5 className="text-[26px] tracking-[0] leading-[1.23] font-bold">
+                  <h5 className="text-xl lg:text-[26px] tracking-[0] leading-[1.23] font-bold">
                     {name}
                   </h5>
                 </motion.div>

@@ -151,7 +151,7 @@ const ExploreCompany = () => {
               <motion.div
                 key={i}
                 className={cn(
-                  "rounded-[30px] rounded-br-none min-h-[500px] p-[40px] pb-[60px] flex flex-col gap-[25px] justify-between relative",
+                  "rounded-[30px] rounded-br-none min-h-[500px] px-8 md:px-[40px] py-[40px] lg:p-[40px] pb-[60px] flex flex-col gap-[25px] justify-between relative",
                   "br-primary group/card",
                   containerClassName
                 )}

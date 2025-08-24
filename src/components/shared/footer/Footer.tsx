@@ -72,8 +72,8 @@ const Footer = () => {
 
   return (
     <footer className="footer">
-      <div className="w-full h-full bg-fixed bg-[url(https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/03/footer-bg.jpg)] bg-no-repeat bg-cover bg-center flex flex-col relative before:content-[''] before:absolute before:bg-black/40 before:top-0 before:left-0 before:w-full before:h-full pb-5 lg:pb-0">
-        <div className="h-[50px] w-full absolute top-0 left-0">
+      <div className="w-full h-full bg-fixed bg-[url(https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/03/footer-bg.jpg)] bg-no-repeat bg-cover bg-center flex flex-col relative before:content-[''] before:absolute before:bg-black/50 before:top-0 before:left-0 before:w-full before:h-full pb-5 lg:pb-0">
+        <div className="h-[25px] lg:h-[50px] w-full absolute top-0 left-0">
           <div className="bg-background rounded-b-[50px] h-full w-full"></div>
         </div>
 
@@ -109,15 +109,15 @@ const Footer = () => {
           </motion.div>
 
           <motion.div
-            className=""
+            className="w-full"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: "-100px" }}
             variants={scaleUp}
             transition={{ delay: 0.4 }}
           >
-            <div className="bg-card rounded-[20px] lg:rounded-[40px] flex flex-col px-[15px] lg:px-[30px] pt-[30px] lg:pt-[60px] mt-20 ">
-              <div className="w-full max-w-[min(100%,1290px)] mx-auto flex flex-col ">
+            <div className="bg-card rounded-[25px] lg:rounded-[50px] flex flex-col px-[15px] lg:px-[30px] pt-[30px] lg:pt-[60px] mt-20 ">
+              <div className="w-full mx-auto flex flex-col ">
                 <motion.div
                   className="grid grid-cols-1 lg:grid-cols-3 border-b border-b-border pb-[30px] lg:pb-[60px] gap-[30px] lg:gap-0"
                   variants={containerVariants}
@@ -146,16 +146,15 @@ const Footer = () => {
                   </motion.div>
 
                   <motion.div
-                    className="flex justify-between border-t lg:border-t-0 border-b lg:border-b-0 lg:border-l lg:border-l-border lg:border-r lg:border-r-border py-[30px] lg:py-0 px-10 pb-5"
+                    className="flex justify-evenly lg:justify-between border-t lg:border-t-0 border-b lg:border-b-0 lg:border-l lg:border-l-border lg:border-r lg:border-r-border py-[30px] lg:py-0 px-10 pb-5"
                     variants={itemVariants}
                   >
                     <div>
                       <ul>
                         {[
                           { href: "/about-us", text: "About Us" },
-                          { href: "/about", text: "Why Choose Us" },
-                          { href: "/about-us#team", text: "Our Team" },
-                          { href: "/about", text: "Core Values" },
+                          { href: "/listing/estates", text: "Estates" },
+                          { href: "/listing/properties", text: "Properties" },
                         ].map((item, index) => (
                           <motion.li
                             key={index}
@@ -179,11 +178,10 @@ const Footer = () => {
                     <div>
                       <ul>
                         {[
-                          "Our Projects",
-                          "News & Updates",
-                          "Terms & Conditions",
-                          "Support Center",
-                          "Contact",
+                          // { href: "/services", text: "Our Services" },
+                          { href: "/blog", text: "Blog & News" },
+                          { href: "/contact-us", text: "Contact Us" },
+                          // { href: "/careers", text: "Careers" },
                         ].map((item, index) => (
                           <motion.li
                             key={index}
@@ -194,10 +192,10 @@ const Footer = () => {
                             viewport={{ once: true }}
                           >
                             <AnimatedLink
-                              href={"#"}
+                              href={item.href}
                               className="font-semibold !bg-[length:0_1px] hover:!bg-[length:100%_1px]"
                             >
-                              <span>{item}</span>
+                              <span>{item.text}</span>
                             </AnimatedLink>
                           </motion.li>
                         ))}

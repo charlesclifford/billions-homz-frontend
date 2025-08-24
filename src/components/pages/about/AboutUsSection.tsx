@@ -81,9 +81,9 @@ const numberCount = {
 const AboutUsSection = () => {
   return (
     <>
-      <div className="about-section w-full container mx-auto mb-[80px] mt-[30px] lg:mt-[100px]">
+      <div className="about-section w-full mb-[80px] mt-[30px] lg:mt-[100px]">
         <motion.div
-          className="w-full max-w-[min(100%,1290px)] mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-[30px] mb-[80px]"
+          className="w-full container max-w-[min(100%,1290px)] mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-[30px] mb-[80px]"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
@@ -156,19 +156,13 @@ const AboutUsSection = () => {
         viewport={{ once: true, margin: "-100px" }}
         variants={containerVariants}
       >
-        <div className="w-full max-w-[min(100%,1290px)] mx-auto px-4">
+        <div className="w-full container max-w-[min(100%,1290px)] mx-auto px-4">
           <motion.div
             className="bg-[url(https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/03/h2_img1.jpg)] bg-no-repeat bg-cover bg-center w-full h-full rounded-[30px] grid grid-cols-1 lg:grid-cols-2"
             variants={scaleUp}
           >
             <div>
-              <motion.div
-                className="max-w-full relative w-[150px] lg:w-[220px]"
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3, duration: 0.7 }}
-                viewport={{ once: true }}
-              >
+              <div className="max-w-full relative w-[150px] lg:w-[220px]">
                 <div className="bg-background rounded-br-[30px] w-full h-full">
                   <div className="w-full h-full">
                     <div className="h-full">
@@ -180,7 +174,7 @@ const AboutUsSection = () => {
                 <div className="bg-background w-[30px] h-[30px] absolute top-0 right-[-30px] rotate-90 border-shape"></div>
                 {/* bottom-left */}
                 <div className="bg-background w-[30px] h-[30px] absolute bottom-[-30px] left-0 rotate-90 border-shape"></div>
-              </motion.div>
+              </div>
             </div>
             <div className="lg:pt-[130px] pb-[60px] lg:pb-2.5 px-2.5  flex flex-col">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5">
@@ -190,18 +184,34 @@ const AboutUsSection = () => {
                 {[
                   {
                     icon: (
-                      <Buildings size="56" color="var(--primary)" variant="Bulk" />
+                      <Buildings
+                        size="56"
+                        color="var(--primary)"
+                        variant="Bulk"
+                      />
                     ),
                     label: "projects in development",
                     value: "40",
                   },
                   {
-                    icon: <RulerPen size="56" color="var(--primary)" variant="Bulk" />,
+                    icon: (
+                      <RulerPen
+                        size="56"
+                        color="var(--primary)"
+                        variant="Bulk"
+                      />
+                    ),
                     label: "square feet of property",
                     value: "18m",
                   },
                   {
-                    icon: <Setting2 size="56" color="var(--primary)" variant="Bulk" />,
+                    icon: (
+                      <Setting2
+                        size="56"
+                        color="var(--primary)"
+                        variant="Bulk"
+                      />
+                    ),
                     label: "total projects cost",
                     value: "2.5b",
                   },

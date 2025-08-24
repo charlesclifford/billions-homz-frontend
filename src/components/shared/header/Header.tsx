@@ -113,13 +113,13 @@ const Header = () => {
       <div
         className={cn(
           "transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)]",
-          isScrolled ? "px-0" : "px-4"
+          isScrolled ? "px-0" : "px-2 lg:px-4"
         )}
       >
         <div
           className={cn(
             "w-full transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)]",
-            isScrolled ? "py-0" : "py-5"
+            isScrolled ? "py-0" : "py-4"
           )}
         >
           <div

@@ -78,8 +78,8 @@ const PageHeader = ({
         animate="visible"
       >
         <motion.div variants={titleVariants}>
-          <div className="mb-12 lg:mb-[150px]">
-            <h2 className="font-bold text-[52px] lg:text-[90px] leading-[1.06em] tracking-[-2px] text-white capitalize text-shadow">
+          <div className="mb-12 md:mb-16 lg:mb-[150px]">
+            <h2 className="font-bold text-[48px] md:text-[52px] lg:text-[90px] leading-[1.06em] tracking-[-2px] text-white capitalize text-shadow">
               {title}
             </h2>
           </div>
@@ -87,7 +87,7 @@ const PageHeader = ({
         <div></div>
       </motion.div>
 
-      <div className="h-[50px] w-full absolute bottom-0 left-0">
+      <div className="h-[25px] lg:h-[50px] w-full absolute bottom-0 left-0">
         <div className="bg-background rounded-t-[50px] h-full w-full"></div>
       </div>
     </div>
