@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
+import { motion } from "framer-motion";
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Name is required" }),
@@ -29,6 +30,19 @@ const formSchema = z.object({
 });
 
 export type FormValues = z.infer<typeof formSchema>;
+
+// Animation variants for form elements
+const formItemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+    },
+  },
+};
 
 const QuickContactForm = () => {
   const form = useForm<FormValues>({
@@ -53,93 +67,104 @@ const QuickContactForm = () => {
         className="grid grid-cols-1 lg:grid-cols-2 gap-[15px] lg:gap-[30px]"
       >
         {/* Name Field */}
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input
-                  placeholder="Your name"
-                  className="focus-visible:ring-0 shadow-none px-[30px] py-[15px] bg-gray-100 rounded-[30px] text-base leading-[1.75] h-12"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <motion.div variants={formItemVariants}>
+          <FormField
+            control={form.control}
+            name="name"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input
+                    placeholder="Your name"
+                    className="focus-visible:ring-0 shadow-none px-[30px] py-[15px] bg-gray-100 rounded-[30px] text-base leading-[1.75] h-12 transition-all duration-300 focus:bg-white focus:ring-2 focus:ring-primary/20"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </motion.div>
 
         {/* Email Field */}
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input
-                  type="email"
-                  placeholder="you@example.com"
-                  className="focus-visible:ring-0 shadow-none px-[30px] py-[15px] bg-gray-100 rounded-[30px] text-base leading-[1.75] h-12"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <motion.div variants={formItemVariants}>
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input
+                    type="email"
+                    placeholder="you@example.com"
+                    className="focus-visible:ring-0 shadow-none px-[30px] py-[15px] bg-gray-100 rounded-[30px] text-base leading-[1.75] h-12 transition-all duration-300 focus:bg-white focus:ring-2 focus:ring-primary/20"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </motion.div>
 
         {/* Phone Field */}
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input
-                  type="tel"
-                  placeholder="Your phone number"
-                  className="focus-visible:ring-0 shadow-none px-[30px] py-[15px] bg-gray-100 rounded-[30px] text-base leading-[1.75] h-12"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <motion.div variants={formItemVariants}>
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input
+                    type="tel"
+                    placeholder="Your phone number"
+                    className="focus-visible:ring-0 shadow-none px-[30px] py-[15px] bg-gray-100 rounded-[30px] text-base leading-[1.75] h-12 transition-all duration-300 focus:bg-white focus:ring-2 focus:ring-primary/20"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </motion.div>
 
         {/* Inquiry Select Field */}
-        <FormField
-          control={form.control}
-          name="inquiry"
-          render={({ field }) => (
-            <FormItem>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger className="focus-visible:ring-0 shadow-none px-[30px] py-[15px] bg-gray-100 rounded-[30px] text-base leading-[1.75] w-full !h-12">
-                    <SelectValue placeholder="Select an inquiry type" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="general">General Inquiry</SelectItem>
-                  <SelectItem value="support">Support Request</SelectItem>
-                  <SelectItem value="sales">Sales Question</SelectItem>
-                  <SelectItem value="feedback">Feedback</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <motion.div variants={formItemVariants}>
+          <FormField
+            control={form.control}
+            name="inquiry"
+            render={({ field }) => (
+              <FormItem>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger className="focus-visible:ring-0 shadow-none px-[30px] py-[15px] bg-gray-100 rounded-[30px] text-base leading-[1.75] w-full !h-12 transition-all duration-300 focus:bg-white focus:ring-2 focus:ring-primary/20">
+                      <SelectValue placeholder="Select an inquiry type" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="general">General Inquiry</SelectItem>
+                    <SelectItem value="support">Support Request</SelectItem>
+                    <SelectItem value="sales">Sales Question</SelectItem>
+                    <SelectItem value="feedback">Feedback</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </motion.div>
 
         <div className="col-span-1 lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-[15px] lg:gap-[30px]">
-          <p className="text-neutral-500">
+          <motion.p className="text-neutral-500" variants={formItemVariants}>
             <span>
               We&apos;re excited to connect with you! Required fields are marked
               *
             </span>
-          </p>
+          </motion.p>
           <div className="flex justify-end">
             <button
               type="submit"
