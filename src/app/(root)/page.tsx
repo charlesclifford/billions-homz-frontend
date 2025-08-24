@@ -16,11 +16,18 @@ const Homepage = () => {
   return (
     <div className="min-h-dvh">
       <HeroSection />
-      <AboutSection />
+      <div className="bg-background">
+        <AboutSection />
+      </div>
       <WhatWeOffer />
       <TestimonialSection />
-      <ContactSection />
-      <BlogSection />
+
+      <div className="bg-background">
+        <ContactSection />
+      </div>
+      <div className="bg-background">
+        <BlogSection />
+      </div>
     </div>
   );
 };

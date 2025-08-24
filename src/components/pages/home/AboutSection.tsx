@@ -4,7 +4,7 @@ import SmallTitle from "../../shared/SmallTitle";
 
 const AboutSection = () => {
   return (
-    <div className="about-section w-full container mx-auto px-4 lg:mb-[150px]">
+    <div className="about-section w-full container mx-auto px-4 pt-[150px] lg:pb-[150px]">
       <div className="w-full max-w-[min(100%,1290px)] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-[30px] mb-[80px]">
         <div className="col-span-1">
           <SmallTitle text="Who we are" />

@@ -1,5 +1,10 @@
+"use client";
 import { ReactNode } from "react";
 import ServiceCard from "../../services/ServiceCard";
+import Image from "next/image";
+import { useIsMobile } from "@/hooks/use-mobile";
+import HeroBg from "../../../../public/images/bg/land-plot-with-nature-landscape-location-pin.jpg";
+import { motion } from "framer-motion";
 
 export interface IServiceList {
   icon: ReactNode;
@@ -62,39 +67,114 @@ const serviceList: IServiceList[] = [
   },
 ];
 
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.3,
+    },
+  },
+};
+
+const titleVariants = {
+  hidden: { y: 30, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.8,
+      ease: "easeOut",
+    },
+  },
+};
+
+const subtitleVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut",
+      delay: 0.4,
+    },
+  },
+};
+
 const HeroSection = () => {
+  const isMobile = useIsMobile();
+
   return (
-    <div className="h-full w-full bg-fixed bg-top bg-[url(/images/bg/land-plot-with-nature-landscape-location-pin.jpg)] bg-no-repeat bg-cover relative before:content-[''] before:absolute before:bg-black/40 before:top-0 before:left-0 before:w-full before:h-full mb-[150px]">
-      <div className="h-[50px] w-full absolute bottom-0 left-0">
-        <div className="bg-background rounded-t-[50px] h-full w-full"></div>
+    <div className="relative min-h-screen overflow-hidden">
+      {/* Fixed background container */}
+      <div className="fixed inset-0 -z-10 h-screen w-full">
+        <Image
+          src={HeroBg}
+          alt="Background landscape"
+          fill
+          priority
+          quality={isMobile ? 70 : 85}
+          sizes="100vw"
+          style={{
+            objectFit: "cover",
+            objectPosition: "top",
+          }}
+          placeholder="blur"
+        />
+        <div className="absolute inset-0 bg-black/40"></div>
       </div>
 
-      <div className="container max-w-[min(100%,1290px)] mx-auto px-4 pt-[200px] lg:pt-[245px] relative">
-        <div className="max-w-full w-[910px] mx-auto text-center self-center">
-          <div className="mb-5">
-            <h1 className="text-white font-bold text-[52px] lg:text-[90px] leading-[1]">
-              Shaping future through excellence
-            </h1>
+      {/* Content container with relative positioning */}
+      <div className="relative z-10 min-h-screen pb-1">
+        {/* Bottom curve with animation */}
+        <motion.div
+          className="absolute bottom-0 left-0 w-full h-[50px]"
+          initial={{ opacity: 0, scaleX: 0.8 }}
+          animate={{ opacity: 1, scaleX: 1 }}
+          transition={{ duration: 0.8, delay: 1.2 }}
+        >
+          <div className="bg-background rounded-t-[50px] h-full w-full"></div>
+        </motion.div>
+
+        {/* Content */}
+        <div className="container max-w-[min(100%,1290px)] mx-auto px-4 pt-[200px] lg:pt-[245px]">
+          <motion.div
+            className="max-w-full w-[910px] mx-auto text-center self-center"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <motion.div className="mb-5" variants={titleVariants}>
+              <h1 className="text-white font-bold text-[52px] lg:text-[90px] leading-[1]">
+                Shaping future through excellence
+              </h1>
+            </motion.div>
+          </motion.div>
+
+          <motion.div
+            className="max-w-full w-[770px] mx-auto text-center self-center"
+            variants={subtitleVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <div className="mb-[50px] lg:mb-[125px]">
+              <h1 className="text-neutral-300 font-semibold text-[22px] leading-[1]">
+                We are a top 25 builder and developer fully invested in our
+                customers&apos; success and improving the communities we serve.
+              </h1>
+            </div>
+          </motion.div>
+
+          <div className="py-[60px]"></div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-[30px]">
+            {serviceList.map((item, i) => (
+              <ServiceCard key={i} item={item} index={i} />
+            ))}
           </div>
-        </div>
-
-        <div className="max-w-full w-[770px] mx-auto text-center self-center">
-          <div className="mb-[50px] lg:mb-[125px]">
-            <h1 className="text-neutral-300 font-semibold text-[22px] leading-[1]">
-              We are a top 25 builder and developer fully invested in our
-              customers&apos; success and improving the communities we serve.
-            </h1>
-          </div>
-        </div>
-
-        <div className=" py-[60px] ">
-          
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-[30px] z-[2]">
-          {serviceList.map((item, i) => (
-            <ServiceCard key={i} item={item} />
-          ))}
         </div>
       </div>
     </div>
