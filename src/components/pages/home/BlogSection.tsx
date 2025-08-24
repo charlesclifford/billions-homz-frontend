@@ -1,13 +1,13 @@
 "use client";
+import usePosts from "@/hooks/usePosts";
+import { PostFilterInput } from "@/interfaces/blog.interface";
+import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import SmallTitle from "../../shared/SmallTitle";
-import BlogCard from "./BlogCard";
 import { useState } from "react";
-import { PostFilterInput } from "@/interfaces/blog.interface";
-import usePosts from "@/hooks/usePosts";
+import SmallTitle from "../../shared/SmallTitle";
 import BlogCardSkeleton from "../blogs/BlogCardSkeleton";
-import { motion } from "framer-motion";
+import BlogCard from "./BlogCard";
 
 // Animation variants
 const containerVariants = {
@@ -16,9 +16,9 @@ const containerVariants = {
     opacity: 1,
     transition: {
       staggerChildren: 0.15,
-      delayChildren: 0.2
-    }
-  }
+      delayChildren: 0.2,
+    },
+  },
 };
 
 const titleVariants = {
@@ -28,9 +28,9 @@ const titleVariants = {
     opacity: 1,
     transition: {
       duration: 0.7,
-      ease: "easeOut"
-    }
-  }
+      ease: "easeOut",
+    },
+  },
 };
 
 const buttonVariants = {
@@ -42,9 +42,9 @@ const buttonVariants = {
       type: "spring",
       stiffness: 200,
       damping: 15,
-      duration: 0.5
-    }
-  }
+      duration: 0.5,
+    },
+  },
 };
 
 const cardVariants = {
@@ -56,9 +56,9 @@ const cardVariants = {
       type: "spring",
       damping: 15,
       stiffness: 100,
-      duration: 0.7
-    }
-  }
+      duration: 0.7,
+    },
+  },
 };
 
 const BlogSection = () => {
@@ -79,7 +79,7 @@ const BlogSection = () => {
   return (
     <div className="about-section w-full container mx-auto px-4">
       <div className="w-full max-w-[min(100%,1290px)] mx-auto py-[150px] flex flex-col">
-        <motion.div 
+        <motion.div
           className="grid grid-cols-1 lg:grid-cols-2"
           initial="hidden"
           whileInView="visible"
@@ -98,34 +98,36 @@ const BlogSection = () => {
               </h2>
             </div>
           </motion.div>
-          
-          <motion.div 
+
+          <motion.div
             className="flex items-center lg:items-end justify-center lg:justify-end pb-2.5 pt-[30px]"
             variants={buttonVariants}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
           >
             <Link
               href={"/blogs"}
               className="p-[5px] pl-[30px] border rounded-[30px] text-sm font-bold capitalize inline-grid relative group transition duration-300 dark:bg-white overflow-hidden"
             >
               <span className="flex gap-2.5 items-center flex-row-reverse justify-center">
-                <motion.span 
-                  className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-primary text-white"
-                  whileHover={{ 
-                    rotate: 45,
-                    transition: { duration: 0.3 }
-                  }}
-                >
-                  <ArrowUpRight />
-                </motion.span>
+                <span className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-primary text-white">
+                  <span className="flex items-center justify-center w-[18px] h-[18px] overflow-hidden relative">
+                    {/* Top icon – animates out along 45deg */}
+                    <span className="flex absolute items-center justify-center  transition-all duration-500 transform-3d transform-[translate3d(0px,0px,0px)_scale3d(1,1,1)] opacity-100 group-hover:transform-[translate3d(17px,-17px,0px)_scale3d(0.2,0.2,1)] group-hover:opacity-0">
+                      <ArrowUpRight />
+                    </span>
+
+                    {/* Bottom icon – animates in along 45deg */}
+                    <span className="flex absolute items-center justify-center  transition-all duration-500 transform-[translate3d(-17px,17px,0px)_scale3d(0.2,0.2,1)_rotate(-45deg)] opacity-0 group-hover:transform-[translate3d(0px,0px,0px)_scale3d(1,1,1)] group-hover:opacity-100">
+                      <ArrowUpRight />
+                    </span>
+                  </span>
+                </span>
                 <span className="inline-block text-black">view All Posts</span>
               </span>
             </Link>
           </motion.div>
         </motion.div>
 
-        <motion.div 
+        <motion.div
           className="mt-[60px] relative"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -147,7 +149,7 @@ const BlogSection = () => {
             </div>
           ) : (
             featuredPosts.length > 0 && (
-              <motion.div 
+              <motion.div
                 className="grid grid-cols-1 lg:grid-cols-3 gap-[30px]"
                 variants={containerVariants}
                 initial="hidden"
@@ -160,10 +162,7 @@ const BlogSection = () => {
                     variants={cardVariants}
                     custom={index}
                   >
-                    <BlogCard
-                      post={post}
-                      containerClassName="mb-2.5"
-                    />
+                    <BlogCard post={post} containerClassName="mb-2.5" />
                   </motion.div>
                 ))}
               </motion.div>
