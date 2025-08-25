@@ -28,7 +28,7 @@ const GalleryGrid = () => {
     infiniteQuery: { photos, isLoadingInfinite, isFetchingNextPage },
     hasMore,
     loadMore,
-  } = useGallery({ page: 1, limit: 20 });
+  } = useGallery({ page: 1, limit: 12 });
 
   const openModal = (index: number) => setSelectedPhotoIndex(index);
   const closeModal = () => setSelectedPhotoIndex(null);
@@ -78,16 +78,25 @@ const GalleryGrid = () => {
 
   return (
     <div className="w-full relative">
-      {isLoadingInfinite && !photos.length ? (
-        <div className="w-full grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {[...Array(9)].map((_, i) => (
-            <Skeleton key={i} className="w-full rounded-[30px]" />
+      {isLoadingInfinite && photos.length === 0 ? (
+        <div className="w-full grid gap-3 md:gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-8">
+          {[...Array(12)].map((_, i) => (
+            <div
+              key={i}
+              className="relative border w-full rounded-[30px] overflow-hidden aspect-square"
+            >
+              <Skeleton className="w-full h-full rounded-[30px]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent flex flex-col justify-end p-4">
+                {/* <Skeleton className="h-6 w-3/4 mb-2 bg-white/30" />
+                <Skeleton className="h-4 w-1/2 bg-white/30" /> */}
+              </div>
+            </div>
           ))}
         </div>
-      ) : (
-        <>
+      ) : photos.length > 0 ? (
+        <div>
           {/* Masonry Grid */}
-          <div className="w-full grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-8">
+          <div className="w-full grid gap-3 md:gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-8">
             {photos.map((photo, i) => {
               return (
                 <GalleryPhoto
@@ -100,8 +109,17 @@ const GalleryGrid = () => {
 
             {isFetchingNextPage && (
               <>
-                {[...Array(7)].map((_, i) => (
-                  <Skeleton key={i} className="w-full rounded-[30px]" />
+                {[...Array(4)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="relative border w-full rounded-[30px] overflow-hidden aspect-square"
+                  >
+                    <Skeleton className="w-full h-full rounded-[30px]" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent flex flex-col justify-end p-4">
+                      {/* <Skeleton className="h-6 w-3/4 mb-2 bg-white/30" />
+                      <Skeleton className="h-4 w-1/2 bg-white/30" /> */}
+                    </div>
+                  </div>
                 ))}
               </>
             )}
@@ -109,7 +127,11 @@ const GalleryGrid = () => {
 
           {/* Infinite scroll trigger */}
           <div ref={loaderRef} className="h-10 w-full" />
-        </>
+        </div>
+      ) : (
+        <div className="flex justify-center items-center h-40 text-muted-foreground">
+          No photos yet.
+        </div>
       )}
 
       {/* Image Modal with Carousel */}
@@ -160,7 +182,10 @@ const GalleryGrid = () => {
                 )}
               >
                 {photos.map((photo) => (
-                  <CarouselItem key={photo._id} className="flex items-center justify-center px-0">
+                  <CarouselItem
+                    key={photo._id}
+                    className="flex items-center justify-center px-0"
+                  >
                     <div className="relative w-full h-full">
                       <Image
                         src={photo.imageUrl}

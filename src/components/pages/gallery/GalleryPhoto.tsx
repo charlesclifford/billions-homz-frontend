@@ -1,7 +1,8 @@
 "use client";
 import { IGallery } from "@/interfaces/photos.interface";
-import { MapPin } from "lucide-react";
+import { Loader2, MapPin } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 
 const GalleryPhoto = ({
   photo,
@@ -10,19 +11,30 @@ const GalleryPhoto = ({
   photo: IGallery;
   onClick: () => void;
 }) => {
+  const [imageLoading, setImageLoading] = useState(true);
+
   return (
     <div
       className={`relative group cursor-pointer border w-full rounded-[30px] overflow-hidden aspect-square`}
       onClick={onClick}
     >
-      <div className="w-full h-full flex items-center justify-center bg-gray-100 ">
+      <div className="bg-card w-full h-full flex items-center justify-center relative">
+        {imageLoading && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        )}
         <Image
           src={photo.imageUrl}
           alt={photo.caption || "Property image"}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 ${
+            imageLoading ? "opacity-0" : "opacity-100"
+          }`}
           loading="lazy"
           width={300}
           height={300}
+          onLoad={() => setImageLoading(false)}
+          onError={() => setImageLoading(false)}
         />
       </div>
 
