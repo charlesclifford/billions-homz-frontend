@@ -201,7 +201,7 @@ const GalleryGrid = () => {
                       <div
                         className={`relative h-16 rounded-md overflow-hidden cursor-pointer transition-all border-2 ${
                           selectedPhotoIndex === index
-                            ? "border-red-500"
+                            ? "border-primary"
                             : "border-transparent"
                         }`}
                         onClick={() => {

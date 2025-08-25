@@ -121,7 +121,19 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
   });
 
   // Handle file upload with react-dropzone
-  const onDrop = useCallback((acceptedFiles: File[]) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const onDrop = useCallback((acceptedFiles: File[], fileRejections: any[]) => {
+    // Handle file rejections (too large, wrong type, etc.)
+    if (fileRejections.length > 0) {
+      const rejection = fileRejections[0];
+      if (rejection.errors[0]?.code === "file-too-large") {
+        toast.error("File is too large. Maximum size is 5MB.");
+      } else {
+        toast.error("Invalid file type. Please use JPEG, PNG, or WEBP.");
+      }
+      return;
+    }
+
     setFiles((prev) => [...prev, ...acceptedFiles]);
   }, []);
 
