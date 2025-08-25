@@ -13,6 +13,7 @@ import {
 } from "../../ui/form";
 import { Input } from "../../ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { motion } from "framer-motion";
 
 const formSchema = z.object({
   firstName: z.string().min(1, { message: "First name is required" }),
@@ -40,7 +41,13 @@ const ContactForm = () => {
   };
 
   return (
-    <div className="flex flex-col">
+    <motion.div
+      className="flex flex-col"
+      initial={{ opacity: 0, x: -50 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+    >
       <div className="mb-[30px]">
         <h3 className="leading-[1] tracking-[-1px] font-bold text-[36px] lg:text-[52px]">
           Leave a message
@@ -153,7 +160,7 @@ const ContactForm = () => {
           </form>
         </Form>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
