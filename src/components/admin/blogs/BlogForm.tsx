@@ -32,6 +32,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useIsMobile } from "@/hooks/useMobile";
 import { IPost } from "@/interfaces/blog.interface";
 import { createPost, updatePost } from "@/lib/api/blog";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -105,7 +106,7 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
     }
   }, [initialValues, form]);
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
       "image/*": [".jpeg", ".jpg", ".png", ".webp"],
     },
@@ -264,11 +265,11 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
         <div className="space-y-2">
           <FormLabel>Image</FormLabel>
           {previewImage ? (
-            <div className="relative">
+            <div className="relative aspect-video rounded-lg border-2 border-input border-dashed">
               <Image
                 src={previewImage}
                 alt="Preview"
-                className="w-full aspect-video object-cover rounded-lg"
+                className="w-full h-full object-cover"
                 width={800}
                 height={450}
                 priority
@@ -284,17 +285,28 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
           ) : (
             <div
               {...getRootProps()}
-              className="border-2 border-input border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
+              className={cn(
+                "border-2 border-input border-dashed rounded-lg text-center cursor-pointer hover:border-primary transition-colors",
+                isDragActive ? "border-primary bg-primary/10" : ""
+              )}
             >
               <input {...getInputProps()} />
               <div className="flex flex-col items-center justify-center gap-2">
                 <ImagePlus className="h-8 w-8 text-gray-400" />
-                <p className="text-sm text-gray-500">
-                  Drag & drop an image here, or click to select
-                </p>
-                <p className="text-xs text-gray-400">
-                  JPEG, PNG, WEBP (Max 5MB)
-                </p>
+                {isDragActive ? (
+                  <p className="text-sm text-primary font-medium">
+                    Drop the image here
+                  </p>
+                ) : (
+                  <>
+                    <p className="text-sm text-gray-500">
+                      Drag & drop an image here, or click to select
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      JPEG, PNG, WEBP (Max 5MB)
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           )}

@@ -37,10 +37,11 @@ import { Switch } from "@/components/ui/switch";
 import { useIsMobile } from "@/hooks/useMobile";
 import { IGallery } from "@/interfaces/photos.interface";
 import { createPhoto, updatePhoto } from "@/lib/api/gallery";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { ImagePlus, Tag, X } from "lucide-react";
+import { ImagePlus, Loader2, Tag, X } from "lucide-react";
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
@@ -80,6 +81,7 @@ const PhotoUploader = ({ children, initialValues }: FormProps) => {
   const [tagInput, setTagInput] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const isMobile = useIsMobile();
+  const [imageLoading, setImageLoading] = useState(true);
 
   const form = useForm<PhotoFormValues>({
     resolver: zodResolver(formSchema),
@@ -94,7 +96,7 @@ const PhotoUploader = ({ children, initialValues }: FormProps) => {
   });
 
   useEffect(() => {
-    if (initialValues) {
+    if (open && initialValues) {
       form.reset({
         ...initialValues,
         tags: initialValues.tags || [],
@@ -102,16 +104,34 @@ const PhotoUploader = ({ children, initialValues }: FormProps) => {
       });
       if (initialValues.imageUrl) {
         setPreviewImage(initialValues.imageUrl);
+        setImageLoading(true);
       }
+    } else if (!open) {
+      // Clear preview when dialog closes
+      setPreviewImage(null);
+      setImageFile(null);
+      setImageLoading(false);
     }
-  }, [initialValues, form]);
+  }, [open, initialValues, form]);
 
-  const { getRootProps, getInputProps } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
       "image/*": [".jpeg", ".jpg", ".png", ".webp"],
     },
     maxFiles: 1,
-    onDrop: (acceptedFiles) => {
+    maxSize: 5 * 1024 * 1024, // 5MB limit
+    onDrop: (acceptedFiles, fileRejections) => {
+      // Handle file rejections (too large, wrong type, etc.)
+      if (fileRejections.length > 0) {
+        const rejection = fileRejections[0];
+        if (rejection.errors[0]?.code === "file-too-large") {
+          toast.error("File is too large. Maximum size is 5MB.");
+        } else {
+          toast.error("Invalid file type. Please use JPEG, PNG, or WEBP.");
+        }
+        return;
+      }
+
       const file = acceptedFiles[0];
       if (file) {
         setImageFile(file);
@@ -182,12 +202,17 @@ const PhotoUploader = ({ children, initialValues }: FormProps) => {
     form.reset();
     setPreviewImage(null);
     setImageFile(null);
+    setImageLoading(false);
     setOpen(false);
   };
 
   const handleRemoveImage = () => {
-    setPreviewImage(null);
-    setImageFile(null);
+    // Only allow removing image if it's a new upload, not an existing photo
+    if (!initialValues?._id || !initialValues?.imageUrl) {
+      setPreviewImage(null);
+      setImageFile(null);
+      setImageLoading(false);
+    }
   };
 
   const handleAddTag = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -230,14 +255,24 @@ const PhotoUploader = ({ children, initialValues }: FormProps) => {
         <div className="space-y-2">
           <FormLabel>Image</FormLabel>
           {previewImage ? (
-            <div className="relative">
+            <div className="relative aspect-video rounded-lg border-2 border-input border-dashed">
+              {imageLoading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+              )}
               <Image
                 src={previewImage}
                 alt="Preview"
-                className="w-full aspect-video object-contain rounded-lg"
+                className={cn(
+                  "w-full h-full object-contain pointer-events-none",
+                  imageLoading ? "opacity-0" : "opacity-100"
+                )}
                 width={800}
                 height={450}
                 priority
+                onLoad={() => setImageLoading(false)}
+                onError={() => setImageLoading(false)}
               />
               {(!initialValues?._id || !initialValues?.imageUrl) && (
                 <button
@@ -252,17 +287,28 @@ const PhotoUploader = ({ children, initialValues }: FormProps) => {
           ) : (
             <div
               {...getRootProps()}
-              className="border-2 border-input border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary transition-colors"
+              className={cn(
+                "border-2 border-input border-dashed rounded-lg text-center cursor-pointer hover:border-primary transition-colors",
+                isDragActive ? "border-primary bg-primary/10" : ""
+              )}
             >
               <input {...getInputProps()} />
-              <div className="flex flex-col items-center justify-center gap-2">
+              <div className="flex flex-col items-center justify-center gap-2 aspect-video">
                 <ImagePlus className="h-8 w-8 text-gray-400" />
-                <p className="text-sm text-gray-500">
-                  Drag & drop an image here, or click to select
-                </p>
-                <p className="text-xs text-gray-400">
-                  JPEG, PNG, WEBP (Max 5MB)
-                </p>
+                {isDragActive ? (
+                  <p className="text-sm text-primary font-medium">
+                    Drop the image here
+                  </p>
+                ) : (
+                  <>
+                    <p className="text-sm text-gray-500">
+                      Drag & drop an image here, or click to select
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      JPEG, PNG, WEBP (Max 5MB)
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           )}

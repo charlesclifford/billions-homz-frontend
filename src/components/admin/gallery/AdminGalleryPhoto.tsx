@@ -29,6 +29,7 @@ const AdminGalleryPhoto = ({
   const pathname = usePathname();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [postToDelete, setPostToDelete] = useState<string | null>(null);
+  const [imageLoading, setImageLoading] = useState(true);
 
   const isAdminRoute = pathname.startsWith("/admin");
 
@@ -59,14 +60,23 @@ const AdminGalleryPhoto = ({
 
   return (
     <div className="relative group border w-full rounded-[30px] overflow-hidden aspect-square">
-      <div className="bg-gray-100 w-full h-full flex items-center justify-center ">
+      <div className="bg-card w-full h-full flex items-center justify-center relative">
+        {imageLoading && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        )}
         <Image
           src={photo.imageUrl}
           alt={photo.caption || "Property image"}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 ${
+            imageLoading ? "opacity-0" : "opacity-100"
+          }`}
           loading="lazy"
           width={300}
           height={300}
+          onLoad={() => setImageLoading(false)}
+          onError={() => setImageLoading(false)}
         />
       </div>
 
@@ -149,5 +159,3 @@ const AdminGalleryPhoto = ({
 };
 
 export default AdminGalleryPhoto;
-
-

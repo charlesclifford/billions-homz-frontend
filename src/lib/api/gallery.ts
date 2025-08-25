@@ -31,6 +31,16 @@ export const getAllPhotos = async (params?: PhotosFilterInput) => {
   }
 };
 
+export const getPhoto = async (id: string) => {
+  try {
+    const response = await instance.get(`/photos/${id}`);
+
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
 export const createPhoto = async (data: FormData) => {
   try {
     const response = await instance.post("/photos/add", data, {

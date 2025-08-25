@@ -19,15 +19,16 @@ import {
 import useGallery from "@/hooks/useGallery";
 import { PhotosFilterInput } from "@/interfaces/photos.interface";
 import { cn } from "@/lib/utils";
-import { GalleryThumbnailsIcon, MapPin, XIcon } from "lucide-react";
+import { GalleryThumbnailsIcon, Loader2, MapPin, XIcon } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import AdminGalleryPhoto from "./AdminGalleryPhoto";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const GalleryList = () => {
   const [filter, setFilter] = useState<PhotosFilterInput>({
     page: 1,
-    limit: 10,
+    limit: 12,
   });
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(
     null
@@ -36,6 +37,9 @@ const GalleryList = () => {
   const [thumbsApi, setThumbsApi] = useState<CarouselApi>();
   const [showThumbnails, setShowThumbnails] = useState(true);
   const { photos, isPending, totalPages } = useGallery(filter);
+  const [loadingImages, setLoadingImages] = useState<Record<number, boolean>>(
+    {}
+  );
 
   const openModal = (index: number) => setSelectedPhotoIndex(index);
   const closeModal = () => setSelectedPhotoIndex(null);
@@ -65,25 +69,44 @@ const GalleryList = () => {
     setFilter({ ...filter, page });
   };
 
-  if (isPending) return <div>Loading...</div>;
+  const handleImageLoad = (index: number) => {
+    setLoadingImages((prev) => ({ ...prev, [index]: false }));
+  };
+
+  const handleImageStartLoad = (index: number) => {
+    setLoadingImages((prev) => ({ ...prev, [index]: true }));
+  };
 
   return (
     <div className="w-full relative">
       {/* Masonry Grid */}
       <>
         <div className="w-full grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-8">
-          {photos.map((photo, i) => {
-            return (
-              <AdminGalleryPhoto
-                key={photo._id}
-                photo={photo}
-                onClick={() => openModal(i)}
-              />
-            );
-          })}
+          {isPending
+            ? [...Array(filter.limit)].map((_, i) => (
+                <div
+                  key={i}
+                  className="relative border w-full rounded-[30px] overflow-hidden aspect-square"
+                >
+                  <Skeleton className="w-full h-full rounded-[30px]" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent flex flex-col justify-end p-4">
+                    <Skeleton className="h-6 w-3/4 mb-2 bg-white/30" />
+                    <Skeleton className="h-4 w-1/2 bg-white/30" />
+                  </div>
+                </div>
+              ))
+            : photos.map((photo, i) => {
+                return (
+                  <AdminGalleryPhoto
+                    key={photo._id}
+                    photo={photo}
+                    onClick={() => openModal(i)}
+                  />
+                );
+              })}
         </div>
 
-        {photos.length > 0 && totalPages > 1 && (
+        {!isPending && photos.length > 0 && totalPages > 1 && (
           <Pagination>
             <PaginationContent>
               <PaginationItem>
@@ -170,18 +193,29 @@ const GalleryList = () => {
                   : "h-[calc(100dvh-80px)]"
               )}
             >
-              {photos.map((photo) => (
+              {photos.map((photo, index) => (
                 <CarouselItem
                   key={photo._id}
                   className="flex items-center justify-center px-0"
                 >
                   <div className="relative w-full h-full">
+                    {loadingImages[index] && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Loader2 className="h-12 w-12 animate-spin text-white/70" />
+                      </div>
+                    )}
                     <Image
                       src={photo.imageUrl}
                       alt={photo.caption || "photo"}
                       width={500}
                       height={500}
-                      className="w-full h-full object-contain"
+                      className={cn(
+                        "w-full h-full object-contain transition-opacity duration-300",
+                        loadingImages[index] ? "opacity-0" : "opacity-100"
+                      )}
+                      onLoad={() => handleImageLoad(index)}
+                      onLoadingComplete={() => handleImageLoad(index)}
+                      onLoadStart={() => handleImageStartLoad(index)}
                     />
                   </div>
                 </CarouselItem>

@@ -6,7 +6,7 @@ import realEstateAnim from "@/assets/animations/Lanyard drop.json"
 const AuthAnimation = () => {
   return (
     <div className="flex items-center justify-center w-full h-full overflow-hidden">
-      <Lottie animationData={realEstateAnim} loop autoplay />
+      <Lottie animationData={realEstateAnim} loop autoplay className="scale-125" />
     </div>
   );
 };

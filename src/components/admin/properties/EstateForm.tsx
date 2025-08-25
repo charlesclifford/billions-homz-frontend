@@ -128,7 +128,18 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
     },
     maxFiles: 1,
     maxSize: 5 * 1024 * 1024, // 5MB
-    onDrop: (acceptedFiles) => {
+    onDrop: (acceptedFiles, fileRejections) => {
+      // Handle file rejections (too large, wrong type, etc.)
+      if (fileRejections.length > 0) {
+        const rejection = fileRejections[0];
+        if (rejection.errors[0]?.code === "file-too-large") {
+          toast.error("File is too large. Maximum size is 5MB.");
+        } else {
+          toast.error("Invalid file type. Please use JPEG, PNG, or WEBP.");
+        }
+        return;
+      }
+
       const file = acceptedFiles[0];
       if (file) {
         setImageFile(file);
@@ -419,7 +430,7 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                             <FormControl>
                               <InputWithAffix
                                 type="number"
-                                min="0"
+                                min="1"
                                 placeholder="Enter plot size"
                                 className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm pr-10"
                                 suffix={<SquareMetreIcon />}
@@ -445,7 +456,7 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                                 <InputWithAffix
                                   type="text"
                                   inputMode="numeric"
-                                  min="0"
+                                  min="1"
                                   placeholder="Enter price"
                                   prefix={<NairaIcon />}
                                   className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
