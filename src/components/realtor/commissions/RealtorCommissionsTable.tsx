@@ -19,6 +19,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -30,13 +31,12 @@ import {
 import { useRealtorCommissions } from "@/hooks/useRealtorCommissions";
 import { ICommission, StatusType } from "@/interfaces/commission.interface";
 import { cn } from "@/lib/utils";
+import { setTabPage } from "@/store/features/commissions/commisson.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { formatCurrency, formatRate } from "@/utils/helpers";
 import { formatDate } from "date-fns";
-import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { RequestPayoutButton } from "./RequestPayoutButton";
-import { setTabPage } from "@/store/features/commissions/commisson.slice";
 
 interface RealtorCommissionsTableProps {
   title?: string;
@@ -67,6 +67,7 @@ const RealtorCommissionsTable = ({
   const dispatch = useAppDispatch();
   const { tabPagination } = useAppSelector((state) => state.commission);
   const currentPage = tabPagination[status]?.page || 1;
+  const limit = tabPagination[status]?.limit || 10;
 
   const {
     commissions,
@@ -78,7 +79,7 @@ const RealtorCommissionsTable = ({
   } = useRealtorCommissions({
     page: currentPage,
     status,
-    limit: tabPagination[status]?.limit || 10,
+    limit,
   });
 
   // const createQueryString = useCallback(
@@ -98,6 +99,29 @@ const RealtorCommissionsTable = ({
 
   const handlePageChange = (newPage: number) => {
     dispatch(setTabPage({ status, page: newPage }));
+  };
+
+  // Helper function to get asset name based on type
+  const getAssetName = (commission: ICommission) => {
+    if (commission.sale.assetType === "property" && commission.sale.property) {
+      return commission.sale.property.title || "Unknown Property";
+    } else if (
+      commission.sale.assetType === "estate" &&
+      commission.sale.estate
+    ) {
+      return commission.sale.estate.name || "Unknown Estate";
+    }
+    return "Unknown Asset";
+  };
+
+  // Helper function to get asset type display
+  const getAssetTypeDisplay = (commission: ICommission) => {
+    if (commission.sale.assetType === "property") {
+      return "Property";
+    } else if (commission.sale.assetType === "estate") {
+      return "Estate";
+    }
+    return "Unknown";
   };
 
   if (error) {
@@ -122,14 +146,20 @@ const RealtorCommissionsTable = ({
     );
   }
 
-  const renderTableCell = (commission: ICommission, header: string) => {
+  const renderTableCell = (
+    commission: ICommission,
+    header: string,
+    idx: number
+  ) => {
     switch (header) {
-      case "Estate":
+      case "S/N":
+        return <div>{(currentPage - 1) * limit + idx + 1}</div>;
+      case "Asset Type":
         return (
-          <span className="capitalize">
-            {commission.sale.estate?.name || "N/A"}
-          </span>
+          <span className="capitalize">{getAssetTypeDisplay(commission)}</span>
         );
+      case "Asset Name":
+        return <span className="capitalize">{getAssetName(commission)}</span>;
       case "Buyer":
         return commission.sale?.buyerName || "N/A";
       case "Sale Amount":
@@ -189,9 +219,13 @@ const RealtorCommissionsTable = ({
           <CardTitle>{title}</CardTitle>
           <CardDescription>
             {description ||
-              (!isPending && commissions
-                ? `Showing ${commissions.length} of ${totalCommissions} commissions`
-                : "Loading your commission history...")}
+              (!isPending && commissions ? (
+                <p>
+                  {`Showing ${commissions.length} of ${totalCommissions} commissions`}
+                </p>
+              ) : (
+                <Skeleton className="h-4 w-40 mt-1" />
+              ))}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -205,16 +239,15 @@ const RealtorCommissionsTable = ({
             </TableHeader>
             <TableBody>
               {isPending ? (
-                <TableRow>
-                  <TableCell colSpan={headers.length}>
-                    <div className="py-8 flex flex-col gap-2 items-center justify-center">
-                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                      <p className="text-sm text-muted-foreground">
-                        Loading commission records...
-                      </p>
-                    </div>
-                  </TableCell>
-                </TableRow>
+                [...Array(headers.length)].map((_, rowIndex) => (
+                  <TableRow key={`skeleton-${rowIndex}`}>
+                    {[...Array(10)].map((_, colIndex) => (
+                      <TableCell key={colIndex}>
+                        <Skeleton className="h-6 w-full" />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
               ) : commissions && commissions.length === 0 ? (
                 <TableRow>
                   <TableCell
@@ -236,11 +269,11 @@ const RealtorCommissionsTable = ({
                   </TableCell>
                 </TableRow>
               ) : (
-                commissions.map((commission) => (
+                commissions.map((commission, idx) => (
                   <TableRow key={commission._id}>
                     {headers.map((header) => (
                       <TableCell key={`${commission._id}-${header}`}>
-                        {renderTableCell(commission, header)}
+                        {renderTableCell(commission, header, idx)}
                       </TableCell>
                     ))}
                   </TableRow>

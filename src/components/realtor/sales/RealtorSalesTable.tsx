@@ -104,9 +104,11 @@ const RealtorSalesTable = () => {
         <CardHeader className="flex flex-col ">
           <CardTitle>My Sales</CardTitle>
           <CardDescription>
-            {!isPending && sales
-              ? `Showing ${sales.length} of ${totalSales} sales`
-              : "Loading your commission history..."}
+            {!isPending && sales ? (
+              <p>{`Showing ${sales.length} of ${totalSales} sales`} </p>
+            ) : (
+              <Skeleton className="h-4 w-40 mt-1" />
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>

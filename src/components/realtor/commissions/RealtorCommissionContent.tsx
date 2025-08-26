@@ -10,7 +10,9 @@ const statusConfig = {
     label: "Pending",
     description: "Commissions awaiting payout request",
     tableHeaders: [
-      "Estate",
+      "S/N",
+      "Asset Type",
+      "Asset Name",
       "Buyer",
       "Sale Amount",
       "Commission Rate",
@@ -24,7 +26,9 @@ const statusConfig = {
     label: "Requests",
     description: "Payouts you've requested",
     tableHeaders: [
-      "Estate",
+      "S/N",
+      "Asset Type",
+      "Asset Name",
       "Buyer",
       "Sale Amount",
       "Commission Amount",
@@ -36,7 +40,9 @@ const statusConfig = {
     label: "Approved",
     description: "Approved payouts",
     tableHeaders: [
-      "Estate",
+      "S/N",
+      "Asset Type",
+      "Asset Name",
       "Buyer",
       "Sale Amount",
       "Commission Amount",
@@ -48,7 +54,9 @@ const statusConfig = {
     label: "Paid",
     description: "Completed payouts",
     tableHeaders: [
-      "Estate",
+      "S/N",
+      "Asset Type",
+      "Asset Name",
       "Buyer",
       "Sale Amount",
       "Commission Amount",

@@ -17,14 +17,15 @@ export const useRealtorCommissions = (params?: CommissionsFilterInput) => {
     queryFn: async () => getRealtorCommissions(params),
   });
 
-  const { commissions, totalCommissions, totalPages } = useMemo(() => {
+  const { commissions, totalCommissions, totalPages, limit } = useMemo(() => {
     if (!data || isPending || isError)
-      return { commissions: [], totalCommissions: 0, totalPages: 0 };
+      return { commissions: [], totalCommissions: 0, totalPages: 0, limit: 0 };
 
     return {
       commissions: data.data || [],
       totalCommissions: data.pagination.total || 0,
       totalPages: data.pagination.totalPages || 0,
+      limit: data.pagination.limit || 0,
     };
   }, [data, isPending, isError]);
 
@@ -36,5 +37,6 @@ export const useRealtorCommissions = (params?: CommissionsFilterInput) => {
     refetch,
     totalCommissions,
     totalPages,
+    limit,
   };
 };
