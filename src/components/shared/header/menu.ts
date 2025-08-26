@@ -25,7 +25,7 @@ export const menuList: IMenu[] = [
       {
         name: "Properties",
         href: "/listings/properties",
-        disabled: true,
+        disabled: false,
       },
     ],
   },
