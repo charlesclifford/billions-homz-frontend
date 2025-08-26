@@ -67,24 +67,55 @@ import {
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
+import useProperties from "@/hooks/useProperties";
 
-const formSchema = z.object({
-  estate: z.string().min(1, "Estate is required"),
-  units: z.coerce.number().min(0, "Unit must be positive"),
-  buyerName: z.string().min(1, "Buyer name is required"),
-  buyerPhone: z.string().min(1, "Buyer contact is required"),
-  buyerEmail: z.string().email().optional().or(z.literal("")),
-  buyerAddress: z.string().optional(),
-  amountPaid: z.coerce.number().min(0, "Amount paid must be positive"),
-  paymentType: z.enum(["full", "installment"]),
-  paymentMethod: z.enum(["cash", "bank_transfer", "cheque", "other"]),
-  realtor: z.string().optional(),
-  notes: z.string().optional(),
-  paymentProof: z.any().optional(),
-  dateSold: z.date({
-    required_error: "Date of purchase is required",
-  }),
-});
+const formSchema = z
+  .object({
+    assetType: z.enum(["estate", "property"]),
+    estate: z.string().optional(),
+    property: z.string().optional(),
+    units: z.coerce.number().min(0, "Unit must be positive"),
+    buyerName: z.string().min(1, "Buyer name is required"),
+    buyerPhone: z.string().min(1, "Buyer contact is required"),
+    buyerEmail: z.string().email().optional().or(z.literal("")),
+    buyerAddress: z.string().optional(),
+    amountPaid: z.coerce.number().min(0, "Amount paid must be positive"),
+    paymentType: z.enum(["full", "installment"]),
+    paymentMethod: z.enum(["cash", "bank_transfer", "cheque", "other"]),
+    realtor: z.string().optional(),
+    notes: z.string().optional(),
+    paymentProof: z.any().optional(),
+    dateSold: z.date({
+      required_error: "Date of purchase is required",
+    }),
+  })
+  .refine(
+    (data) => {
+      // Validate that either estate or property is provided based on assetType
+      if (data.assetType === "estate") {
+        return !!data.estate;
+      } else {
+        return !!data.property;
+      }
+    },
+    {
+      message: "Asset selection is required",
+      path: ["assetType"], // This will show the error on the assetType field
+    }
+  )
+  .refine(
+    (data) => {
+      // Validate units based on asset type
+      if (data.assetType === "property") {
+        return data.units === 1;
+      }
+      return true;
+    },
+    {
+      message: "Properties can only have 1 unit",
+      path: ["units"],
+    }
+  );
 
 export type SalesFormValues = z.infer<typeof formSchema>;
 
@@ -107,6 +138,10 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
     page: 1,
     limit: 20,
   });
+  const { properties } = useProperties({
+    page: 1,
+    limit: 20,
+  });
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingValues, setPendingValues] = useState<SalesFormValues | null>(
     null
@@ -116,7 +151,9 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       ...initialValues,
+      assetType: "estate",
       estate: "",
+      property: "",
       units: undefined,
       buyerName: "",
       buyerPhone: "",
@@ -130,6 +167,8 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
       dateSold: undefined,
     },
   });
+
+  const selectedAssetType = form.watch("assetType");
 
   useEffect(() => {
     if (initialValues) {
@@ -174,6 +213,7 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
       toast.success(data?.message || "Sale created successfully");
       queryClient.invalidateQueries({ queryKey: ["sales"] });
       queryClient.invalidateQueries({ queryKey: ["allEstates"] });
+      queryClient.invalidateQueries({ queryKey: ["allProperties"] });
       handleClose();
     },
     onError: (error) => {
@@ -206,7 +246,16 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
     const formData = new FormData();
 
     // Append all form values
-    formData.append("estate", pendingValues.estate);
+    formData.append("assetType", pendingValues.assetType);
+    if (pendingValues.assetType === "estate" && pendingValues.estate) {
+      formData.append("estate", pendingValues.estate);
+    } else if (
+      pendingValues.assetType === "property" &&
+      pendingValues.property
+    ) {
+      formData.append("property", pendingValues.property);
+    }
+
     formData.append("units", String(pendingValues.units));
     formData.append("buyerName", pendingValues.buyerName);
     formData.append("buyerPhone", pendingValues.buyerPhone);
@@ -255,11 +304,18 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
   };
 
   // Helper function to get estate name by ID
-  const getEstateName = (estateId: string) => {
-    const estate = estates.find((e) => e._id === estateId);
-    return estate
-      ? `${estate.name} (${formatCurrency(estate.price as number)})`
-      : estateId;
+  const getAssetName = (assetId: string, assetType: "estate" | "property") => {
+    if (assetType === "estate") {
+      const estate = estates.find((e) => e._id === assetId);
+      return estate
+        ? `${estate.name} (${formatCurrency(estate.price as number)})`
+        : assetId;
+    } else {
+      const property = properties.find((p) => p._id === assetId);
+      return property
+        ? `${property.title} (${formatCurrency(property.price as number)})`
+        : assetId;
+    }
   };
 
   // Helper function to get realtor name by ID
@@ -277,6 +333,29 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
           className="space-y-6 p-4 h-full"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+            {/* Asset Type Selection */}
+            <FormField
+              control={form.control}
+              name="assetType"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Asset Type</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="w-full cursor-pointer">
+                        <SelectValue placeholder="Select asset type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="estate">Estate</SelectItem>
+                      <SelectItem value="property">Property</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="dateSold"
@@ -320,54 +399,96 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
               )}
             />
 
-            {/* Estate and Unit */}
-            <FormField
-              control={form.control}
-              name="estate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Estate</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="w-full cursor-pointer capitalize">
-                        <SelectValue placeholder="Select estate" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {estates.map((estate) => (
-                        <SelectItem
-                          key={estate._id}
-                          value={estate._id}
-                          className={cn(
-                            "capitalize cursor-pointer",
-                            estate.soldUnits === estate.totalUnits &&
-                              "line-through"
-                          )}
-                          disabled={estate.soldUnits === estate.totalUnits}
-                        >
-                          {estate.name} (
-                          {formatCurrency(estate.price as number)})
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {/* Asset Selection based on type */}
+            {selectedAssetType === "estate" ? (
+              <FormField
+                control={form.control}
+                name="estate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Estate</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="w-full cursor-pointer capitalize">
+                          <SelectValue placeholder="Select estate" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {estates.map((estate) => (
+                          <SelectItem
+                            key={estate._id}
+                            value={estate._id}
+                            className={cn(
+                              "capitalize cursor-pointer",
+                              estate.soldUnits === estate.totalUnits &&
+                                "line-through"
+                            )}
+                            disabled={estate.soldUnits === estate.totalUnits}
+                          >
+                            {estate.name} (
+                            {formatCurrency(estate.price as number)})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            ) : (
+              <FormField
+                control={form.control}
+                name="property"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Property</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="w-full cursor-pointer capitalize">
+                          <SelectValue placeholder="Select property" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {properties.map((property) => (
+                          <SelectItem
+                            key={property._id}
+                            value={property._id}
+                            className={cn(
+                              "capitalize cursor-pointer",
+                              property.status !== "available" && "line-through"
+                            )}
+                            disabled={property.status !== "available"}
+                          >
+                            {property.title} (
+                            {formatCurrency(property.price as number)})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}
               name="units"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Units</FormLabel>
+                  <FormLabel>
+                    {" "}
+                    Units {selectedAssetType === "property" && "(Always 1)"}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       min={1}
+                      max={selectedAssetType === "property" ? 1 : undefined}
                       placeholder="Units sold"
                       {...field}
+                      // disabled={selectedAssetType === "property"}
+                      value={selectedAssetType === "property" ? 1 : field.value}
                     />
                   </FormControl>
                   <FormMessage />
@@ -672,6 +793,13 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <h4 className="font-semibold text-sm text-muted-foreground">
+                        Asset Type
+                      </h4>
+                      <p className="capitalize">{pendingValues.assetType}</p>
+                    </div>
+
+                    <div>
+                      <h4 className="font-semibold text-sm text-muted-foreground">
                         Date of Purchase
                       </h4>
                       <p>{format(pendingValues.dateSold, "PPP")}</p>
@@ -679,10 +807,17 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
 
                     <div>
                       <h4 className="font-semibold text-sm text-muted-foreground">
-                        Estate
+                        {pendingValues.assetType === "estate"
+                          ? "Estate"
+                          : "Property"}
                       </h4>
                       <p className="capitalize">
-                        {getEstateName(pendingValues.estate)}
+                        {getAssetName(
+                          pendingValues.assetType === "estate"
+                            ? pendingValues.estate!
+                            : pendingValues.property!,
+                          pendingValues.assetType
+                        )}
                       </p>
                     </div>
 

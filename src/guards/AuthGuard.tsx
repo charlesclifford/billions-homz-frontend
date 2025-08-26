@@ -12,7 +12,7 @@ import cookies from "js-cookie";
 import { usePathname } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
-interface ApiError {
+export interface ApiError {
   message: string;
   details?: {
     status: boolean;

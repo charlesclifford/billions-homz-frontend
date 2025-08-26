@@ -6,7 +6,7 @@ import {
   CardContent,
   CardDescription,
   CardFooter,
-  CardHeader
+  CardHeader,
 } from "@/components/ui/card";
 import {
   Pagination,
@@ -33,6 +33,8 @@ import { formatCurrency } from "@/utils/helpers";
 import { formatDate } from "date-fns";
 import { useRouter } from "next/navigation";
 import SalesDetails from "./SalesDetails";
+import { ISale } from "@/interfaces/sales.interface";
+import { useEffect } from "react";
 
 const SalesContent = () => {
   const router = useRouter();
@@ -43,8 +45,34 @@ const SalesContent = () => {
   const { sales, isPending, error, totalSales, totalPages, refetch } =
     useSales(filter);
 
+  useEffect(() => {
+    if (!filter.assetType) {
+      dispatch(setFilter({ assetType: "estate", page: currentPage }));
+    }
+  }, [filter.assetType, dispatch, currentPage]);
+
   const handlePageChange = (newPage: number) => {
     dispatch(setFilter({ page: newPage }));
+  };
+
+  // Helper function to get asset name based on type
+  const getAssetName = (sale: ISale) => {
+    if (sale.assetType === "property" && sale.property) {
+      return sale.property.title || "Unknown Property";
+    } else if (sale.assetType === "estate" && sale.estate) {
+      return sale.estate.name || "Unknown Estate";
+    }
+    return "Unknown Asset";
+  };
+
+  // Helper function to get asset type display
+  const getAssetTypeDisplay = (sale: ISale) => {
+    if (sale.assetType === "property") {
+      return "Property";
+    } else if (sale.assetType === "estate") {
+      return "Estate";
+    }
+    return "Unknown";
   };
 
   if (error) {
@@ -73,9 +101,9 @@ const SalesContent = () => {
       <Card>
         <CardHeader className="flex flex-col">
           <CardDescription>
-            <p>
-              {!isPending && sales ? (
-                `
+            {!isPending && sales ? (
+              <p>
+                {`
               Showing ${Math.min(
                 (filter.page - 1) * filter.limit + 1,
                 totalSales
@@ -83,11 +111,11 @@ const SalesContent = () => {
                 ${Math.min(filter.page * filter.limit, totalSales)} of
                 ${totalSales}
              sales
-              `
-              ) : (
-                <Skeleton className="h-4 mt-1" />
-              )}
-            </p>
+             `}
+              </p>
+            ) : (
+              <Skeleton className="h-4 w-40 mt-1" />
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -95,7 +123,8 @@ const SalesContent = () => {
             <TableHeader className="bg-sidebar dark:bg-background">
               <TableRow>
                 <TableHead>S/N</TableHead>
-                <TableHead>Property</TableHead>
+                <TableHead>Asset Type</TableHead>
+                <TableHead>Asset Name</TableHead>
                 <TableHead>Buyer</TableHead>
                 <TableHead>Realtor</TableHead>
                 <TableHead>Unit</TableHead>
@@ -110,7 +139,7 @@ const SalesContent = () => {
               {isPending ? (
                 [...Array(5)].map((_, rowIndex) => (
                   <TableRow key={`skeleton-${rowIndex}`}>
-                    {[...Array(10)].map((_, colIndex) => (
+                    {[...Array(11)].map((_, colIndex) => (
                       <TableCell key={colIndex}>
                         <Skeleton className="h-6 w-full" />
                       </TableCell>
@@ -119,10 +148,11 @@ const SalesContent = () => {
                 ))
               ) : sales && sales.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={10} className="text-center py-8">
+                  <TableCell colSpan={11} className="text-center py-8">
                     <div className="flex flex-col items-center gap-2">
                       <p className="text-muted-foreground">
-                        No sales records found
+                        No sales records found{" "}
+                        {filter.assetType && ` for ${filter.assetType}s`}
                       </p>
                       <Button
                         variant="ghost"
@@ -142,8 +172,11 @@ const SalesContent = () => {
                     </TableCell>
                     <TableCell>
                       <div className="capitalize">
-                        {sale.estate?.name || "Unknown Property"}
+                        {getAssetTypeDisplay(sale)}
                       </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="capitalize">{getAssetName(sale)}</div>
                     </TableCell>
                     <TableCell>
                       <div>

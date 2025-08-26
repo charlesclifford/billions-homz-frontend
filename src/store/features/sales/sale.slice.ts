@@ -1,4 +1,4 @@
-import { ISale } from "@/interfaces/sales.interface";
+import { AssetType, ISale } from "@/interfaces/sales.interface";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface SaleFilterState {
@@ -8,6 +8,7 @@ interface SaleFilterState {
   startDate?: string;
   endDate?: string;
   search?: string;
+  assetType?: AssetType;
 }
 
 interface SalesSate {

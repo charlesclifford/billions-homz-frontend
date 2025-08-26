@@ -7,7 +7,7 @@ import {
   CardContent,
   CardDescription,
   CardFooter,
-  CardHeader
+  CardHeader,
 } from "@/components/ui/card";
 import {
   Pagination,
@@ -87,9 +87,9 @@ const CommissionsContent = () => {
       <Card>
         <CardHeader className="flex flex-col">
           <CardDescription>
-            <p>
-              {!isPending && commissions ? (
-                `
+            {!isPending && commissions ? (
+              <p>
+                {`
               Showing ${Math.min(
                 (filter.page - 1) * filter.limit + 1,
                 totalCommissions
@@ -97,11 +97,11 @@ const CommissionsContent = () => {
                 ${Math.min(filter.page * filter.limit, totalCommissions)} of
                 ${totalCommissions}
              sales
-              `
-              ) : (
-                <Skeleton className="h-4 mt-1" />
-              )}
-            </p>
+              `}
+              </p>
+            ) : (
+              <Skeleton className="h-4 w-40 mt-1" />
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>

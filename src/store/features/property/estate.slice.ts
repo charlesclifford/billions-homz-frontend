@@ -10,6 +10,7 @@ export interface EstateFilterState {
   maxPrice?: number;
   sortBy?: string;
   sortOrder?: "asc" | "desc";
+  includeDeleted?: boolean;
 }
 
 interface EstateState {

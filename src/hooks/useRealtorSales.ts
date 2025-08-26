@@ -14,14 +14,15 @@ export const useRealtorsales = (params?: SalesFilterInput) => {
     queryFn: async () => getMySales(params),
   });
 
-  const { sales, totalSales, totalPages } = useMemo(() => {
+  const { sales, totalSales, totalPages, limit } = useMemo(() => {
     if (!data || isPending || isError)
-      return { sales: [], totalSales: 0, totalPages: 0 };
+      return { sales: [], totalSales: 0, totalPages: 0, limit: 0 };
 
     return {
       sales: data.data || [],
       totalSales: data.pagination.total || 0,
       totalPages: data.pagination.totalPages || 0,
+      limit: data.pagination.limit || 0,
     };
   }, [data, isPending, isError]);
 
@@ -33,5 +34,6 @@ export const useRealtorsales = (params?: SalesFilterInput) => {
     refetch,
     totalSales,
     totalPages,
+    limit
   };
 };

@@ -141,40 +141,57 @@ const SalesDetails = ({ id }: { id: string }) => {
                   {/* Property Information */}
                   <div className="space-y-2">
                     <h3 className="text-lg font-semibold text-neutral-700 dark:text-neutral-500 border-b pb-2">
-                      Property Information
+                      {sale.assetType === "estate"
+                        ? "Estate Information"
+                        : "Property Information"}
                     </h3>
                     <div className="space-y-2">
-                      <div className="flex items-start">
-                        <span className="w-36 font-medium text-neutral-600">
-                          Estate:
-                        </span>
-                        <span className="flex-1 capitalize">
-                          {sale.estate.name}
-                        </span>
-                      </div>
-                      <div className="flex items-center">
-                        <span className="w-36 font-medium text-neutral-600">
-                          Type:
-                        </span>
-                        {sale.estate.estateType === "house" ? (
-                          <span className="flex items-center gap-2">
-                            <span>House</span>
-                          </span>
-                        ) : (
-                          <span className="flex items-center gap-2">
-                            <span>Land</span>
-                          </span>
-                        )}
-                      </div>
-                      {sale.estate.location.address && (
-                        <div className="flex items-start">
-                          <span className="w-36 font-medium text-neutral-600">
-                            Address:
-                          </span>
-                          <span className="flex items-start gap-2 flex-1">
-                            <span>{sale.estate.location.city}</span>
-                          </span>
-                        </div>
+                      {sale.assetType === "estate" && sale.estate && (
+                        <>
+                          <div className="flex items-start">
+                            <span className="w-36 font-medium text-neutral-600">
+                              Estate:
+                            </span>
+                            <span className="flex-1 capitalize">
+                              {sale.estate.name}
+                            </span>
+                          </div>
+
+                          {sale.estate.location?.address && (
+                            <div className="flex items-start">
+                              <span className="w-36 font-medium text-neutral-600">
+                                Address:
+                              </span>
+                              <span className="flex-1">
+                                {sale.estate.location.address}
+                              </span>
+                            </div>
+                          )}
+                        </>
+                      )}
+
+                      {sale.assetType === "property" && sale.property && (
+                        <>
+                          <div className="flex items-start">
+                            <span className="w-36 font-medium text-neutral-600">
+                              Property:
+                            </span>
+                            <span className="flex-1 capitalize">
+                              {sale.property.title}
+                            </span>
+                          </div>
+
+                          {sale.property.location?.address && (
+                            <div className="flex items-start">
+                              <span className="w-36 font-medium text-neutral-600">
+                                Address:
+                              </span>
+                              <span className="flex-1">
+                                {sale.property.location.address}
+                              </span>
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>
@@ -441,30 +458,40 @@ const SalesDetails = ({ id }: { id: string }) => {
                     Property Details
                   </h3>
                   <div className="bg-gray-50 p-4 rounded-lg">
-                    <p className="font-medium capitalize">{sale.estate.name}</p>
+                    <p className="font-medium capitalize">
+                      {sale.assetType === "estate"
+                        ? sale.estate?.name
+                        : sale.property?.title}
+                    </p>
                     <div className="grid grid-cols-2 gap-4 mt-2">
-                      <div>
-                        <p className="text-sm text-gray-500">Type</p>
-                        <p>
-                          {sale.estate.estateType === "house"
-                            ? "House"
-                            : "Land"}
-                        </p>
-                      </div>
                       <div>
                         <p className="text-sm text-gray-500">Units</p>
                         <p>{sale.units}</p>
                       </div>
                     </div>
-                    {sale.estate.location.address && (
-                      <div className="mt-2">
-                        <p className="text-sm text-gray-500">Location</p>
-                        <p className="flex items-start gap-1">
-                          <MapPin className="h-4 w-4 mt-0.5 text-gray-500 flex-shrink-0" />
-                          <span>{sale.estate.location.address}</span>
-                        </p>
-                      </div>
-                    )}
+                    {sale.assetType === "estate" &&
+                      sale.estate &&
+                      sale.estate.location.address && (
+                        <div className="mt-2">
+                          <p className="text-sm text-gray-500">Location</p>
+                          <p className="flex items-start gap-1">
+                            <MapPin className="h-4 w-4 mt-0.5 text-gray-500 flex-shrink-0" />
+                            <span>{sale.estate.location.address}</span>
+                          </p>
+                        </div>
+                      )}
+
+                    {sale.assetType === "property" &&
+                      sale.property &&
+                      sale.property?.location?.address && (
+                        <div className="mt-2">
+                          <p className="text-sm text-gray-500">Location</p>
+                          <p className="flex items-start gap-1">
+                            <MapPin className="h-4 w-4 mt-0.5 text-gray-500 flex-shrink-0" />
+                            <span>{sale.property.location.address}</span>
+                          </p>
+                        </div>
+                      )}
                   </div>
                 </div>
 

@@ -43,6 +43,16 @@ instance.interceptors.response.use(
           status: 400,
         });
       }
+
+      // Handle 401 Unauthorized
+      if (status === 401) {
+        console.warn("Unauthorized:", data);
+        return Promise.reject({
+          message: "Unauthorized - please login again",
+          details: data,
+          status: 401,
+        });
+      }
     }
     // For other errors, just reject with the original error
     return Promise.reject(error);

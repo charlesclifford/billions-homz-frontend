@@ -1,17 +1,19 @@
 import { IEstate } from "./estate.interface";
-import { IImage } from "./property.interface";
+import { IImage, IProperty } from "./property.interface";
 import { IUser } from "./user.interface";
 
 export interface SalesFilterInput {
   page?: number;
   limit?: number;
   commissionStatus?: string;
+  assetType?: AssetType;
 }
 
 export interface ISale {
   _id: string;
   referenceCode: string;
   estate: IEstate;
+  property: IProperty;
   realtor?: IUser;
   units: number;
 
@@ -34,5 +36,9 @@ export interface ISale {
   createdAt: string;
   updatedAt: string;
 
-  dateSold: string
+  dateSold: string;
+
+  assetType: AssetType;
 }
+
+export type AssetType = "estate" | "property";

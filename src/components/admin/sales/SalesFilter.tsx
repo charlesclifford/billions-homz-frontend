@@ -2,12 +2,14 @@
 import DateRangePicker from "@/components/shared/DateRangePicker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import useSales from "@/hooks/useSales";
+import { AssetType } from "@/interfaces/sales.interface";
 import {
   initialFilterState,
   resetFilter,
@@ -61,6 +63,10 @@ const SalesFilter = () => {
         })
       );
     }
+  };
+
+  const handleAssetTypeChange = (type: AssetType) => {
+    dispatch(setFilter({ assetType: type }));
   };
 
   // Sync local search with Redux state on mount
@@ -135,6 +141,26 @@ const SalesFilter = () => {
             Reset Filters
           </Button>
         </div>
+      </div>
+
+      {/* asset type tabs */}
+      <div className="w-full">
+        <Tabs
+          value={filter.assetType || "estate"}
+          onValueChange={(value) => handleAssetTypeChange(value as AssetType)}
+        >
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-5 h-full">
+            <TabsTrigger value="estate" className="py-1.5 px-2 cursor-pointer">
+              Estates
+            </TabsTrigger>
+            <TabsTrigger
+              value="property"
+              className="py-1.5 px-2 cursor-pointer"
+            >
+              Properties
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
     </div>
   );

@@ -7,7 +7,7 @@ import {
   CardContent,
   CardDescription,
   CardFooter,
-  CardHeader
+  CardHeader,
 } from "@/components/ui/card";
 import {
   Dialog,
@@ -168,18 +168,14 @@ const PropertiesContent = () => {
       <Card>
         <CardHeader className="flex flex-col">
           <CardDescription>
-            <p>
-              {!isPending && properties ? (
-                `
-              Showing ${startItem} -
-                ${endItem} of
-                ${totalProperties}
-             estates
-              `
-              ) : (
-                <Skeleton className="h-4 mt-1" />
-              )}
-            </p>
+            {!isPending && properties ? (
+              <p>
+                {` Showing ${startItem} - ${endItem} of ${totalProperties}
+                estates`}
+              </p>
+            ) : (
+              <Skeleton className="h-4 mt-1" />
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>

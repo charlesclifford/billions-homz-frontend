@@ -17,6 +17,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -26,10 +27,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useRealtorsales } from "@/hooks/useRealtorSales";
+import { ISale } from "@/interfaces/sales.interface";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/utils/helpers";
 import { formatDate } from "date-fns";
-import { Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 
@@ -38,7 +39,7 @@ const RealtorSalesTable = () => {
   const searchParams = useSearchParams();
   const currentPage = parseInt(searchParams.get("page") || "1");
 
-  const { sales, isPending, error, refetch, totalPages, totalSales } =
+  const { sales, isPending, error, refetch, totalPages, totalSales, limit } =
     useRealtorsales({ page: currentPage });
 
   const createQueryString = useCallback(
@@ -54,6 +55,26 @@ const RealtorSalesTable = () => {
     router.push(
       `/realtor/sales?${createQueryString("page", newPage.toString())}`
     );
+  };
+
+  // Helper function to get asset name based on type
+  const getAssetName = (sale: ISale) => {
+    if (sale.assetType === "property" && sale.property) {
+      return sale.property.title || "Unknown Property";
+    } else if (sale.assetType === "estate" && sale.estate) {
+      return sale.estate.name || "Unknown Estate";
+    }
+    return "Unknown Asset";
+  };
+
+  // Helper function to get asset type display
+  const getAssetTypeDisplay = (sale: ISale) => {
+    if (sale.assetType === "property") {
+      return "Property";
+    } else if (sale.assetType === "estate") {
+      return "Estate";
+    }
+    return "Unknown";
   };
 
   if (error) {
@@ -92,7 +113,9 @@ const RealtorSalesTable = () => {
           <Table>
             <TableHeader className="bg-sidebar dark:bg-background">
               <TableRow>
-                <TableHead>Property</TableHead>
+                <TableHead>S/N</TableHead>
+                <TableHead>Asset Type</TableHead>
+                <TableHead>Asset Name</TableHead>
                 <TableHead>Buyer</TableHead>
                 <TableHead>Units</TableHead>
                 <TableHead>Amount Paid</TableHead>
@@ -104,19 +127,18 @@ const RealtorSalesTable = () => {
             </TableHeader>
             <TableBody>
               {isPending ? (
-                <TableRow>
-                  <TableCell colSpan={7}>
-                    <div className="py-8 flex flex-col gap-2 items-center justify-center">
-                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                      <p className="text-sm text-muted-foreground">
-                        Loading sales records...
-                      </p>
-                    </div>
-                  </TableCell>
-                </TableRow>
+                [...Array(5)].map((_, rowIndex) => (
+                  <TableRow key={`skeleton-${rowIndex}`}>
+                    {[...Array(10)].map((_, colIndex) => (
+                      <TableCell key={colIndex}>
+                        <Skeleton className="h-6 w-full" />
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
               ) : sales && sales.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center py-8">
+                  <TableCell colSpan={10} className="text-center py-8">
                     <div className="flex flex-col items-center gap-2">
                       <p className="text-muted-foreground">
                         No sales records found
@@ -132,12 +154,18 @@ const RealtorSalesTable = () => {
                   </TableCell>
                 </TableRow>
               ) : (
-                sales.map((sale) => (
+                sales.map((sale, idx) => (
                   <TableRow key={sale._id}>
                     <TableCell>
-                      <span className="capitalize">
-                        {sale.estate?.name || "N/A"}
-                      </span>
+                      <div>{(currentPage - 1) * limit + idx + 1}</div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="capitalize">
+                        {getAssetTypeDisplay(sale)}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="capitalize">{getAssetName(sale)}</div>
                     </TableCell>
                     <TableCell>
                       <span className="capitalize">{sale.buyerName}</span>
