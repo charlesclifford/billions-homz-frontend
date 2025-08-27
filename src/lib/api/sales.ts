@@ -77,3 +77,11 @@ export const updateSale = async (id: string, data: FormData) => {
     handleError(error);
   }
 };
+export const getSalesAnalytics = async () => {
+  try {
+    const response = await instance.get(`/sales/analytics`);
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};

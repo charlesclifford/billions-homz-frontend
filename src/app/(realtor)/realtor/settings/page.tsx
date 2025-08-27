@@ -132,7 +132,7 @@ const RealtorSettings = () => {
   }, [showSuccessDialog, signOut]);
 
   return (
-    <div className="space-y-8 max-w-2xl mx-auto">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Profile Section */}
       <Card>
         <CardContent>

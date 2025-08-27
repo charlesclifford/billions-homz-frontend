@@ -3,7 +3,7 @@ import { useRealtorStats } from "@/hooks/useRealtorStats";
 import { formatCurrency } from "@/utils/helpers";
 import { CheckCircle, Clock, FileText, Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
-import StatCard from "../../admin/realtors/StatCard";
+import StatCard from "./StatCard";
 import RealtorSalesPerformanceCharts from "./RealtorsSalesPerformanceCharts";
 
 const DashboardContent = () => {

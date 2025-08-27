@@ -42,3 +42,10 @@ export interface ISale {
 }
 
 export type AssetType = "estate" | "property";
+
+export interface ISalesAnalytics {
+  estateSales: number;
+  propertySales: number;
+  totalRevenue: number;
+  totalCommission: number;
+}
