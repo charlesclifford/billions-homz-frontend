@@ -1,5 +1,6 @@
 "use client";
 import { getPaginationRange } from "@/components/shared/DataTable";
+import { EmptyTableState } from "@/components/shared/EmptyTableState";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -26,15 +27,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import useSales from "@/hooks/useSales";
+import { ISale } from "@/interfaces/sales.interface";
 import { cn } from "@/lib/utils";
 import { setFilter } from "@/store/features/sales/sale.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { formatCurrency } from "@/utils/helpers";
 import { formatDate } from "date-fns";
 import { useRouter } from "next/navigation";
-import SalesDetails from "./SalesDetails";
-import { ISale } from "@/interfaces/sales.interface";
 import { useEffect } from "react";
+import SalesDetails from "./SalesDetails";
 
 const SalesContent = () => {
   const router = useRouter();
@@ -42,8 +43,7 @@ const SalesContent = () => {
   const { filter } = useAppSelector((state) => state.sale);
   const currentPage = filter.page || 1;
 
-  const { sales, isPending, error, totalSales, totalPages, refetch } =
-    useSales(filter);
+  const { sales, isPending, error, totalSales, totalPages } = useSales(filter);
 
   useEffect(() => {
     if (!filter.assetType) {
@@ -119,25 +119,11 @@ const SalesContent = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader className="bg-sidebar dark:bg-background">
-              <TableRow>
-                <TableHead>S/N</TableHead>
-                <TableHead>Asset Type</TableHead>
-                <TableHead>Asset Name</TableHead>
-                <TableHead>Buyer</TableHead>
-                <TableHead>Realtor</TableHead>
-                <TableHead>Unit</TableHead>
-                <TableHead>Amount Paid</TableHead>
-                <TableHead>Date of Purchase</TableHead>
-                <TableHead>Payment Type</TableHead>
-                <TableHead>Date Created</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isPending ? (
-                [...Array(5)].map((_, rowIndex) => (
+          {isPending ? (
+            // Skeleton state
+            <Table>
+              <TableBody>
+                {[...Array(5)].map((_, rowIndex) => (
                   <TableRow key={`skeleton-${rowIndex}`}>
                     {[...Array(11)].map((_, colIndex) => (
                       <TableCell key={colIndex}>
@@ -145,27 +131,36 @@ const SalesContent = () => {
                       </TableCell>
                     ))}
                   </TableRow>
-                ))
-              ) : sales && sales.length === 0 ? (
+                ))}
+              </TableBody>
+            </Table>
+          ) : !sales || sales.length === 0 ? (
+            // ✅ Empty state component here (same pattern as CommissionsContent)
+            <EmptyTableState
+              title="No sales records found"
+              description={`Once sales are recorded, they will appear here.${
+                filter.assetType ? ` Filtered by: ${filter.assetType}s` : ""
+              }`}
+            />
+          ) : (
+            <Table>
+              <TableHeader className="bg-sidebar dark:bg-background">
                 <TableRow>
-                  <TableCell colSpan={11} className="text-center py-8">
-                    <div className="flex flex-col items-center gap-2">
-                      <p className="text-muted-foreground">
-                        No sales records found{" "}
-                        {filter.assetType && ` for ${filter.assetType}s`}
-                      </p>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => refetch()}
-                      >
-                        Refresh
-                      </Button>
-                    </div>
-                  </TableCell>
+                  <TableHead>S/N</TableHead>
+                  <TableHead>Asset Type</TableHead>
+                  <TableHead>Asset Name</TableHead>
+                  <TableHead>Buyer</TableHead>
+                  <TableHead>Realtor</TableHead>
+                  <TableHead>Unit</TableHead>
+                  <TableHead>Amount Paid</TableHead>
+                  <TableHead>Date of Purchase</TableHead>
+                  <TableHead>Payment Type</TableHead>
+                  <TableHead>Date Created</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ) : (
-                sales?.map((sale, idx) => (
+              </TableHeader>
+              <TableBody>
+                {sales?.map((sale, idx) => (
                   <TableRow key={sale._id}>
                     <TableCell>
                       <div>{(filter.page - 1) * filter.limit + idx + 1}</div>
@@ -210,10 +205,10 @@ const SalesContent = () => {
                       <SalesDetails id={sale._id} />
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
 
         {totalPages > 1 && (

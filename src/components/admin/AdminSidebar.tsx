@@ -2,6 +2,7 @@
 import { cn } from "@/lib/utils";
 import { useAppSelector } from "@/store/hooks";
 import {
+  Building2,
   CircleGaugeIcon,
   HomeIcon,
   ImageIcon,
@@ -17,6 +18,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Logo from "../shared/Logo";
+import { ScrollArea } from "../ui/scroll-area";
 import {
   Sidebar,
   SidebarContent,
@@ -30,7 +32,6 @@ import {
   useSidebar,
 } from "../ui/sidebar";
 import AdminSidebarUser from "./AdminSidebarUser";
-import { ScrollArea } from "../ui/scroll-area";
 
 interface ISidebarMenu {
   title: string;
@@ -51,7 +52,7 @@ const navGroups = [
       {
         title: "Estates",
         url: "/admin/estates",
-        icon: HomeIcon,
+        icon: Building2,
       },
       {
         title: "Properties",
@@ -177,7 +178,7 @@ const AdminSidebar = () => {
         </div>
       </SidebarHeader>
       <SidebarContent >
-        <ScrollArea className="flex-1 min-h-[calc(100dvh-180px)]">
+        <ScrollArea className="flex-1 flex flex-col min-h-0">
           {navGroups.map((group, groupIndex) => {
             // Filter items based on user role
             const filteredItems = group.items.filter(

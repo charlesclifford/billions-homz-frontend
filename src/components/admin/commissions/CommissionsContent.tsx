@@ -35,6 +35,8 @@ import { formatDate } from "date-fns";
 import { useRouter } from "next/navigation";
 import ApproveCommission from "./ApproveCommission";
 import ConfirmPayout from "./ConfirmPayout";
+import { ICommission } from "@/interfaces/commission.interface";
+import { EmptyTableState } from "@/components/shared/EmptyTableState";
 
 const statusClassMap = {
   pending: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300",
@@ -58,6 +60,29 @@ const CommissionsContent = () => {
 
   const handlePageChange = (newPage: number) => {
     dispatch(setFilter({ page: newPage }));
+  };
+
+  // Helper function to get asset name based on type
+  const getAssetName = (commission: ICommission) => {
+    if (commission.sale.assetType === "property" && commission.sale.property) {
+      return commission.sale.property.title || "Unknown Property";
+    } else if (
+      commission.sale.assetType === "estate" &&
+      commission.sale.estate
+    ) {
+      return commission.sale.estate.name || "Unknown Estate";
+    }
+    return "Unknown Asset";
+  };
+
+  // Helper function to get asset type display
+  const getAssetTypeDisplay = (commission: ICommission) => {
+    if (commission.sale.assetType === "property") {
+      return "Property";
+    } else if (commission.sale.assetType === "estate") {
+      return "Estate";
+    }
+    return "Unknown";
   };
 
   if (error) {
@@ -105,39 +130,45 @@ const CommissionsContent = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader className="bg-sidebar dark:bg-background">
-              <TableRow>
-                <TableHead>S/N</TableHead>
-                <TableHead>Realtor</TableHead>
-                <TableHead>Estate</TableHead>
-                <TableHead>Sale Amount</TableHead>
-                <TableHead>Commission Rate</TableHead>
-                <TableHead>Commission Amount</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Date Created</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isPending ? (
-                [...Array(5)].map((_, rowIndex) => (
+          {isPending ? (
+            // Skeleton state
+            <Table>
+              <TableBody>
+                {[...Array(5)].map((_, rowIndex) => (
                   <TableRow key={`skeleton-${rowIndex}`}>
-                    {[...Array(9)].map((_, colIndex) => (
+                    {[...Array(10)].map((_, colIndex) => (
                       <TableCell key={colIndex}>
                         <Skeleton className="h-6 w-full" />
                       </TableCell>
                     ))}
                   </TableRow>
-                ))
-              ) : commissions && commissions.length === 0 ? (
+                ))}
+              </TableBody>
+            </Table>
+          ) : !commissions || commissions.length === 0 ? (
+            // ✅ Empty state component here
+            <EmptyTableState
+              title="No commission records found"
+              description="Once commissions are recorded, they will appear here."
+            />
+          ) : (
+            <Table>
+              <TableHeader className="bg-sidebar dark:bg-background">
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8">
-                    No commission records found
-                  </TableCell>
+                  <TableHead>S/N</TableHead>
+                  <TableHead>Realtor</TableHead>
+                  <TableHead>Asset Type</TableHead>
+                  <TableHead>Asset Name</TableHead>
+                  <TableHead>Sale Amount</TableHead>
+                  <TableHead>Commission Rate</TableHead>
+                  <TableHead>Commission Amount</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Date Created</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ) : (
-                commissions?.map((commission, idx) => (
+              </TableHeader>
+              <TableBody>
+                {commissions?.map((commission, idx) => (
                   <TableRow key={commission._id}>
                     <TableCell>
                       <div>{(filter.page - 1) * filter.limit + idx + 1}</div>
@@ -150,7 +181,12 @@ const CommissionsContent = () => {
                     </TableCell>
                     <TableCell>
                       <div className="capitalize">
-                        {commission.sale?.estate?.name || "Unknown Property"}
+                        {getAssetTypeDisplay(commission)}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="capitalize">
+                        {getAssetName(commission)}
                       </div>
                     </TableCell>
                     <TableCell>
@@ -188,10 +224,10 @@ const CommissionsContent = () => {
                       )}
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
 
         {totalPages > 1 && (

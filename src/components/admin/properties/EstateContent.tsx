@@ -1,5 +1,6 @@
 "use client";
 import { getPaginationRange } from "@/components/shared/DataTable";
+import { EmptyTableState } from "@/components/shared/EmptyTableState";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,7 +8,7 @@ import {
   CardContent,
   CardDescription,
   CardFooter,
-  CardHeader
+  CardHeader,
 } from "@/components/ui/card";
 import {
   Dialog,
@@ -190,30 +191,17 @@ const EstateContent = () => {
              estates
               `
               ) : (
-                <Skeleton className="h-4 mt-1" />
+                <Skeleton className="h-4 w-40 mt-1" />
               )}
             </p>
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader className="bg-sidebar dark:bg-background">
-              <TableRow>
-                <TableHead>S/N</TableHead>
-                <TableHead>Estate</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Area</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Units</TableHead>
-                <TableHead>Features</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isPending ? (
-                // Skeleton loading state
-                [...Array(5)].map((_, rowIndex) => (
+          {isPending ? (
+            // Skeleton state
+            <Table>
+              <TableBody>
+                {[...Array(5)].map((_, rowIndex) => (
                   <TableRow key={`skeleton-${rowIndex}`}>
                     {[...Array(9)].map((_, colIndex) => (
                       <TableCell key={colIndex}>
@@ -221,161 +209,177 @@ const EstateContent = () => {
                       </TableCell>
                     ))}
                   </TableRow>
-                ))
-              ) : estates && estates.length === 0 ? (
+                ))}
+              </TableBody>
+            </Table>
+          ) : !estates || estates.length === 0 ? (
+            // ✅ Empty state component here (same pattern)
+            <EmptyTableState
+              title="No estates found"
+              description="Create your first estate to get started."
+            />
+          ) : (
+            <Table>
+              <TableHeader className="bg-sidebar dark:bg-background">
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8">
-                    <div className="text-muted-foreground">
-                      No estates found. Create one to get started.
-                    </div>
-                  </TableCell>
+                  <TableHead>S/N</TableHead>
+                  <TableHead>Estate</TableHead>
+                  <TableHead>Location</TableHead>
+                  <TableHead>Area</TableHead>
+                  <TableHead>Price</TableHead>
+                  <TableHead>Units</TableHead>
+                  <TableHead>Features</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ) : (
-                estates &&
-                estates.map((estate, idx) => (
-                  <TableRow key={estate._id}>
-                    <TableCell>
-                      <div>{(filter.page - 1) * filter.limit + idx + 1}</div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        {estate.bannerImage?.imageUrl && (
-                          <div className="relative h-10 w-16 rounded-md overflow-hidden">
-                            <Image
-                              src={estate.bannerImage.imageUrl}
-                              alt={estate.name}
-                              fill
-                              className="object-cover"
-                            />
+              </TableHeader>
+              <TableBody>
+                {estates &&
+                  estates.map((estate, idx) => (
+                    <TableRow key={estate._id}>
+                      <TableCell>
+                        <div>{(filter.page - 1) * filter.limit + idx + 1}</div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          {estate.bannerImage?.imageUrl && (
+                            <div className="relative h-10 w-16 rounded-md overflow-hidden">
+                              <Image
+                                src={estate.bannerImage.imageUrl}
+                                alt={estate.name}
+                                fill
+                                className="object-cover"
+                              />
+                            </div>
+                          )}
+                          <div>
+                            <Link
+                              href={`/admin/estates/${estate._id}`}
+                              className="font-medium hover:underline capitalize"
+                            >
+                              {estate.name}
+                            </Link>
+                            {estate.description && (
+                              <p className="text-xs text-muted-foreground line-clamp-1">
+                                {estate.description}
+                              </p>
+                            )}
                           </div>
-                        )}
-                        <div>
-                          <Link
-                            href={`/admin/estates/${estate._id}`}
-                            className="font-medium hover:underline capitalize"
-                          >
-                            {estate.name}
-                          </Link>
-                          {estate.description && (
-                            <p className="text-xs text-muted-foreground line-clamp-1">
-                              {estate.description}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4 text-muted-foreground" />
+                          <div>
+                            <p className="font-medium">
+                              {estate.location.city || estate.location.state}
                             </p>
+                            {estate.location.landmarks &&
+                              estate.location.landmarks.length > 0 && (
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <p className="text-xs text-muted-foreground cursor-pointer">
+                                      Near {estate.location.landmarks[0]}
+                                      {estate.location.landmarks.length > 1 && (
+                                        <span>
+                                          {" "}
+                                          +
+                                          {estate.location.landmarks.length -
+                                            1}{" "}
+                                          more
+                                        </span>
+                                      )}
+                                    </p>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <div className="space-y-1">
+                                      {estate.location.landmarks.map(
+                                        (landmark, index) => (
+                                          <p key={index}>{landmark}</p>
+                                        )
+                                      )}
+                                    </div>
+                                  </TooltipContent>
+                                </Tooltip>
+                              )}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {estate.plotSize ? `${estate.plotSize} m²` : "-"}
+                      </TableCell>
+                      <TableCell>
+                        {estate.price ? formatCurrency(estate.price) : "-"}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col gap-1">
+                          <div>
+                            <span className="font-medium">
+                              {estate.soldUnits || 0}
+                            </span>
+                            <span className="text-muted-foreground">/</span>
+                            <span>{estate.totalUnits || 0}</span>
+                          </div>
+                          <div className="w-16">
+                            <div className="h-1.5 bg-gray-200 rounded-full">
+                              <div
+                                className="h-1.5 bg-green-500 rounded-full"
+                                style={{
+                                  width: `${Math.min(
+                                    100,
+                                    ((estate.soldUnits || 0) /
+                                      (estate.totalUnits || 1)) *
+                                      100
+                                  )}%`,
+                                }}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-wrap gap-1 max-w-[200px]">
+                          {estate.features?.slice(0, 3).map((feature) => (
+                            <Badge
+                              key={feature}
+                              variant="outline"
+                              className="text-xs"
+                            >
+                              {feature}
+                            </Badge>
+                          ))}
+                          {estate.features && estate.features.length > 3 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{estate.features.length - 3}
+                            </Badge>
                           )}
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-muted-foreground" />
-                        <div>
-                          <p className="font-medium">
-                            {estate.location.city || estate.location.state}
-                          </p>
-                          {estate.location.landmarks &&
-                            estate.location.landmarks.length > 0 && (
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <p className="text-xs text-muted-foreground cursor-pointer">
-                                    Near {estate.location.landmarks[0]}
-                                    {estate.location.landmarks.length > 1 && (
-                                      <span>
-                                        {" "}
-                                        +{estate.location.landmarks.length -
-                                          1}{" "}
-                                        more
-                                      </span>
-                                    )}
-                                  </p>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                  <div className="space-y-1">
-                                    {estate.location.landmarks.map(
-                                      (landmark, index) => (
-                                        <p key={index}>{landmark}</p>
-                                      )
-                                    )}
-                                  </div>
-                                </TooltipContent>
-                              </Tooltip>
-                            )}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {estate.plotSize ? `${estate.plotSize} m²` : "-"}
-                    </TableCell>
-                    <TableCell>
-                      {estate.price ? formatCurrency(estate.price) : "-"}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-col gap-1">
-                        <div>
-                          <span className="font-medium">
-                            {estate.soldUnits || 0}
-                          </span>
-                          <span className="text-muted-foreground">/</span>
-                          <span>{estate.totalUnits || 0}</span>
-                        </div>
-                        <div className="w-16">
-                          <div className="h-1.5 bg-gray-200 rounded-full">
-                            <div
-                              className="h-1.5 bg-green-500 rounded-full"
-                              style={{
-                                width: `${Math.min(
-                                  100,
-                                  ((estate.soldUnits || 0) /
-                                    (estate.totalUnits || 1)) *
-                                    100
-                                )}%`,
-                              }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1 max-w-[200px]">
-                        {estate.features?.slice(0, 3).map((feature) => (
-                          <Badge
-                            key={feature}
-                            variant="outline"
-                            className="text-xs"
-                          >
-                            {feature}
-                          </Badge>
-                        ))}
-                        {estate.features && estate.features.length > 3 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{estate.features.length - 3}
-                          </Badge>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          estate.soldUnits === estate.totalUnits
-                            ? "destructive"
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            estate.soldUnits === estate.totalUnits
+                              ? "destructive"
+                              : estate.soldUnits && estate.soldUnits > 0
+                              ? "default"
+                              : "secondary"
+                          }
+                        >
+                          {estate.soldUnits === estate.totalUnits
+                            ? "Sold Out"
                             : estate.soldUnits && estate.soldUnits > 0
-                            ? "default"
-                            : "secondary"
-                        }
-                      >
-                        {estate.soldUnits === estate.totalUnits
-                          ? "Sold Out"
-                          : estate.soldUnits && estate.soldUnits > 0
-                          ? "Now Selling"
-                          : "Available"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <ActionsComp item={estate} />
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                            ? "Now Selling"
+                            : "Available"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <ActionsComp item={estate} />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
 
         {totalPages > 1 && (

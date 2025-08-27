@@ -1,5 +1,6 @@
 "use client";
 import { getPaginationRange } from "@/components/shared/DataTable";
+import { EmptyTableState } from "@/components/shared/EmptyTableState";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -174,28 +175,16 @@ const PropertiesContent = () => {
                 estates`}
               </p>
             ) : (
-              <Skeleton className="h-4 mt-1" />
+              <Skeleton className="h-4 w-40 mt-1" />
             )}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>S/N</TableHead>
-                <TableHead>Property</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Location</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Size</TableHead>
-                <TableHead>Features</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isPending ? (
-                [...Array(5)].map((_, rowIndex) => (
+          {isPending ? (
+            // Skeleton state
+            <Table>
+              <TableBody>
+                {[...Array(5)].map((_, rowIndex) => (
                   <TableRow key={`skeleton-${rowIndex}`}>
                     {[...Array(9)].map((_, colIndex) => (
                       <TableCell key={colIndex}>
@@ -203,17 +192,32 @@ const PropertiesContent = () => {
                       </TableCell>
                     ))}
                   </TableRow>
-                ))
-              ) : properties && properties.length === 0 ? (
+                ))}
+              </TableBody>
+            </Table>
+          ) : !properties || properties.length === 0 ? (
+            // ✅ Empty state component here (same pattern as CommissionsContent)
+            <EmptyTableState
+              title="No properties found"
+              description="Create your first property to get started."
+            />
+          ) : (
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-8">
-                    <div className="text-muted-foreground">
-                      No properties found. Create one to get started.
-                    </div>
-                  </TableCell>
+                  <TableHead>S/N</TableHead>
+                  <TableHead>Property</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Location</TableHead>
+                  <TableHead>Price</TableHead>
+                  <TableHead>Size</TableHead>
+                  <TableHead>Features</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ) : (
-                properties?.map((property, idx) => (
+              </TableHeader>
+              <TableBody>
+                {properties?.map((property, idx) => (
                   <TableRow key={property._id}>
                     <TableCell>
                       <div>{(filter.page - 1) * filter.limit + idx + 1}</div>
@@ -308,10 +312,10 @@ const PropertiesContent = () => {
                       <PropertyActions property={property} />
                     </TableCell>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
         {properties && properties.length > 0 && (
           <CardFooter className="flex justify-between">
