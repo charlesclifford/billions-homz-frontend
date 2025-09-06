@@ -155,7 +155,7 @@ const HeroSection = () => {
             animate="visible"
           >
             <div className="mb-[50px] lg:mb-[125px]">
-              <h1 className="text-neutral-300 font-semibold text-[22px] leading-[1]">
+              <h1 className="text-neutral-300 font-semibold text-[22px] leading-[1.5]">
                 We are a top 25 builder and developer fully invested in our
                 customers&apos; success and improving the communities we serve.
               </h1>
