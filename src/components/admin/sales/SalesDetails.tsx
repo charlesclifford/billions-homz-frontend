@@ -378,11 +378,11 @@ const SalesDetails = ({ id }: { id: string }) => {
             </p>
           </DialogHeader>
 
-          <ScrollArea className="h-[calc(90vh-180px)] bg-white p-6">
+          <ScrollArea className="h-[calc(90vh-240px)] bg-white">
             {sale && (
               <div
                 ref={printRef}
-                className="print-layout bg-white text-gray-800 p-8 max-w-4xl mx-auto"
+                className="print-layout bg-white text-gray-800 py-4 max-w-4xl mx-auto"
               >
                 {/* Invoice Header */}
                 <div className="print-header mb-8">
