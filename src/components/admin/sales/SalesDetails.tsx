@@ -129,7 +129,7 @@ const SalesDetails = ({ id }: { id: string }) => {
             </div>
           </DialogHeader>
 
-          <ScrollArea className="h-[calc(90vh-180px)] px-6">
+          <ScrollArea className="h-[calc(90vh-180px)]">
             {isPending ? (
               <div className="flex justify-center items-center h-full py-8">
                 <Loader2 className="h-8 w-8 animate-spin" />
@@ -149,7 +149,7 @@ const SalesDetails = ({ id }: { id: string }) => {
                       {sale.assetType === "estate" && sale.estate && (
                         <>
                           <div className="flex items-start">
-                            <span className="w-36 font-medium text-neutral-600">
+                            <span className="w-36 font-medium text-neutral-600 shrink-0">
                               Estate:
                             </span>
                             <span className="flex-1 capitalize">
@@ -159,7 +159,7 @@ const SalesDetails = ({ id }: { id: string }) => {
 
                           {sale.estate.location?.address && (
                             <div className="flex items-start">
-                              <span className="w-36 font-medium text-neutral-600">
+                              <span className="w-36 font-medium text-neutral-600 shrink-0">
                                 Address:
                               </span>
                               <span className="flex-1">
@@ -173,7 +173,7 @@ const SalesDetails = ({ id }: { id: string }) => {
                       {sale.assetType === "property" && sale.property && (
                         <>
                           <div className="flex items-start">
-                            <span className="w-36 font-medium text-neutral-600">
+                            <span className="w-36 font-medium text-neutral-600 shrink-0">
                               Property:
                             </span>
                             <span className="flex-1 capitalize">
@@ -183,7 +183,7 @@ const SalesDetails = ({ id }: { id: string }) => {
 
                           {sale.property.location?.address && (
                             <div className="flex items-start">
-                              <span className="w-36 font-medium text-neutral-600">
+                              <span className="w-36 font-medium text-neutral-600 shrink-0">
                                 Address:
                               </span>
                               <span className="flex-1">
@@ -203,7 +203,7 @@ const SalesDetails = ({ id }: { id: string }) => {
                     </h3>
                     <div className="space-y-2">
                       <div className="flex items-center">
-                        <span className="w-36 font-medium text-neutral-600">
+                        <span className="w-36 font-medium text-neutral-600 shrink-0">
                           Status:
                         </span>
                         <Badge
@@ -214,13 +214,13 @@ const SalesDetails = ({ id }: { id: string }) => {
                         </Badge>
                       </div>
                       <div className="flex items-center">
-                        <span className="w-36 font-medium text-neutral-600">
+                        <span className="w-36 font-medium text-neutral-600 shrink-0">
                           Date Created:
                         </span>
                         <span>{format(new Date(sale.createdAt), "PPPp")}</span>
                       </div>
                       <div className="flex items-center">
-                        <span className="w-36 font-medium text-neutral-600">
+                        <span className="w-36 font-medium text-neutral-600 shrink-0">
                           Date of Purchase:
                         </span>
                         <span>
@@ -230,7 +230,7 @@ const SalesDetails = ({ id }: { id: string }) => {
                         </span>
                       </div>
                       <div className="flex items-center">
-                        <span className="w-36 font-medium text-neutral-600">
+                        <span className="w-36 font-medium text-neutral-600 shrink-0">
                           Reference:
                         </span>
                         <code className="bg-gray-100 dark:bg-card px-2 py-1 rounded text-sm">
@@ -250,13 +250,13 @@ const SalesDetails = ({ id }: { id: string }) => {
                     </h3>
                     <div className="space-y-2">
                       <div className="flex items-center">
-                        <span className="w-36 font-medium text-neutral-600">
+                        <span className="w-36 font-medium text-neutral-600 shrink-0">
                           Name:
                         </span>
                         <span className="">{sale.buyerName}</span>
                       </div>
                       <div className="flex items-center">
-                        <span className="w-36 font-medium text-neutral-600">
+                        <span className="w-36 font-medium text-neutral-600 shrink-0">
                           Phone:
                         </span>
                         <span>{sale.buyerPhone}</span>
@@ -279,7 +279,7 @@ const SalesDetails = ({ id }: { id: string }) => {
                     </h3>
                     <div className="space-y-2">
                       <div className="flex items-center">
-                        <span className="w-36 font-medium text-neutral-600">
+                        <span className="w-36 font-medium text-neutral-600 shrink-0">
                           Amount:
                         </span>
                         <span className="font-medium text-green-600">
@@ -287,19 +287,19 @@ const SalesDetails = ({ id }: { id: string }) => {
                         </span>
                       </div>
                       <div className="flex items-center">
-                        <span className="w-36 font-medium text-neutral-600">
+                        <span className="w-36 font-medium text-neutral-600 shrink-0">
                           Type:
                         </span>
                         <span>{paymentTypeMap[sale.paymentType]}</span>
                       </div>
                       <div className="flex items-center">
-                        <span className="w-36 font-medium text-neutral-600">
+                        <span className="w-36 font-medium text-neutral-600 shrink-0">
                           Method:
                         </span>
                         <span>{paymentMethodMap[sale.paymentMethod]}</span>
                       </div>
                       <div className="flex items-center">
-                        <span className="w-36 font-medium text-neutral-600">
+                        <span className="w-36 font-medium text-neutral-600 shrink-0">
                           Units:
                         </span>
                         <span>{sale.units}</span>
