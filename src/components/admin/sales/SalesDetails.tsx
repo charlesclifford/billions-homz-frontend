@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { ISale } from "@/interfaces/sales.interface";
 import { getSalesDetails } from "@/lib/api/sales";
 import { config } from "@/utils/config";
@@ -28,6 +29,7 @@ const SalesDetails = ({ id }: { id: string }) => {
   const [showPrintPreview, setShowPrintPreview] = useState(false);
   const [showImagePreview, setShowImagePreview] = useState(false);
   const printRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   const {
     data: sale,
@@ -41,8 +43,10 @@ const SalesDetails = ({ id }: { id: string }) => {
     select: (data) => data.data as ISale,
   });
 
-  const handlePrint = useReactToPrint({
+  // Desktop printing (react-to-print)
+  const handleDesktopPrint = useReactToPrint({
     contentRef: printRef,
+    documentTitle: "Invoice",
     pageStyle: `
       @page { 
         size: A4;
@@ -75,6 +79,55 @@ const SalesDetails = ({ id }: { id: string }) => {
       }
     `,
   });
+
+  // Mobile printing (iframe-based)
+  const handleMobilePrint = () => {
+    if (!printRef.current) return;
+
+    const content = printRef.current.innerHTML;
+    const printWindow = window.open("", "_blank", "width=800,height=600");
+
+    if (!printWindow) return;
+
+    printWindow.document.open();
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Invoice</title>
+          <style>
+            @page { size: A4; margin: 15mm; }
+            body {
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+              font-family: sans-serif;
+              background: white;
+              color: black;
+            }
+            .print-layout { max-width: 100%; }
+            .print-header { margin-bottom: 1.5rem; }
+            .print-section { margin-bottom: 1.5rem; }
+            .print-divider { border-top: 1px solid #e2e8f0; margin: 1.25rem 0; }
+          </style>
+        </head>
+        <body>${content}</body>
+      </html>
+    `);
+    printWindow.document.close();
+
+    printWindow.onload = () => {
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+    };
+  };
+
+  const handlePrint = () => {
+    if (isMobile) {
+      handleMobilePrint();
+    } else {
+      handleDesktopPrint();
+    }
+  };
 
   const paymentMethodMap = {
     cash: "Cash",
