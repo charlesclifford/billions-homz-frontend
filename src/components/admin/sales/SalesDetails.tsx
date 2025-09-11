@@ -370,7 +370,7 @@ const SalesDetails = ({ id }: { id: string }) => {
 
       {/* Print Preview Dialog */}
       <Dialog open={showPrintPreview} onOpenChange={setShowPrintPreview}>
-        <DialogContent className="!max-w-4xl w-full h-[90vh]">
+        <DialogContent className="!max-w-4xl w-full">
           <DialogHeader>
             <DialogTitle className="text-xl">Invoice Preview</DialogTitle>
             <p className="text-sm text-gray-500">
@@ -382,7 +382,7 @@ const SalesDetails = ({ id }: { id: string }) => {
             {sale && (
               <div
                 ref={printRef}
-                className="print-layout bg-white text-gray-800 py-4 max-w-4xl mx-auto"
+                className="print-layout bg-white text-gray-800 py-4 md:px-8"
               >
                 {/* Invoice Header */}
                 <div className="print-header mb-8">
@@ -561,7 +561,7 @@ const SalesDetails = ({ id }: { id: string }) => {
                     {APP_NAME} • {window.location.hostname}
                   </p>
                   <p className="mt-4 text-xs">
-                    Invoice generated on {format(new Date(), "PPPp")}
+                    Invoice generated on {format(new Date(), "PPp")}
                   </p>
                 </div>
               </div>
