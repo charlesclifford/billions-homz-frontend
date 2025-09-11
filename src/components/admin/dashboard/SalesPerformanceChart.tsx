@@ -23,7 +23,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useAdminSalesPerformance } from "@/hooks/useDashboardStats";
-import { formatCurrency } from "@/utils/helpers";
 import { Loader2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
@@ -141,6 +140,7 @@ export function SalesPerformanceChart() {
                 tickLine={false}
                 axisLine={false}
                 tickMargin={8}
+               
               />
               {/* <YAxis
                 tickLine={false}
@@ -151,16 +151,18 @@ export function SalesPerformanceChart() {
               <YAxis
                 yAxisId="left"
                 orientation="left"
-                tickLine={false}
-                axisLine={false}
+                // tickLine={false}
+                // axisLine={false}
+                hide
               />
               {/* Right Y-axis for Sales Amount */}
               <YAxis
                 yAxisId="right"
                 orientation="right"
-                tickLine={false}
-                axisLine={false}
-                tickFormatter={(value) => formatCurrency(value)}
+                // tickLine={false}
+                // axisLine={false}
+                // tickFormatter={(value) => formatCurrency(value)}
+                hide
               />
               <ChartTooltip
                 content={
