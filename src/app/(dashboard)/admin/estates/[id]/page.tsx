@@ -14,7 +14,6 @@ import { IEstate } from "@/interfaces/estate.interface";
 import { getEstateById } from "@/lib/api/properties";
 import { formatCurrency } from "@/utils/helpers";
 import {
-  ArrowLeft,
   CheckCircle,
   DollarSign,
   Edit,
@@ -22,7 +21,7 @@ import {
   Home,
   MapPin,
   Ruler,
-  Star,
+  Star
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -43,9 +42,9 @@ const EstateDetailsPage = async ({
   }
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="">
       {/* Breadcrumb Navigation */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row justify-between md:items-center gap-4 mb-6">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -65,13 +64,13 @@ const EstateDetailsPage = async ({
         </Breadcrumb>
 
         <div className="flex gap-2">
-          <Button variant="outline" asChild>
+          {/* <Button variant="outline" asChild>
             <Link href="/admin/estates">
               <ArrowLeft className="h-4 w-4" />
               Back to Estates
             </Link>
-          </Button>
-          <Button asChild>
+          </Button> */}
+          <Button asChild className="ms-auto">
             <Link href={`/admin/estates/${estate._id}/edit`}>
               <Edit className="h-4 w-4" />
               Edit Estate

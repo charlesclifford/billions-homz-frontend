@@ -177,7 +177,7 @@ const PropertiesContent = () => {
             {!isPending && properties ? (
               <p>
                 {` Showing ${startItem} - ${endItem} of ${totalProperties}
-                estates`}
+                properties`}
               </p>
             ) : (
               <Skeleton className="h-4 w-40 mt-1" />
@@ -228,7 +228,7 @@ const PropertiesContent = () => {
                       <div>{(filter.page - 1) * filter.limit + idx + 1}</div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-3 w-[300px] truncate">
+                      <div className="flex items-center gap-3">
                         {property.images[0]?.imageUrl && (
                           <div className="relative h-10 w-16 rounded-md overflow-hidden shrink-0">
                             <Image
@@ -239,12 +239,15 @@ const PropertiesContent = () => {
                             />
                           </div>
                         )}
-                        <div>
+                        <div className="w-[180px]">
                           <Link
                             href={`/admin/properties/${property._id}`}
-                            className="font-medium hover:underline"
+                            className="hover:underline"
+                            title={property.title}
                           >
-                            {property.title}
+                            <p className="font-medium truncate">
+                              {property.title}
+                            </p>
                           </Link>
                           {property.description && (
                             <p className="text-xs text-muted-foreground truncate">

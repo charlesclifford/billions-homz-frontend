@@ -248,7 +248,7 @@ const EstateContent = () => {
                       <TableCell>
                         <div className="flex items-center gap-3">
                           {estate.bannerImage?.imageUrl && (
-                            <div className="relative h-10 w-16 rounded-md overflow-hidden">
+                            <div className="relative h-10 w-16 rounded-md overflow-hidden shrink-0">
                               <Image
                                 src={estate.bannerImage.imageUrl}
                                 alt={estate.name}
@@ -257,15 +257,18 @@ const EstateContent = () => {
                               />
                             </div>
                           )}
-                          <div>
+                          <div className="w-[180px]">
                             <Link
                               href={`/admin/estates/${estate._id}`}
-                              className="font-medium hover:underline capitalize"
+                              className="hover:underline"
+                              title={estate.name}
                             >
-                              {estate.name}
+                              <p className="font-medium truncate capitalize">
+                                {estate.name}
+                              </p>
                             </Link>
                             {estate.description && (
-                              <p className="text-xs text-muted-foreground line-clamp-1">
+                              <p className="text-xs text-muted-foreground truncate">
                                 {estate.description}
                               </p>
                             )}
@@ -350,7 +353,10 @@ const EstateContent = () => {
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <div className="flex items-center">
-                                  <Badge variant="outline" className="text-xs capitalize">
+                                  <Badge
+                                    variant="outline"
+                                    className="text-xs capitalize"
+                                  >
                                     {estate.features[0]}
                                     {estate.features.length > 1 && (
                                       <span className="ml-1">

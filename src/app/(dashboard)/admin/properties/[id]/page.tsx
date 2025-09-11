@@ -11,12 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { IProperty } from "@/interfaces/property.interface";
 import { getPropertyById } from "@/lib/api/properties";
-import {
-  ArrowLeft,
-  Edit,
-  Home,
-  MapPin
-} from "lucide-react";
+import { Edit, Home, MapPin } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -34,11 +29,10 @@ const PropertyDetailsPage = async ({
     return notFound();
   }
 
-
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="">
       {/* Breadcrumb Navigation */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row justify-between md:items-center gap-4 mb-6">
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
@@ -60,13 +54,13 @@ const PropertyDetailsPage = async ({
         </Breadcrumb>
 
         <div className="flex gap-2">
-          <Button variant="outline" asChild>
+          {/* <Button variant="outline" asChild>
             <Link href="/admin/properties">
               <ArrowLeft className="h-4 w-4" />
               Back to Properties
             </Link>
-          </Button>
-          <Button asChild>
+          </Button> */}
+          <Button asChild className="ms-auto">
             <Link href={`/admin/properties/${property._id}/edit`}>
               <Edit className="h-4 w-4" />
               Edit Property
