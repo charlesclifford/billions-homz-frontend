@@ -7,7 +7,7 @@ const ForgotPasswordPage = () => {
   return (
     <div className="w-full flex items-center justify-center">
       <div className="w-full max-w-md space-y-8">
-        <div className="lg:text-center space-y-2">
+        <div className="text-center space-y-2">
           <h2 className="text-3xl font-bold ">Reset Your Password</h2>
           <p className="text-neutral-500">
             Enter your email to receive a password reset link
