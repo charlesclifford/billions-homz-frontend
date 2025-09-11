@@ -300,7 +300,9 @@ const EstateContent = () => {
                                     <div className="space-y-1">
                                       {estate.location.landmarks.map(
                                         (landmark, index) => (
-                                          <p key={index}>{landmark}</p>
+                                          <p key={index} className="capitalize">
+                                            {landmark}
+                                          </p>
                                         )
                                       )}
                                     </div>
@@ -344,19 +346,35 @@ const EstateContent = () => {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-wrap gap-1 max-w-[200px]">
-                          {estate.features?.slice(0, 3).map((feature) => (
-                            <Badge
-                              key={feature}
-                              variant="outline"
-                              className="text-xs"
-                            >
-                              {feature}
-                            </Badge>
-                          ))}
-                          {estate.features && estate.features.length > 3 && (
-                            <Badge variant="outline" className="text-xs">
-                              +{estate.features.length - 3}
-                            </Badge>
+                          {estate.features && estate.features.length > 0 ? (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <div className="flex items-center">
+                                  <Badge variant="outline" className="text-xs capitalize">
+                                    {estate.features[0]}
+                                    {estate.features.length > 1 && (
+                                      <span className="ml-1">
+                                        +{estate.features.length - 1}
+                                      </span>
+                                    )}
+                                  </Badge>
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent className="max-w-xs">
+                                <div className="space-y-1">
+                                  <p className="font-medium">All Features:</p>
+                                  {estate.features.map((feature, index) => (
+                                    <p key={index} className="capitalize">
+                                      • {feature}
+                                    </p>
+                                  ))}
+                                </div>
+                              </TooltipContent>
+                            </Tooltip>
+                          ) : (
+                            <span className="text-muted-foreground text-xs">
+                              -
+                            </span>
                           )}
                         </div>
                       </TableCell>

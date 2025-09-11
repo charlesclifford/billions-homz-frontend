@@ -35,6 +35,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import useProperties from "@/hooks/useProperties";
 import { IProperty } from "@/interfaces/property.interface";
 import { deleteProperty } from "@/lib/api/properties";
@@ -278,19 +283,38 @@ const PropertiesContent = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex flex-wrap gap-1 max-w-[200px]">
-                        {property.features?.slice(0, 3).map((feature) => (
-                          <Badge
-                            key={feature}
-                            variant="outline"
-                            className="text-xs"
-                          >
-                            {feature}
-                          </Badge>
-                        ))}
-                        {property.features && property.features.length > 3 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{property.features.length - 3}
-                          </Badge>
+                        {property.features && property.features.length > 0 ? (
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div className="flex items-center">
+                                <Badge
+                                  variant="outline"
+                                  className="text-xs capitalize"
+                                >
+                                  {property.features[0]}
+                                  {property.features.length > 1 && (
+                                    <span className="ml-1">
+                                      +{property.features.length - 1}
+                                    </span>
+                                  )}
+                                </Badge>
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent className="max-w-xs">
+                              <div className="space-y-1">
+                                <p className="font-medium">All Features:</p>
+                                {property.features.map((feature, index) => (
+                                  <p key={index} className="capitalize">
+                                    • {feature}
+                                  </p>
+                                ))}
+                              </div>
+                            </TooltipContent>
+                          </Tooltip>
+                        ) : (
+                          <span className="text-muted-foreground text-xs">
+                            -
+                          </span>
                         )}
                       </div>
                     </TableCell>
