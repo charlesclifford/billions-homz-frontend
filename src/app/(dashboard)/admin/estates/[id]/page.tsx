@@ -67,13 +67,13 @@ const EstateDetailsPage = async ({
         <div className="flex gap-2">
           <Button variant="outline" asChild>
             <Link href="/admin/estates">
-              <ArrowLeft className="h-4 w-4 mr-2" />
+              <ArrowLeft className="h-4 w-4" />
               Back to Estates
             </Link>
           </Button>
           <Button asChild>
             <Link href={`/admin/estates/${estate._id}/edit`}>
-              <Edit className="h-4 w-4 mr-2" />
+              <Edit className="h-4 w-4" />
               Edit Estate
             </Link>
           </Button>

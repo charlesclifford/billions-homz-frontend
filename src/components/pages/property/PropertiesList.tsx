@@ -74,7 +74,7 @@ const PropertiesList = () => {
         lng: property.location!.coordinates!.lng!,
         id: property._id,
         popupContent: `
-          <div>
+          <div class="p-1 px-3">
             <p class="font-semibold capitalize">${property.title}</p>
             <p>${property.location?.address || ""}, ${
           property.location?.city || ""

@@ -33,6 +33,7 @@ import {
   BedDouble,
   ImagePlus,
   Loader2,
+  Plus,
   Ruler,
   Tag,
   X,
@@ -154,17 +155,21 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
     setImagesToDelete((prev) => [...prev, publicId]);
   };
 
+  const addFeature = () => {
+    const newFeature = featureInput.trim();
+    if (newFeature) {
+      const currentFeatures = form.getValues("features") || [];
+      if (!currentFeatures.includes(newFeature)) {
+        form.setValue("features", [...currentFeatures, newFeature]);
+      }
+      setFeatureInput("");
+    }
+  };
+
   const handleAddFeature = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
-      const newFeature = featureInput.trim();
-      if (newFeature) {
-        const currentFeatures = form.getValues("features") || [];
-        if (!currentFeatures.includes(newFeature)) {
-          form.setValue("features", [...currentFeatures, newFeature]);
-        }
-        setFeatureInput("");
-      }
+      addFeature();
     }
   };
 
@@ -176,20 +181,21 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
     );
   };
 
+  const addLandmark = () => {
+    const newLandmark = landmarkInput.trim();
+    if (newLandmark) {
+      const currentLandmarks = form.getValues("location.landmarks") || [];
+      if (!currentLandmarks.includes(newLandmark)) {
+        form.setValue("location.landmarks", [...currentLandmarks, newLandmark]);
+      }
+      setLandmarkInput("");
+    }
+  };
+
   const handleAddLandmark = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
-      const newLandmark = landmarkInput.trim();
-      if (newLandmark) {
-        const currentLandmarks = form.getValues("location.landmarks") || [];
-        if (!currentLandmarks.includes(newLandmark)) {
-          form.setValue("location.landmarks", [
-            ...currentLandmarks,
-            newLandmark,
-          ]);
-        }
-        setLandmarkInput("");
-      }
+      addLandmark();
     }
   };
 
@@ -598,15 +604,25 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                                   </Badge>
                                 ))}
                               </div>
-                              <Input
-                                value={featureInput}
-                                onChange={(e) =>
-                                  setFeatureInput(e.target.value)
-                                }
-                                onKeyDown={handleAddFeature}
-                                placeholder="Add features (press Enter or comma)"
-                                className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
-                              />
+                              <div className="flex gap-2">
+                                <Input
+                                  value={featureInput}
+                                  onChange={(e) =>
+                                    setFeatureInput(e.target.value)
+                                  }
+                                  onKeyDown={handleAddFeature}
+                                  placeholder="Add features (press Enter or comma)"
+                                  className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
+                                />
+                                <Button
+                                  type="button"
+                                  size="icon"
+                                  onClick={addFeature}
+                                  className="shrink-0 cursor-pointer"
+                                >
+                                  <Plus className="h-4 w-4" />
+                                </Button>
+                              </div>
                             </div>
                           </FormControl>
                           <FormMessage />
@@ -703,15 +719,25 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                                     </Badge>
                                   ))}
                                 </div>
-                                <Input
-                                  value={landmarkInput}
-                                  onChange={(e) =>
-                                    setLandmarkInput(e.target.value)
-                                  }
-                                  onKeyDown={handleAddLandmark}
-                                  placeholder="Add landmarks (press Enter or comma)"
-                                  className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
-                                />
+                                <div className="flex gap-2">
+                                  <Input
+                                    value={landmarkInput}
+                                    onChange={(e) =>
+                                      setLandmarkInput(e.target.value)
+                                    }
+                                    onKeyDown={handleAddLandmark}
+                                    placeholder="Add landmarks (press Enter or comma)"
+                                    className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
+                                  />
+                                  <Button
+                                    type="button"
+                                    size="icon"
+                                    onClick={addLandmark}
+                                    className="shrink-0 cursor-pointer"
+                                  >
+                                    <Plus className="h-4 w-4" />
+                                  </Button>
+                                </div>
                               </div>
                             </FormControl>
                             <FormMessage />
@@ -775,7 +801,7 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                                           ) || []
                                         )
                                       }
-                                      className="ml-1"
+                                      className="ml-1 cursor-pointer"
                                     >
                                       <X className="h-3 w-3" />
                                     </button>
@@ -786,7 +812,7 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                                 onValueChange={handleDocumentSelect}
                                 value=""
                               >
-                                <SelectTrigger className="w-full">
+                                <SelectTrigger className="w-full cursor-pointer">
                                   <SelectValue placeholder="Select documents..." />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -865,7 +891,7 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                                 onClick={() =>
                                   handleRemoveExistingImage(image.publicId)
                                 }
-                                className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                               >
                                 <X className="w-4 h-4" />
                               </button>
@@ -888,7 +914,7 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                           <button
                             type="button"
                             onClick={() => handleRemoveFile(index)}
-                            className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="absolute top-2 right-2 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                           >
                             <X className="w-4 h-4" />
                           </button>
@@ -945,7 +971,7 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
               >
                 {createMutation.isPending || updateMutation.isPending ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                     {initialValues?._id ? "Updating..." : "Creating..."}
                   </>
                 ) : initialValues?._id ? (

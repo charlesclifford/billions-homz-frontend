@@ -48,7 +48,7 @@ import { setFilter } from "@/store/features/property/estate.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { formatCurrency } from "@/utils/helpers";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Edit2, Loader2, MapPin, Trash2 } from "lucide-react";
+import { Edit2, Eye, Loader2, MapPin, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -85,6 +85,11 @@ const ActionsComp = ({ item }: { item: IEstate }) => {
 
   return (
     <div className="flex items-center gap-2">
+      <Button asChild variant="outline" size="icon" className="cursor-pointer">
+        <Link href={`/admin/estates/${item._id}`}>
+          <Eye className="h-4 w-4" />
+        </Link>
+      </Button>
       <Button asChild variant="outline" size="icon" className="cursor-pointer">
         <Link href={`/admin/estates/${item._id}/edit`}>
           <Edit2 className="h-4 w-4" />
