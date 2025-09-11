@@ -217,7 +217,7 @@ const SalesDetails = ({ id }: { id: string }) => {
                         <span className="w-36 font-medium text-neutral-600 shrink-0">
                           Date Created:
                         </span>
-                        <span>{format(new Date(sale.createdAt), "PPPp")}</span>
+                        <span>{format(new Date(sale.createdAt), "PPp")}</span>
                       </div>
                       <div className="flex items-center">
                         <span className="w-36 font-medium text-neutral-600 shrink-0">
@@ -225,7 +225,7 @@ const SalesDetails = ({ id }: { id: string }) => {
                         </span>
                         <span>
                           {sale.dateSold
-                            ? format(new Date(sale.dateSold), "PPP")
+                            ? format(new Date(sale.dateSold), "PPp")
                             : "Not specified"}
                         </span>
                       </div>
