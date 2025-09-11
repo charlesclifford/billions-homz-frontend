@@ -223,7 +223,10 @@ export function MapViewer({
 
       if (location.popupContent) {
         const popupNode = createPopupContent(location.popupContent);
-        const popup = new mapboxgl.Popup({ offset: 25 })
+        const popup = new mapboxgl.Popup({
+          offset: 25,
+          className: "mapboxgl-popup-custom",
+        })
           .setLngLat([location.lng, location.lat])
           .setDOMContent(popupNode);
 
@@ -409,6 +412,12 @@ export function MapViewer({
         }
 
         :global(.mapboxgl-popup-anchor-top .mapboxgl-popup-tip) {
+          border-bottom-color: var(--background) !important;
+        }
+        :global(.mapboxgl-popup-anchor-top-left .mapboxgl-popup-tip) {
+          border-bottom-color: var(--background) !important;
+        }
+        :global(.mapboxgl-popup-anchor-top-right .mapboxgl-popup-tip) {
           border-bottom-color: var(--background) !important;
         }
         :global(.mapboxgl-popup-anchor-right .mapboxgl-popup-tip) {

@@ -86,7 +86,7 @@ const ActionsComp = ({ item }: { item: IEstate }) => {
   return (
     <div className="flex items-center gap-2">
       <Button asChild variant="outline" size="icon" className="cursor-pointer">
-        <Link href={`/admin/estates/${item._id}`}>
+        <Link href={`/admin/estates/${item._id}/edit`}>
           <Edit2 className="h-4 w-4" />
         </Link>
       </Button>
