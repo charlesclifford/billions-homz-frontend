@@ -33,7 +33,7 @@ import { createEstate, updateEstate } from "@/lib/api/properties";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Tag } from "iconsax-reactjs";
-import { ImagePlus, Loader2, X } from "lucide-react";
+import { ImagePlus, Loader2, Plus, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -148,17 +148,21 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
     },
   });
 
+  const addFeature = () => {
+    const newFeature = featureInput.trim();
+    if (newFeature) {
+      const currentFeatures = form.getValues("features") || [];
+      if (!currentFeatures.includes(newFeature)) {
+        form.setValue("features", [...currentFeatures, newFeature]);
+      }
+      setFeatureInput("");
+    }
+  };
+
   const handleAddFeature = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
-      const newFeature = featureInput.trim();
-      if (newFeature) {
-        const currentFeatures = form.getValues("features") || [];
-        if (!currentFeatures.includes(newFeature)) {
-          form.setValue("features", [...currentFeatures, newFeature]);
-        }
-        setFeatureInput("");
-      }
+      addFeature();
     }
   };
 
@@ -170,20 +174,21 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
     );
   };
 
+  const addLandmark = () => {
+    const newLandmark = landmarkInput.trim();
+    if (newLandmark) {
+      const currentLandmarks = form.getValues("location.landmarks") || [];
+      if (!currentLandmarks.includes(newLandmark)) {
+        form.setValue("location.landmarks", [...currentLandmarks, newLandmark]);
+      }
+      setLandmarkInput("");
+    }
+  };
+
   const handleAddLandmark = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
-      const newLandmark = landmarkInput.trim();
-      if (newLandmark) {
-        const currentLandmarks = form.getValues("location.landmarks") || [];
-        if (!currentLandmarks.includes(newLandmark)) {
-          form.setValue("location.landmarks", [
-            ...currentLandmarks,
-            newLandmark,
-          ]);
-        }
-        setLandmarkInput("");
-      }
+      addLandmark();
     }
   };
 
@@ -545,15 +550,25 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                                   </Badge>
                                 ))}
                               </div>
-                              <Input
-                                value={featureInput}
-                                onChange={(e) =>
-                                  setFeatureInput(e.target.value)
-                                }
-                                onKeyDown={handleAddFeature}
-                                placeholder="Add features (press Enter or comma)"
-                                className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
-                              />
+                              <div className="flex gap-2">
+                                <Input
+                                  value={featureInput}
+                                  onChange={(e) =>
+                                    setFeatureInput(e.target.value)
+                                  }
+                                  onKeyDown={handleAddFeature}
+                                  placeholder="Add features (press Enter or comma)"
+                                  className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm flex-1"
+                                />
+                                <Button
+                                  type="button"
+                                  size="icon"
+                                  onClick={addFeature}
+                                  className="shrink-0 cursor-pointer"
+                                >
+                                  <Plus className="h-4 w-4" />
+                                </Button>
+                              </div>
                             </div>
                           </FormControl>
                           <FormMessage />
@@ -653,15 +668,25 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                                     </Badge>
                                   ))}
                                 </div>
-                                <Input
-                                  value={landmarkInput}
-                                  onChange={(e) =>
-                                    setLandmarkInput(e.target.value)
-                                  }
-                                  onKeyDown={handleAddLandmark}
-                                  placeholder="Add landmarks (press Enter or comma)"
-                                  className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
-                                />
+                                <div className="flex gap-2">
+                                  <Input
+                                    value={landmarkInput}
+                                    onChange={(e) =>
+                                      setLandmarkInput(e.target.value)
+                                    }
+                                    onKeyDown={handleAddLandmark}
+                                    placeholder="Add landmarks (press Enter or comma)"
+                                    className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm flex-1"
+                                  />
+                                  <Button
+                                    type="button"
+                                    size="icon"
+                                    onClick={addLandmark}
+                                    className="shrink-0 cursor-pointer"
+                                  >
+                                    <Plus className="h-4 w-4" />
+                                  </Button>
+                                </div>
                               </div>
                             </FormControl>
                             <FormMessage />
@@ -853,7 +878,7 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                 type="button"
                 variant="outline"
                 className="cursor-pointer"
-                onClick={() => router.push("/admin/estates")}
+                onClick={() => router.back()}
               >
                 Cancel
               </Button>
