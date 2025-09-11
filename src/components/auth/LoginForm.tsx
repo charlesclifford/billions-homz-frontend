@@ -10,7 +10,7 @@ import { AxiosError } from "axios";
 import cookies from "js-cookie";
 import { Eye, EyeOff, Loader2Icon } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -24,6 +24,7 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
+import { PageLoader } from "../shared/PageLoader";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -37,7 +38,9 @@ export type LoginFormValues = z.infer<typeof formSchema>;
 const LoginForm = () => {
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
   const { refetch } = useUser();
 
   const callbackUrl = searchParams.get("redirect") || "/";
@@ -54,7 +57,10 @@ const LoginForm = () => {
     mutationFn: loginUser,
     onSuccess: async (data) => {
       if (data?.requiresPasswordChange) {
-        window.location.href = `/auth/update-password?token=${data?.tempToken}&userId=${data?.userId}`;
+        setRedirecting(true);
+        router.push(
+          `/auth/update-password?token=${data?.tempToken}&userId=${data?.userId}`
+        );
       } else {
         toast.success(data?.message);
         cookies.set(TOKEN_NAME, data?.accessToken);
@@ -68,7 +74,8 @@ const LoginForm = () => {
           // Fallback to the user data from login response if user fetch fails
           dispatch(loginSuccess({ user: data?.data || data.user }));
         }
-        window.location.href = callbackUrl;
+        setRedirecting(true);
+        router.push(callbackUrl);
       }
     },
     onError: (error: AxiosError<{ message: string }>) => {
@@ -83,83 +90,87 @@ const LoginForm = () => {
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              {/* <FormLabel>Email</FormLabel> */}
-              <FormControl>
-                <Input
-                  type="email"
-                  placeholder="you@example.com"
-                  className="focus-visible:ring-0 shadow-none rounded-[30px] h-[45px] px-4"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex justify-end items-center">
-                {/* <FormLabel>Password</FormLabel> */}
-                <Link
-                  href="/auth/forgot-password"
-                  className="text-sm font-medium text-primary hover:underline"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-              <div className="relative">
+    <>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                {/* <FormLabel>Email</FormLabel> */}
                 <FormControl>
                   <Input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    className="focus-visible:ring-0 shadow-none rounded-[30px] h-[45px] px-4 pr-12"
+                    type="email"
+                    placeholder="you@example.com"
+                    className="focus-visible:ring-0 shadow-none rounded-[30px] h-[45px] px-4"
                     {...field}
                   />
                 </FormControl>
-                <button
-                  type="button"
-                  className="absolute right-5 top-1/2 transform -translate-y-1/2 text-muted-foreground"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </button>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <Button
-          type="submit"
-          disabled={loginMutation.isPending}
-          className="w-full rounded-[30px] cursor-pointer h-[45px]"
-        >
-          {loginMutation.isPending ? (
-            <>
-              <Loader2Icon className="animate-spin" />
-              Logging in...
-            </>
-          ) : (
-            "Login"
-          )}
-        </Button>
-      </form>
-    </Form>
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex justify-end items-center">
+                  {/* <FormLabel>Password</FormLabel> */}
+                  <Link
+                    href="/auth/forgot-password"
+                    className="text-sm font-medium text-primary hover:underline"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+                <div className="relative">
+                  <FormControl>
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter your password"
+                      className="focus-visible:ring-0 shadow-none rounded-[30px] h-[45px] px-4 pr-12"
+                      {...field}
+                    />
+                  </FormControl>
+                  <button
+                    type="button"
+                    className="absolute right-5 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button
+            type="submit"
+            disabled={loginMutation.isPending}
+            className="w-full rounded-[30px] cursor-pointer h-[45px]"
+          >
+            {loginMutation.isPending ? (
+              <>
+                <Loader2Icon className="animate-spin" />
+                Logging in...
+              </>
+            ) : (
+              "Login"
+            )}
+          </Button>
+        </form>
+      </Form>
+
+      {redirecting && <PageLoader />}
+    </>
   );
 };
 
