@@ -132,7 +132,7 @@ const SalesDetails = ({ id }: { id: string }) => {
           <ScrollArea className="h-[calc(90vh-180px)]">
             {isPending ? (
               <div className="flex justify-center items-center h-full py-8">
-                <Loader2 className="h-8 w-8 animate-spin" />
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
               </div>
             ) : sale ? (
               <div className="py-6 space-y-8">
@@ -217,7 +217,7 @@ const SalesDetails = ({ id }: { id: string }) => {
                         <span className="w-36 font-medium text-neutral-600 shrink-0">
                           Date Created:
                         </span>
-                        <span>{format(new Date(sale.createdAt), "PPPp")}</span>
+                        <span>{format(new Date(sale.createdAt), "PPp")}</span>
                       </div>
                       <div className="flex items-center">
                         <span className="w-36 font-medium text-neutral-600 shrink-0">
@@ -225,7 +225,7 @@ const SalesDetails = ({ id }: { id: string }) => {
                         </span>
                         <span>
                           {sale.dateSold
-                            ? format(new Date(sale.dateSold), "PPP")
+                            ? format(new Date(sale.dateSold), "PPp")
                             : "Not specified"}
                         </span>
                       </div>
