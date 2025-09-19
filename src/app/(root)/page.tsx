@@ -1,4 +1,5 @@
 import AboutSection from "@/components/pages/home/AboutSection";
+import AcademySection from "@/components/pages/home/AcademySection";
 import BlogSection from "@/components/pages/home/BlogSection";
 import ContactSection from "@/components/pages/home/ContactSection";
 import HeroSection from "@/components/pages/home/HeroSection";
@@ -20,6 +21,7 @@ const Homepage = () => {
         <AboutSection />
       </div>
       <WhatWeOffer />
+      <AcademySection />
       <TestimonialSection />
 
       <div className="bg-background">
