@@ -43,7 +43,7 @@ const scaleUp = {
 const ContactSection = () => {
   return (
     <div className="about-section w-full container mx-auto lg:px-4">
-      <div className="w-full max-w-[min(100%,1290px)] mx-auto py-[150px] flex flex-col">
+      <div className="w-full max-w-[min(100%,1290px)] mx-auto py-16 lg:py-28 flex flex-col">
         <motion.div
           className="bg-[url(https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/03/h1_bg-1.jpg)] bg-center bg-cover bg-no-repeat relative before:content-[''] before:absolute before:bg-black/40 before:top-0 before:left-0 before:w-full before:h-full flex rounded-[30px] flex-col overflow-hidden rounded-bl-none"
           initial="hidden"

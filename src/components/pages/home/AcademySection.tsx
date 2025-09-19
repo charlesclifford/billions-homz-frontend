@@ -74,7 +74,7 @@ export default function AcademySection() {
   };
 
   return (
-    <section className="bg-gradient-to-t from-gray-100 via-gray-100 to-gray-50 dark:from-background dark:via-background dark:to-background py-20 px-6 text-center relative about-section">
+    <section className="bg-gradient-to-t from-gray-100 via-gray-100 to-gray-50 dark:from-background dark:via-background dark:to-background py-16 lg:py-28 text-center relative about-section">
       <div className="relative z-10 container max-w-[min(100%,1290px)] mx-auto px-4">
         <motion.div
           variants={fadeUp}
