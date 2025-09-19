@@ -74,7 +74,7 @@ export default function AcademySection() {
   };
 
   return (
-    <section className="bg-gradient-to-t from-gray-100 to-gray-50 dark:from-background dark:to-background py-20 px-6 text-center relative about-section">
+    <section className="bg-gradient-to-t from-gray-100 via-gray-100 to-gray-50 dark:from-background dark:via-background dark:to-background py-20 px-6 text-center relative about-section">
       <div className="relative z-10 container max-w-[min(100%,1290px)] mx-auto px-4">
         <motion.div
           variants={fadeUp}
@@ -132,7 +132,7 @@ export default function AcademySection() {
           {benefitsList.map(({ icon: Icon, title, content }, i) => (
             <motion.div
               key={i}
-              className="bg-card rounded-[30px] p-8 flex flex-col items-start text-left transition-all relative group/card box-hover overflow-hidden"
+              className="bg-card rounded-[30px] rounded-tr-none p-8 flex flex-col items-start text-left transition-all relative group/card box-hover overflow-hidden"
               variants={cardVariants}
               initial="hidden"
               whileInView="visible"
@@ -163,15 +163,15 @@ export default function AcademySection() {
               </div>
 
               <div className="absolute top-0 right-0 w-[60px] h-[60px] ">
-                <div className="rounded-bl-[30px] w-full h-full bg-gray-50 dark:bg-background"></div>
-                <div className="border-shape w-[30px] h-[30px] absolute top-0 left-[-29.5px] rotate-180 bg-gray-50 dark:bg-background"></div>
-                <div className="border-shape w-[30px] h-[30px] absolute right-[-0.5px] bottom-[-30px] rotate-180 bg-gray-50 dark:bg-background"></div>
+                <div className="rounded-bl-[30px] w-full h-full bg-gray-100 dark:bg-background"></div>
+                <div className="border-shape w-[30px] h-[30px] absolute top-0 left-[-29.5px] rotate-180 bg-gray-100 dark:bg-background"></div>
+                <div className="border-shape w-[30px] h-[30px] absolute right-[-0.5px] bottom-[-30px] rotate-180 bg-gray-100 dark:bg-background"></div>
               </div>
 
-              <div className="relative mb-6 mt-[60px] p-3 w-[70px] h-[70px] bg-primary/20 rounded-full group-hover/card:bg-primary transition flex items-center justify-center">
+              <div className="relative mb-6 mt-[60px] p-3 w-[70px] h-[70px] bg-primary/20 rounded-full group-hover/card:bg-white/20 transition duration-300 flex items-center justify-center">
                 <Icon
                   size={36}
-                  className="text-primary group-hover/card:text-white group-hover:dark:text-gray-900 transition"
+                  className="text-primary group-hover/card:text-white group-hover:dark:text-gray-900 transition duration-300"
                 />
               </div>
               <h4 className="relative text-2xl font-semibold mb-2 group-hover/card:text-white transition duration-300">
