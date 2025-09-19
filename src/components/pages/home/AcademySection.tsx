@@ -190,7 +190,7 @@ export default function AcademySection() {
           variants={buttonVariants}
         >
           <Link
-            href={"/#"}
+            href={"#"}
             className="p-[5px] pl-[30px] border rounded-[30px] text-sm font-bold capitalize inline-grid relative group transition duration-300 dark:bg-white overflow-hidden"
           >
             <span className="flex gap-2.5 items-center flex-row-reverse justify-center">
