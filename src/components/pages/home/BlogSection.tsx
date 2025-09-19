@@ -78,7 +78,7 @@ const BlogSection = () => {
 
   return (
     <div className="about-section w-full container mx-auto px-4">
-      <div className="w-full max-w-[min(100%,1290px)] mx-auto py-[150px] flex flex-col">
+      <div className="w-full max-w-[min(100%,1290px)] mx-auto py-16 lg:py-28 flex flex-col">
         <motion.div
           className="grid grid-cols-1 lg:grid-cols-2"
           initial="hidden"

@@ -114,7 +114,7 @@ const iconVariants = {
 const WhatWeOffer = () => {
   return (
     <div className="about-section w-full bg-[#F6F3EC] dark:bg-background">
-      <div className="w-full container max-w-[min(100%,1290px)] mx-auto px-4 py-[150px] flex flex-col ">
+      <div className="w-full container max-w-[min(100%,1290px)] mx-auto px-4 py-16 lg:py-28 flex flex-col ">
         <motion.div
           initial="hidden"
           whileInView="visible"

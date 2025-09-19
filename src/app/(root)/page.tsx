@@ -3,6 +3,7 @@ import AcademySection from "@/components/pages/home/AcademySection";
 import BlogSection from "@/components/pages/home/BlogSection";
 import ContactSection from "@/components/pages/home/ContactSection";
 import HeroSection from "@/components/pages/home/HeroSection";
+import PropertiesSection from "@/components/pages/home/PropertiesSection";
 import TestimonialSection from "@/components/pages/home/TestimonialSection";
 import WhatWeOffer from "@/components/pages/home/WhatWeOffer";
 import { Metadata } from "next";
@@ -21,6 +22,7 @@ const Homepage = () => {
         <AboutSection />
       </div>
       <WhatWeOffer />
+      <PropertiesSection />
       <AcademySection />
       <TestimonialSection />
 

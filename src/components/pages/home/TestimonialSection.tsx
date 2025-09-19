@@ -112,7 +112,7 @@ const TestimonialSection = () => {
 
   return (
     <div className="about-section w-full bg-[#1b1f12]">
-      <div className="w-full container max-w-[min(100%,1290px)] mx-auto px-4 py-[150px] flex flex-col">
+      <div className="w-full container max-w-[min(100%,1290px)] mx-auto px-4 py-16 lg:py-28 flex flex-col">
         <motion.div
           className="grid grid-cols-1 lg:grid-cols-[40%_auto]"
           initial="hidden"
