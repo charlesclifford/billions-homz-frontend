@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const PropertyCardSkeleton = () => {
   return (
-    <div className="overflow-hidden flex flex-col h-auto group">
+    <div className="overflow-hidden flex flex-col h-auto group relative">
       {/* Image placeholder */}
       <Skeleton className="relative w-full pt-[68.5%] bg-muted rounded-[30px] mb-5">
         {/* <div className="absolute inset-0 flex items-center justify-center">

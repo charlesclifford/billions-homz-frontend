@@ -57,4 +57,8 @@ export const menuList: IMenu[] = [
     href: "/auth/register/realtor",
     roles: ["user"],
   },
+  {
+    name: "Academy",
+    href: "/academy",
+  },
 ];

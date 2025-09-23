@@ -159,12 +159,7 @@ const QuickContactForm = () => {
         </motion.div>
 
         <div className="col-span-1 lg:col-span-2 grid grid-cols-1 lg:grid-cols-2 gap-[15px] lg:gap-[30px]">
-          <motion.p className="text-neutral-500" variants={formItemVariants}>
-            <span>
-              We&apos;re excited to connect with you! Required fields are marked
-              *
-            </span>
-          </motion.p>
+          <div></div>
           <div className="flex justify-end">
             <button
               type="submit"

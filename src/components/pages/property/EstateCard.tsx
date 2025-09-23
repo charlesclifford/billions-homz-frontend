@@ -35,7 +35,7 @@ const EstateCard = ({ estate }: { estate: IEstate }) => {
                 ? "bg-red-500/80 backdrop-blur-sm"
                 : estate.soldUnits && estate.soldUnits > 0
                 ? "bg-primary/80 backdrop-blur-sm"
-                : "bg-background/80 backdrop-blur-sm"
+                : "bg-background/80 backdrop-blur-sm text-black dark:text-white"
             )}
           >
             {estate.soldUnits === estate.totalUnits
