@@ -278,6 +278,7 @@ export function MapViewer({
         zoom: zoom,
         interactive: interactive,
         attributionControl: false,
+        cooperativeGestures: true,
       });
 
       // Add navigation controls if enabled
