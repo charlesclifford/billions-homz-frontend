@@ -4,12 +4,12 @@ import Image from "next/image";
 import React from "react";
 
 const Logo = ({ ...props }: React.ComponentProps<"div">) => {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   return (
     <div className="h-10" {...props}>
       <Image
         src={
-          theme === "light"
+          resolvedTheme === "light"
             ? "/logos/billionz-logo-color.png"
             : "/logos/billionz-logo-white.png"
         }
