@@ -52,7 +52,7 @@ const LocationComboBox = ({
           role="combobox"
           aria-expanded={open}
           className={cn(
-            "w-[250px] justify-between rounded-[30px] py-[15px] px-[30px] h-14 bg-gray-100 focus-visible:ring-0 cursor-pointer font-normal shadow-none",
+            "w-full justify-between rounded-[30px] py-[15px] px-[30px] h-14 bg-gray-100 focus-visible:ring-0 cursor-pointer font-normal shadow-none",
             !value && "text-muted-foreground"
           )}
         >
@@ -60,7 +60,7 @@ const LocationComboBox = ({
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent className="w-[250px] p-0 rounded-2xl">
+      <PopoverContent className="min-w-[250px] w-full p-0 rounded-2xl">
         <Command>
           <CommandInput placeholder="Type to search locations..." />
           <CommandList>
