@@ -43,6 +43,7 @@ import { toast } from "sonner";
 import * as z from "zod";
 import { MapboxPicker } from "./MapboxPicker";
 import { formatNumberWithCommas } from "@/utils/helpers";
+import { nigeriaStates } from "@/data/nigeria-states";
 
 export const NairaIcon = () => <span className="font-medium">₦</span>;
 export const SquareMetreIcon = () => (
@@ -88,6 +89,9 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
   const [landmarkInput, setLandmarkInput] = useState("");
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [selectedState, setSelectedState] = useState<string>(
+    initialValues?.location?.state || ""
+  );
 
   const form = useForm<EstateFormValues>({
     resolver: zodResolver(formSchema),
@@ -594,11 +598,26 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                           <FormItem>
                             <FormLabel>State</FormLabel>
                             <FormControl>
-                              <Input
-                                placeholder="Enter state"
-                                className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
-                                {...field}
-                              />
+                              <Select
+                                value={field.value}
+                                onValueChange={(value) => {
+                                  field.onChange(value);
+                                  setSelectedState(value);
+                                  // reset city when state changes
+                                  form.setValue("location.city", "");
+                                }}
+                              >
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Select a state" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {Object.keys(nigeriaStates).map((state) => (
+                                    <SelectItem key={state} value={state}>
+                                      {state}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -612,11 +631,25 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                           <FormItem>
                             <FormLabel>City</FormLabel>
                             <FormControl>
-                              <Input
-                                placeholder="Enter city"
-                                className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
-                                {...field}
-                              />
+                              <Select
+                                value={field.value}
+                                onValueChange={field.onChange}
+                                disabled={!selectedState}
+                              >
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Select a city" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {selectedState &&
+                                    nigeriaStates[selectedState]?.map(
+                                      (city) => (
+                                        <SelectItem key={city} value={city}>
+                                          {city}
+                                        </SelectItem>
+                                      )
+                                    )}
+                                </SelectContent>
+                              </Select>
                             </FormControl>
                             <FormMessage />
                           </FormItem>

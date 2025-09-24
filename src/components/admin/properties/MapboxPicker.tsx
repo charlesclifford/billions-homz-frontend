@@ -59,6 +59,7 @@ export function MapboxPicker({
         center: [lng, lat],
         zoom: zoom,
         attributionControl: false,
+        cooperativeGestures: true,
       });
 
       // Add navigation controls

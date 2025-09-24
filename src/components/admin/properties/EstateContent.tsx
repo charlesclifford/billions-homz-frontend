@@ -184,21 +184,17 @@ const EstateContent = () => {
       <Card>
         <CardHeader className="flex flex-col">
           <CardDescription>
-            <p>
-              {!isPending && estates ? (
-                `
-              Showing ${Math.min(
-                (filter.page - 1) * filter.limit + 1,
-                totalEstates
-              )} -
-                ${Math.min(filter.page * filter.limit, totalEstates)} of
-                ${totalEstates}
-             estates
-              `
-              ) : (
-                <Skeleton className="h-4 w-40 mt-1" />
-              )}
-            </p>
+            {!isPending && estates ? (
+              <p>
+                {` Showing $
+                {Math.min((filter.page - 1) * filter.limit + 1, totalEstates)} -
+                ${Math.min(filter.page * filter.limit, totalEstates)} of $
+                {totalEstates}
+                estates `}
+              </p>
+            ) : (
+              <Skeleton className="h-4 w-40 mt-1" />
+            )}
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -53,6 +53,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { formatNumberWithCommas } from "@/utils/helpers";
+import { nigeriaStates } from "@/data/nigeria-states";
 
 // Define property schema with validation
 const propertySchema = z.object({
@@ -95,6 +96,9 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
   const [featureInput, setFeatureInput] = useState("");
   const [landmarkInput, setLandmarkInput] = useState("");
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
+  const [selectedState, setSelectedState] = useState<string>(
+    initialValues?.location?.state || ""
+  );
 
   const form = useForm<PropertyFormData>({
     resolver: zodResolver(propertySchema),
@@ -640,16 +644,31 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                     <div className="grid grid-cols-1 gap-4">
                       <FormField
                         control={form.control}
-                        name="location.address"
+                        name="location.state"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Address</FormLabel>
+                            <FormLabel>State</FormLabel>
                             <FormControl>
-                              <Input
-                                placeholder="Enter address"
-                                className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
-                                {...field}
-                              />
+                              <Select
+                                value={field.value}
+                                onValueChange={(value) => {
+                                  field.onChange(value);
+                                  setSelectedState(value);
+                                  // reset city when state changes
+                                  form.setValue("location.city", "");
+                                }}
+                              >
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Select a state" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {Object.keys(nigeriaStates).map((state) => (
+                                    <SelectItem key={state} value={state}>
+                                      {state}
+                                    </SelectItem>
+                                  ))}
+                                </SelectContent>
+                              </Select>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -663,11 +682,25 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
                           <FormItem>
                             <FormLabel>City</FormLabel>
                             <FormControl>
-                              <Input
-                                placeholder="Enter city"
-                                className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
-                                {...field}
-                              />
+                              <Select
+                                value={field.value}
+                                onValueChange={field.onChange}
+                                disabled={!selectedState}
+                              >
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Select a city" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {selectedState &&
+                                    nigeriaStates[selectedState]?.map(
+                                      (city) => (
+                                        <SelectItem key={city} value={city}>
+                                          {city}
+                                        </SelectItem>
+                                      )
+                                    )}
+                                </SelectContent>
+                              </Select>
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -676,13 +709,13 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
 
                       <FormField
                         control={form.control}
-                        name="location.state"
+                        name="location.address"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>State</FormLabel>
+                            <FormLabel>Address</FormLabel>
                             <FormControl>
                               <Input
-                                placeholder="Enter state"
+                                placeholder="Enter address"
                                 className="focus-visible:ring-0 focus-visible:border-primary shadow-none rounded-sm"
                                 {...field}
                               />
