@@ -1,17 +1,17 @@
-import { LoginFormValues } from "@/components/auth/LoginForm";
-import { RegisterFormValues } from "@/components/auth/RegisterForm";
 import {
   changePasswordInput,
   ChangeTempPassword,
+  LoginDTO,
+  SignUpDTO,
 } from "@/interfaces/auth.interface";
 import instance from "@/services/axios";
 
-export const signUpUser = async (data: RegisterFormValues) => {
+export const signUpUser = async (data: SignUpDTO) => {
   const res = await instance.post(`/auth/register`, data);
   return res.data;
 };
 
-export const loginUser = async (data: LoginFormValues) => {
+export const loginUser = async (data: LoginDTO) => {
   const res = await instance.post(`/auth/login`, data);
   return res.data;
 };
