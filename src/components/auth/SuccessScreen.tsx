@@ -1,7 +1,7 @@
 // components/auth/SuccessScreen.tsx
 "use client";
 
-import { CheckCircle } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
 import { Button } from "../ui/button"; // Adjust the import path if necessary
 
 interface SuccessScreenProps {
@@ -17,7 +17,7 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({ email, onContinue }) => {
   return (
     <div className="w-full max-w-md space-y-8 p-6 md:p-8">
       <div className="text-center space-y-4">
-        <CheckCircle className="w-16 h-16 text-green-500 mx-auto" />
+        <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto" />
         <h2 className="text-3xl font-bold text-card-foreground">
           Registration Successful!
         </h2>
