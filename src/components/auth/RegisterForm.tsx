@@ -28,6 +28,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { PageLoader } from "../shared/PageLoader";
+import SuccessScreen from "./SuccessScreen";
 
 // Base schema for all users
 const formSchema = z
@@ -64,6 +65,8 @@ const RegisterForm = ({ type }: { type: string }) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   const [passwordMatch, setPasswordMatch] = useState<boolean | null>(null);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState("");
 
   const callbackUrl = searchParams.get("callbackUrl") || "/auth/login";
 
@@ -106,10 +109,9 @@ const RegisterForm = ({ type }: { type: string }) => {
 
   const registerMutation = useMutation({
     mutationFn: signUpUser,
-    onSuccess: (data) => {
-      toast.success(data?.message);
-      setRedirecting(true);
-      router.push(callbackUrl);
+    onSuccess: (data, variables) => {
+      setRegisteredEmail(variables.email);
+      setRegistrationSuccess(true);
     },
     onError: (error: AxiosError<{ message: string }>) => {
       console.log("error", error);
@@ -126,6 +128,21 @@ const RegisterForm = ({ type }: { type: string }) => {
     // console.log(">>>>>>", data);
     registerMutation.mutate(payload);
   };
+
+  const handleContinueToLogin = () => {
+    setRedirecting(true);
+    router.push(callbackUrl);
+  };
+
+  // If registration was successful, show the success screen
+  if (!registrationSuccess) {
+    return (
+      <SuccessScreen
+        email={registeredEmail}
+        onContinue={handleContinueToLogin}
+      />
+    );
+  }
 
   return (
     <>
@@ -392,15 +409,19 @@ export function PasswordRequirements({ password }: { password: string }) {
             {req.valid ? (
               <Check className="h-3 w-3 text-green-500" />
             ) : (
-              <X className={`h-3 w-3 ${hasTyped ? 'text-red-500' : 'text-muted-foreground'}`} />
+              <X
+                className={`h-3 w-3 ${
+                  hasTyped ? "text-red-500" : "text-muted-foreground"
+                }`}
+              />
             )}
             <span
               className={`text-[10px] ${
-                req.valid 
-                  ? "text-green-600" 
-                  : hasTyped 
-                    ? "text-red-600" 
-                    : "text-muted-foreground"
+                req.valid
+                  ? "text-green-600"
+                  : hasTyped
+                  ? "text-red-600"
+                  : "text-muted-foreground"
               }`}
             >
               {req.text}

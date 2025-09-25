@@ -1,4 +1,4 @@
-import RegisterForm from "@/components/auth/RegisterForm";
+import RegisterPageComp from "@/components/auth/RegisterFormComp";
 import Link from "next/link";
 
 const RegisterPage = async ({
@@ -30,28 +30,7 @@ const RegisterPage = async ({
   return (
     <div className="w-full flex items-center justify-center">
       <div className="w-full flex items-center justify-center">
-        <div className="w-full max-w-md space-y-8">
-          <div className="text-center space-y-2">
-            <h2 className="text-3xl font-bold ">
-              {type === "user" ? "User" : "Realtor"} Registration
-            </h2>
-            <p className="text-neutral-500">
-              Create your {type === "user" ? "user" : "realtor"} account
-            </p>
-          </div>
-
-          <RegisterForm type={type} />
-
-          <div className="text-center text-sm text-neutral-500">
-            Already have an account?{" "}
-            <Link
-              href="/auth/login"
-              className="font-medium text-primary hover:underline"
-            >
-              Sign in
-            </Link>
-          </div>
-        </div>
+        <RegisterPageComp type={type} />
       </div>
     </div>
   );
