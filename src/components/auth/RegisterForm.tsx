@@ -11,10 +11,10 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { Eye, EyeOff, Loader2Icon } from "lucide-react";
+import { Check, Eye, EyeOff, Loader2Icon, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -63,6 +63,7 @@ const RegisterForm = ({ type }: { type: string }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
+  const [passwordMatch, setPasswordMatch] = useState<boolean | null>(null);
 
   const callbackUrl = searchParams.get("callbackUrl") || "/auth/login";
 
@@ -76,7 +77,32 @@ const RegisterForm = ({ type }: { type: string }) => {
       gender: undefined,
       password: "",
     },
+    mode: "onChange",
   });
+
+  // Watch password and confirmPassword fields for real-time validation
+  const watchedPassword = useWatch({
+    control: form.control,
+    name: "password",
+  });
+
+  const watchedConfirmPassword = useWatch({
+    control: form.control,
+    name: "confirmPassword",
+  });
+
+  // Effect to check password match in real-time
+  useEffect(() => {
+    if (watchedConfirmPassword && watchedPassword) {
+      setPasswordMatch(watchedPassword === watchedConfirmPassword);
+    } else if (watchedConfirmPassword) {
+      // If confirm password has value but password is empty
+      setPasswordMatch(false);
+    } else {
+      // If confirm password is empty
+      setPasswordMatch(null);
+    }
+  }, [watchedPassword, watchedConfirmPassword]);
 
   const registerMutation = useMutation({
     mutationFn: signUpUser,
@@ -245,7 +271,8 @@ const RegisterForm = ({ type }: { type: string }) => {
                     )}
                   </button>
                 </div>
-                <FormMessage />
+                <PasswordRequirements password={field.value} />
+                {/* <FormMessage /> */}
               </FormItem>
             )}
           />
@@ -255,7 +282,6 @@ const RegisterForm = ({ type }: { type: string }) => {
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                {/* <FormLabel>Confirm Password</FormLabel> */}
                 <div className="relative">
                   <FormControl>
                     <Input
@@ -276,8 +302,33 @@ const RegisterForm = ({ type }: { type: string }) => {
                       <Eye className="h-4 w-4" />
                     )}
                   </button>
+
+                  {/* Real-time match indicator */}
+                  {watchedConfirmPassword && (
+                    <div className="absolute right-10 top-1/2 transform -translate-y-1/2">
+                      {passwordMatch === true ? (
+                        <Check className="h-4 w-4 text-green-500" />
+                      ) : passwordMatch === false ? (
+                        <X className="h-4 w-4 text-red-500" />
+                      ) : null}
+                    </div>
+                  )}
                 </div>
-                <FormMessage />
+
+                {/* Real-time match message */}
+                {watchedConfirmPassword && passwordMatch !== null && (
+                  <p
+                    className={`text-xs mt-1 px-4 ${
+                      passwordMatch ? "text-green-600" : "text-red-600"
+                    }`}
+                  >
+                    {passwordMatch
+                      ? "Passwords match!"
+                      : "Passwords don't match"}
+                  </p>
+                )}
+
+                {/* <FormMessage /> */}
               </FormItem>
             )}
           />
@@ -305,3 +356,58 @@ const RegisterForm = ({ type }: { type: string }) => {
 };
 
 export default RegisterForm;
+
+export function PasswordRequirements({ password }: { password: string }) {
+  const requirements = [
+    {
+      text: "At least 8 characters",
+      valid: password.length >= 8,
+    },
+    {
+      text: "At least 1 uppercase letter",
+      valid: /[A-Z]/.test(password),
+    },
+    {
+      text: "At least 1 lowercase letter",
+      valid: /[a-z]/.test(password),
+    },
+    {
+      text: "At least 1 number",
+      valid: /[0-9]/.test(password),
+    },
+    {
+      text: "At least 1 special character",
+      valid: /[^A-Za-z0-9]/.test(password),
+    },
+  ];
+
+  const hasTyped = password.length > 0;
+
+  return (
+    <div className="mt-2 space-y-1 px-4">
+      <p className="text-xs text-muted-foreground">Password must contain:</p>
+      <ul className="grid grid-cols-2 gap-1">
+        {requirements.map((req, i) => (
+          <li key={i} className="flex items-center gap-2">
+            {req.valid ? (
+              <Check className="h-3 w-3 text-green-500" />
+            ) : (
+              <X className={`h-3 w-3 ${hasTyped ? 'text-red-500' : 'text-muted-foreground'}`} />
+            )}
+            <span
+              className={`text-[10px] ${
+                req.valid 
+                  ? "text-green-600" 
+                  : hasTyped 
+                    ? "text-red-600" 
+                    : "text-muted-foreground"
+              }`}
+            >
+              {req.text}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
