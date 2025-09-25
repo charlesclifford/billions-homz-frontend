@@ -93,9 +93,7 @@ export default function PropertiesSection() {
           <TabsContent value="properties">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {loadingProperties
-                ? [...Array(3)].map((_, i) => (
-                    <PropertyCardSkeleton key={i} />
-                  ))
+                ? [...Array(3)].map((_, i) => <PropertyCardSkeleton key={i} />)
                 : properties.map((property, i) => (
                     <motion.div
                       key={property._id}
@@ -159,7 +157,17 @@ function CTA({ href, label }: { href: string; label: string }) {
       >
         <span className="flex gap-2.5 items-center flex-row-reverse justify-center">
           <span className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-primary text-white">
-            <ArrowUpRight />
+            <span className="flex items-center justify-center w-[18px] h-[18px] overflow-hidden relative">
+              {/* Top icon – animates out along 45deg */}
+              <span className="flex absolute items-center justify-center  transition-all duration-500 transform-3d transform-[translate3d(0px,0px,0px)_scale3d(1,1,1)] opacity-100 group-hover:transform-[translate3d(17px,-17px,0px)_scale3d(0.2,0.2,1)] group-hover:opacity-0">
+                <ArrowUpRight />
+              </span>
+
+              {/* Bottom icon – animates in along 45deg */}
+              <span className="flex absolute items-center justify-center  transition-all duration-500 transform-[translate3d(-17px,17px,0px)_scale3d(0.2,0.2,1)_rotate(-45deg)] opacity-0 group-hover:transform-[translate3d(0px,0px,0px)_scale3d(1,1,1)] group-hover:opacity-100">
+                <ArrowUpRight />
+              </span>
+            </span>
           </span>
           <span className="inline-block text-black">{label}</span>
         </span>
