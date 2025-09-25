@@ -30,6 +30,7 @@ import { Input } from "../ui/input";
 import { PageLoader } from "../shared/PageLoader";
 import { Turnstile, TurnstileInstance } from "@marsidev/react-turnstile";
 import { useTheme } from "next-themes";
+import SuccessScreen from "./SuccessScreen";
 
 // Base schema for all users
 const formSchema = z
@@ -73,6 +74,8 @@ const RegisterForm = ({ type }: { type: string }) => {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileError, setTurnstileError] = useState<string | null>(null);
   const turnstileRef = useRef<TurnstileInstance>(null);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState("");
 
   const callbackUrl = searchParams.get("callbackUrl") || "/auth/login";
 
@@ -115,10 +118,9 @@ const RegisterForm = ({ type }: { type: string }) => {
 
   const registerMutation = useMutation({
     mutationFn: signUpUser,
-    onSuccess: (data) => {
-      toast.success(data?.message);
-      setRedirecting(true);
-      router.push(callbackUrl);
+    onSuccess: (data, variables) => {
+      setRegisteredEmail(variables.email);
+      setRegistrationSuccess(true);
     },
     onError: (error: AxiosError<{ message: string }>) => {
       console.log("error", error);
@@ -138,6 +140,21 @@ const RegisterForm = ({ type }: { type: string }) => {
       turnstileToken: turnstileToken as string,
     });
   };
+
+  const handleContinueToLogin = () => {
+    setRedirecting(true);
+    router.push(callbackUrl);
+  };
+
+  // If registration was successful, show the success screen
+  if (!registrationSuccess) {
+    return (
+      <SuccessScreen
+        email={registeredEmail}
+        onContinue={handleContinueToLogin}
+      />
+    );
+  }
 
   return (
     <>

@@ -14,8 +14,11 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormMessage
+  FormMessage,
 } from "../ui/form";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+
 import { Input } from "../ui/input";
 
 const formSchema = z.object({
@@ -36,10 +39,7 @@ const ForgotPasswordForm = () => {
   const submitMutation = useMutation({
     mutationFn: forgotPassword,
     onSuccess: async (data) => {
-      toast.success(data.message, {
-        description: "Check your inbox for the password reset link",
-        icon: <MailCheckIcon className="h-5 w-5 text-green-500" />,
-      });
+      console.log(data);
       setEmailSent(true);
       form.reset();
     },
@@ -57,7 +57,7 @@ const ForgotPasswordForm = () => {
 
   if (emailSent) {
     return (
-      <div className="space-y-6 text-center">
+      <div className="w-full max-w-md space-y-8 text-center">
         <MailCheckIcon className="mx-auto h-12 w-12 text-green-500" />
         <h3 className="text-lg font-medium">Check your email</h3>
         <p className="text-sm text-muted-foreground">
@@ -65,7 +65,7 @@ const ForgotPasswordForm = () => {
         </p>
         <Button
           variant="outline"
-          className="w-full cursor-pointer"
+          className="w-full cursor-pointer rounded-[30px] h-[45px]"
           onClick={() => setEmailSent(false)}
         >
           Resend email
@@ -75,44 +75,63 @@ const ForgotPasswordForm = () => {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              {/* <FormLabel>Email address</FormLabel> */}
-              <FormControl>
-                <Input
-                  type="email"
-                  placeholder="you@example.com"
-                  className="focus-visible:ring-0 shadow-none rounded-[30px] h-[45px] px-4"
-                  autoComplete="email"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <div className="w-full max-w-md space-y-8">
+      <div className="text-center space-y-2">
+        <h2 className="text-3xl font-bold ">Reset Your Password</h2>
+        <p className="text-neutral-500">
+          Enter your email to receive a password reset link
+        </p>
+      </div>
+      {/* form is here */}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                {/* <FormLabel>Email address</FormLabel> */}
+                <FormControl>
+                  <Input
+                    type="email"
+                    placeholder="you@example.com"
+                    className="focus-visible:ring-0 shadow-none rounded-[30px] h-[45px] px-4"
+                    autoComplete="email"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-        <Button
-          type="submit"
-          disabled={submitMutation.isPending}
-          className="w-full cursor-pointer rounded-[30px] h-[45px]"
+          <Button
+            type="submit"
+            disabled={submitMutation.isPending}
+            className="w-full cursor-pointer rounded-[30px] h-[45px]"
+          >
+            {submitMutation.isPending ? (
+              <>
+                <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                Sending reset link...
+              </>
+            ) : (
+              "Send reset link"
+            )}
+          </Button>
+        </form>
+      </Form>
+
+      <div className="text-center text-sm text-neutral-500 flex items-center justify-center gap-1">
+        <ArrowLeft size={16} /> Back to{" "}
+        <Link
+          href="/auth/login"
+          className="font-medium text-primary hover:underline"
         >
-          {submitMutation.isPending ? (
-            <>
-              <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-              Sending reset link...
-            </>
-          ) : (
-            "Send reset link"
-          )}
-        </Button>
-      </form>
-    </Form>
+          Sign in
+        </Link>
+      </div>
+    </div>
   );
 };
 
