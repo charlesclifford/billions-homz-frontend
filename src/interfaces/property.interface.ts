@@ -40,6 +40,7 @@ export interface IProperty {
   reviews: IReview[];
 
   createdAt: string
+  updatedAt: string
 }
 
 export type PropertyType = "residential" | "commercial";
