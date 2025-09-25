@@ -1,6 +1,7 @@
 import AboutSection from "@/components/pages/home/AboutSection";
 import AcademySection from "@/components/pages/home/AcademySection";
 import BlogSection from "@/components/pages/home/BlogSection";
+import BookInspectionSection from "@/components/pages/home/BookInspectionSection";
 import ContactSection from "@/components/pages/home/ContactSection";
 import HeroSection from "@/components/pages/home/HeroSection";
 import PropertiesSection from "@/components/pages/home/PropertiesSection";
@@ -26,6 +27,7 @@ const Homepage = () => {
       <AcademySection />
       <TestimonialSection />
 
+      <BookInspectionSection />
       <div className="bg-background">
         <ContactSection />
       </div>

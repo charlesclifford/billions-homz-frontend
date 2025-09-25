@@ -121,9 +121,8 @@ const VerifyEmailContent = ({ token }: { token: string }) => {
         You will be redirected shortly...
       </p>
       <Button
-        variant={"link"}
-        onClick={() => router.push("/login")}
-        className="mt-4 cursor-pointer rounded-[30px] h-[45px]"
+        onClick={() => router.push("/auth/login")}
+        className="mt-4 w-full cursor-pointer rounded-[30px] h-[45px]"
       >
         Go to Login
       </Button>

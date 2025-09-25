@@ -8,10 +8,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import cookies from "js-cookie";
-import { Eye, EyeOff, Loader2Icon } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, Loader2Icon } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -25,6 +25,8 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { PageLoader } from "../shared/PageLoader";
+import { Turnstile, TurnstileInstance } from "@marsidev/react-turnstile";
+import { useTheme } from "next-themes";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -39,9 +41,16 @@ const LoginForm = () => {
   const dispatch = useAppDispatch();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { theme } = useTheme();
   const [showPassword, setShowPassword] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   const { refetch } = useUser();
+  const [turnstileStatus, setTurnstileStatus] = useState<
+    "success" | "error" | "expired" | "required"
+  >("required");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileError, setTurnstileError] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileInstance>(null);
 
   const callbackUrl = searchParams.get("redirect") || "/";
 
@@ -86,7 +95,11 @@ const LoginForm = () => {
   });
 
   const onSubmit = async (values: LoginFormValues) => {
-    loginMutation.mutate(values);
+    if (!turnstileToken) {
+      setTurnstileError("Please complete the security check");
+      return;
+    }
+    loginMutation.mutate({ ...values, turnstileToken });
   };
 
   return (
@@ -152,9 +165,51 @@ const LoginForm = () => {
             )}
           />
 
+          <Turnstile
+            ref={turnstileRef}
+            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+            options={{
+              theme: theme === "dark" || theme === "system" ? "dark" : "light",
+              size: "flexible",
+            }}
+            onError={() => {
+              setTurnstileStatus("error");
+              setTurnstileError("Security check failed. Please try again.");
+            }}
+            onExpire={() => {
+              setTurnstileStatus("expired");
+              setTurnstileError("Security check expired. Please verify again.");
+            }}
+            onWidgetLoad={() => {
+              setTurnstileStatus("required");
+              setTurnstileError(null);
+            }}
+            onSuccess={(token) => {
+              setTurnstileStatus("success");
+              setTurnstileToken(token);
+              setTurnstileError(null);
+
+              console.log("token received:", token);
+            }}
+            scriptOptions={{
+              async: true,
+              defer: true,
+              appendTo: "head",
+            }}
+          />
+          {turnstileError && (
+            <div
+              className="flex items-center gap-2 text-red-500 text-sm mb-2"
+              aria-live="polite"
+            >
+              <AlertCircle size={16} />
+              <span>{turnstileError}</span>
+            </div>
+          )}
+
           <Button
             type="submit"
-            disabled={loginMutation.isPending}
+            disabled={loginMutation.isPending || turnstileStatus !== "success"}
             className="w-full rounded-[30px] cursor-pointer h-[45px]"
           >
             {loginMutation.isPending ? (

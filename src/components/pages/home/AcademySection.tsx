@@ -168,10 +168,10 @@ export default function AcademySection() {
                 <div className="border-shape w-[30px] h-[30px] absolute right-[-0.5px] bottom-[-30px] rotate-180 bg-gray-100 dark:bg-background"></div>
               </div>
 
-              <div className="relative mb-6 mt-[60px] p-3 w-[70px] h-[70px] bg-primary/20 rounded-full group-hover/card:!bg-white/30 transition duration-300 flex items-center justify-center">
+              <div className="relative mb-6 mt-[60px] p-3 w-[70px] h-[70px] bg-primary/20 rounded-full group-hover/card:bg-white/30 transition duration-300 flex items-center justify-center">
                 <Icon
                   size={36}
-                  className="text-primary group-hover/card:!text-white group-hover:dark:text-gray-900 transition duration-300"
+                  className="text-primary group-hover/card:text-white transition duration-300"
                 />
               </div>
               <h4 className="relative text-2xl font-semibold mb-2 group-hover/card:text-white transition duration-300">

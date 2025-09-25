@@ -1,21 +1,12 @@
 "use client";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { signUpUser } from "@/lib/api/auth";
-import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { Eye, EyeOff, Loader2Icon } from "lucide-react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import { useEffect, useRef, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "../ui/button";
@@ -27,9 +18,20 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { PageLoader } from "../shared/PageLoader";
+import SuccessScreen from "./SuccessScreen";
+import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
+import { AlertCircle, Check, Eye, EyeOff, Loader2Icon, X } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { Turnstile, TurnstileInstance } from "@marsidev/react-turnstile";
+import { useTheme } from "next-themes";
 
-// Base schema for all users
 const formSchema = z
   .object({
     firstName: z.string().min(1, "First name is required"),
@@ -57,12 +59,21 @@ const formSchema = z
 
 export type RegisterFormValues = z.infer<typeof formSchema>;
 
-const RegisterForm = ({ type }: { type: string }) => {
+const RegisterFormComp = ({ type }: { type: string }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [redirecting, setRedirecting] = useState(false);
+  const [passwordMatch, setPasswordMatch] = useState<boolean | null>(null);
+  const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [registeredEmail, setRegisteredEmail] = useState("");
+  const [turnstileStatus, setTurnstileStatus] = useState<
+    "success" | "error" | "expired" | "required"
+  >("required");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileError, setTurnstileError] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileInstance>(null);
+  const { theme } = useTheme();
 
   const callbackUrl = searchParams.get("callbackUrl") || "/auth/login";
 
@@ -76,14 +87,38 @@ const RegisterForm = ({ type }: { type: string }) => {
       gender: undefined,
       password: "",
     },
+    mode: "onChange",
   });
+
+  // Watch password and confirmPassword fields for real-time validation
+  const watchedPassword = useWatch({
+    control: form.control,
+    name: "password",
+  });
+
+  const watchedConfirmPassword = useWatch({
+    control: form.control,
+    name: "confirmPassword",
+  });
+
+  // Effect to check password match in real-time
+  useEffect(() => {
+    if (watchedConfirmPassword && watchedPassword) {
+      setPasswordMatch(watchedPassword === watchedConfirmPassword);
+    } else if (watchedConfirmPassword) {
+      // If confirm password has value but password is empty
+      setPasswordMatch(false);
+    } else {
+      // If confirm password is empty
+      setPasswordMatch(null);
+    }
+  }, [watchedPassword, watchedConfirmPassword]);
 
   const registerMutation = useMutation({
     mutationFn: signUpUser,
-    onSuccess: (data) => {
-      toast.success(data?.message);
-      setRedirecting(true);
-      router.push(callbackUrl);
+    onSuccess: (data, variables) => {
+      setRegisteredEmail(variables.email);
+      setRegistrationSuccess(true);
     },
     onError: (error: AxiosError<{ message: string }>) => {
       console.log("error", error);
@@ -93,16 +128,48 @@ const RegisterForm = ({ type }: { type: string }) => {
 
   const onSubmit = async (values: RegisterFormValues) => {
     const payload = {
-      ...values,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+      password: values.password,
+      phone: values.phone,
+      gender: values.gender,
       role: type,
     };
 
     // console.log(">>>>>>", data);
-    registerMutation.mutate(payload);
+    registerMutation.mutate({
+      ...payload,
+      turnstileToken: turnstileToken as string,
+    });
   };
 
+  const handleContinueToLogin = () => {
+    router.push(callbackUrl);
+  };
+
+  // If registration was successful, show the success screen
+  if (registrationSuccess) {
+    return (
+      <SuccessScreen
+        email={registeredEmail}
+        onContinue={handleContinueToLogin}
+      />
+    );
+  }
+
   return (
-    <>
+    <div className="w-full max-w-md space-y-8">
+      <div className="text-center space-y-2">
+        <h2 className="text-3xl font-bold ">
+          {type === "user" ? "User" : "Realtor"} Registration
+        </h2>
+        <p className="text-neutral-500">
+          Create your {type === "user" ? "user" : "realtor"} account
+        </p>
+      </div>
+
+      {/* form starts here */}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           {/* Common fields */}
@@ -167,7 +234,7 @@ const RegisterForm = ({ type }: { type: string }) => {
             render={({ field }) => (
               <FormItem>
                 {/* <FormLabel>Phone Number</FormLabel> */}
-                <FormControl className="focus-within:border-ring">
+                <FormControl className="focus-within:border-ring overflow-hidden h-9">
                   <PhoneInput
                     international
                     countryCallingCodeEditable={false}
@@ -176,7 +243,7 @@ const RegisterForm = ({ type }: { type: string }) => {
                     value={field.value}
                     onChange={field.onChange}
                     className={cn(
-                      "placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-sm border bg-transparent px-3 py-1 text-base shadow-none transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+                      "placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-full w-full min-w-0 rounded-sm border bg-transparent px-3 pr-0 py-0 text-base shadow-none transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
                       "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
                       "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
                       "[&>input]:h-full [&>input]:outline-none",
@@ -245,7 +312,8 @@ const RegisterForm = ({ type }: { type: string }) => {
                     )}
                   </button>
                 </div>
-                <FormMessage />
+                <PasswordRequirements password={field.value} />
+                {/* <FormMessage /> */}
               </FormItem>
             )}
           />
@@ -255,7 +323,6 @@ const RegisterForm = ({ type }: { type: string }) => {
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                {/* <FormLabel>Confirm Password</FormLabel> */}
                 <div className="relative">
                   <FormControl>
                     <Input
@@ -276,16 +343,85 @@ const RegisterForm = ({ type }: { type: string }) => {
                       <Eye className="h-4 w-4" />
                     )}
                   </button>
+
+                  {/* Real-time match indicator */}
+                  {watchedConfirmPassword && (
+                    <div className="absolute right-10 top-1/2 transform -translate-y-1/2">
+                      {passwordMatch === true ? (
+                        <Check className="h-4 w-4 text-green-500" />
+                      ) : passwordMatch === false ? (
+                        <X className="h-4 w-4 text-red-500" />
+                      ) : null}
+                    </div>
+                  )}
                 </div>
-                <FormMessage />
+
+                {/* Real-time match message */}
+                {watchedConfirmPassword && passwordMatch !== null && (
+                  <p
+                    className={`text-xs mt-1 px-4 ${
+                      passwordMatch ? "text-green-600" : "text-red-600"
+                    }`}
+                  >
+                    {passwordMatch
+                      ? "Passwords match!"
+                      : "Passwords don't match"}
+                  </p>
+                )}
+
+                {/* <FormMessage /> */}
               </FormItem>
             )}
           />
 
+          <Turnstile
+            ref={turnstileRef}
+            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+            options={{
+              theme: theme === "dark" || theme === "system" ? "dark" : "light",
+              size: "flexible",
+            }}
+            onError={() => {
+              setTurnstileStatus("error");
+              setTurnstileError("Security check failed. Please try again.");
+            }}
+            onExpire={() => {
+              setTurnstileStatus("expired");
+              setTurnstileError("Security check expired. Please verify again.");
+            }}
+            onWidgetLoad={() => {
+              setTurnstileStatus("required");
+              setTurnstileError(null);
+            }}
+            onSuccess={(token) => {
+              setTurnstileStatus("success");
+              setTurnstileToken(token);
+              setTurnstileError(null);
+
+              console.log("token received:", token);
+            }}
+            scriptOptions={{
+              async: true,
+              defer: true,
+              appendTo: "head",
+            }}
+          />
+          {turnstileError && (
+            <div
+              className="flex items-center gap-2 text-red-500 text-sm mb-2"
+              aria-live="polite"
+            >
+              <AlertCircle size={16} />
+              <span>{turnstileError}</span>
+            </div>
+          )}
+
           <Button
             type="submit"
             className="w-full cursor-pointer rounded-[30px] h-[45px]"
-            disabled={registerMutation.isPending}
+            disabled={
+              registerMutation.isPending || turnstileStatus !== "success"
+            }
           >
             {registerMutation.isPending ? (
               <>
@@ -299,9 +435,78 @@ const RegisterForm = ({ type }: { type: string }) => {
         </form>
       </Form>
 
-      {redirecting && <PageLoader />}
-    </>
+      {/* form ends here */}
+
+      <div className="text-center text-sm text-neutral-500">
+        Already have an account?{" "}
+        <Link
+          href="/auth/login"
+          className="font-medium text-primary hover:underline"
+        >
+          Sign in
+        </Link>
+      </div>
+    </div>
   );
 };
 
-export default RegisterForm;
+export default RegisterFormComp;
+
+export function PasswordRequirements({ password }: { password: string }) {
+  const requirements = [
+    {
+      text: "At least 8 characters",
+      valid: password.length >= 8,
+    },
+    {
+      text: "At least 1 uppercase letter",
+      valid: /[A-Z]/.test(password),
+    },
+    {
+      text: "At least 1 lowercase letter",
+      valid: /[a-z]/.test(password),
+    },
+    {
+      text: "At least 1 number",
+      valid: /[0-9]/.test(password),
+    },
+    {
+      text: "At least 1 special character",
+      valid: /[^A-Za-z0-9]/.test(password),
+    },
+  ];
+
+  const hasTyped = password.length > 0;
+
+  return (
+    <div className="mt-2 space-y-1 px-4">
+      <p className="text-xs text-muted-foreground">Password must contain:</p>
+      <ul className="grid grid-cols-2 gap-1">
+        {requirements.map((req, i) => (
+          <li key={i} className="flex items-center gap-2">
+            {req.valid ? (
+              <Check className="h-3 w-3 text-green-500" />
+            ) : (
+              <X
+                className={`h-3 w-3 ${
+                  hasTyped ? "text-red-500" : "text-muted-foreground"
+                }`}
+              />
+            )}
+            <span
+              className={`text-[10px] ${
+                req.valid
+                  ? "text-green-600"
+                  : hasTyped
+                  ? "text-red-600"
+                  : "text-muted-foreground"
+              }`}
+            >
+              {req.text}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
