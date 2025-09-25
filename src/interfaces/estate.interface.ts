@@ -29,5 +29,6 @@ export interface IEstate {
   allowInstallment: boolean;
   marketingNotes?: string;
   status: "active" | "upcoming" | "sold_out";
-  createdAt?: string;
+  createdAt: string;
+  updatedAt: string;
 }
