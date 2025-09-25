@@ -11,9 +11,9 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { Check, Eye, EyeOff, Loader2Icon, X } from "lucide-react";
+import { AlertCircle, Check, Eye, EyeOff, Loader2Icon, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import { toast } from "sonner";
@@ -28,6 +28,8 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { PageLoader } from "../shared/PageLoader";
+import { Turnstile, TurnstileInstance } from "@marsidev/react-turnstile";
+import { useTheme } from "next-themes";
 import SuccessScreen from "./SuccessScreen";
 
 // Base schema for all users
@@ -61,10 +63,17 @@ export type RegisterFormValues = z.infer<typeof formSchema>;
 const RegisterForm = ({ type }: { type: string }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { theme } = useTheme();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
   const [passwordMatch, setPasswordMatch] = useState<boolean | null>(null);
+  const [turnstileStatus, setTurnstileStatus] = useState<
+    "success" | "error" | "expired" | "required"
+  >("required");
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const [turnstileError, setTurnstileError] = useState<string | null>(null);
+  const turnstileRef = useRef<TurnstileInstance>(null);
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [registeredEmail, setRegisteredEmail] = useState("");
 
@@ -126,7 +135,10 @@ const RegisterForm = ({ type }: { type: string }) => {
     };
 
     // console.log(">>>>>>", data);
-    registerMutation.mutate(payload);
+    registerMutation.mutate({
+      ...payload,
+      turnstileToken: turnstileToken as string,
+    });
   };
 
   const handleContinueToLogin = () => {
@@ -350,10 +362,54 @@ const RegisterForm = ({ type }: { type: string }) => {
             )}
           />
 
+          <Turnstile
+            ref={turnstileRef}
+            siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+            options={{
+              theme: theme === "dark" || theme === "system" ? "dark" : "light",
+              size: "flexible",
+            }}
+            onError={() => {
+              setTurnstileStatus("error");
+              setTurnstileError("Security check failed. Please try again.");
+            }}
+            onExpire={() => {
+              setTurnstileStatus("expired");
+              setTurnstileError("Security check expired. Please verify again.");
+            }}
+            onWidgetLoad={() => {
+              setTurnstileStatus("required");
+              setTurnstileError(null);
+            }}
+            onSuccess={(token) => {
+              setTurnstileStatus("success");
+              setTurnstileToken(token);
+              setTurnstileError(null);
+
+              console.log("token received:", token);
+            }}
+            scriptOptions={{
+              async: true,
+              defer: true,
+              appendTo: "head",
+            }}
+          />
+          {turnstileError && (
+            <div
+              className="flex items-center gap-2 text-red-500 text-sm mb-2"
+              aria-live="polite"
+            >
+              <AlertCircle size={16} />
+              <span>{turnstileError}</span>
+            </div>
+          )}
+
           <Button
             type="submit"
             className="w-full cursor-pointer rounded-[30px] h-[45px]"
-            disabled={registerMutation.isPending}
+            disabled={
+              registerMutation.isPending || turnstileStatus !== "success"
+            }
           >
             {registerMutation.isPending ? (
               <>
