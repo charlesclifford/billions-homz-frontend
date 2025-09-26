@@ -1,5 +1,6 @@
 "use client";
 
+import { StatusDialog } from "@/components/shared/StatusDialog";
 import {
   Dialog,
   DialogContent,
@@ -8,27 +9,59 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { ArrowUpRight } from "lucide-react";
 import { useState } from "react";
 import BookInspectionForm from "../property/BookInspectionForm";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { motion } from "framer-motion";
 
 const BookInspectionSection = () => {
   const [open, setOpen] = useState(false);
+  const [successOpen, setSuccessOpen] = useState(false);
+
+  const handleSuccess = () => {
+    setOpen(false); // close form dialog
+    setSuccessOpen(true); // open success dialog
+  };
+
+  const fadeUp = {
+    hidden: { y: 30, opacity: 0 },
+    visible: (i = 0) => ({
+      y: 0,
+      opacity: 1,
+      transition: { delay: i * 0.15, duration: 0.6, ease: "easeOut" },
+    }),
+  };
 
   return (
     <section className="bg-background relative overflow-hidden">
       <div className="w-full max-w-[min(100%,1290px)] mx-auto py-16 lg:py-28 px-4">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-3">
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="text-center mb-3"
+        >
+          <h2 className="text-[42px] lg:text-[70px] font-extrabold tracking-tight ">
             Book an Inspection
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+        </motion.div>
+
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          custom={1}
+          className="text-center mb-12"
+        >
+          <p className="text-lg md:text-xl max-w-2xl mx-auto">
             Ready to explore your future home? Schedule a guided inspection with
             our team at your convenience.
           </p>
-        </div>
+        </motion.div>
 
         {/* Dialog Trigger */}
         <div className="flex justify-center">
@@ -67,11 +100,20 @@ const BookInspectionSection = () => {
                 </DialogDescription>
               </DialogHeader>
               <ScrollArea className="max-h-[calc(100vh-200px)] px-4 md:px-8 py-8">
-                <BookInspectionForm />
+                <BookInspectionForm onSuccess={handleSuccess} />
               </ScrollArea>
             </DialogContent>
           </Dialog>
         </div>
+
+        {/* Success Dialog */}
+        <StatusDialog
+          open={successOpen}
+          onOpenChange={setSuccessOpen}
+          type="success"
+          title="Booking Request Sent"
+          description="We’ve received your inspection request. Our team will review it and confirm shortly."
+        />
       </div>
     </section>
   );
