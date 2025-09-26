@@ -14,10 +14,11 @@ const VerifyEmailContent = ({ token }: { token: string }) => {
   const verifyMutation = useMutation({
     mutationFn: verifyEmail,
     onSuccess: (data) => {
-      toast.success("Success", {
-        description: data.message,
-        icon: <CheckCircle2 className="h-5 w-5 text-green-500" />,
-      });
+      // toast.success("Success", {
+      //   description: data.message,
+      //   icon: <CheckCircle2 className="h-5 w-5 text-green-500" />,
+      // });
+      console.log(data.message);
       // Redirect to login/dashboard after 3 seconds
       setTimeout(() => router.push("/auth/login"), 3000);
     },
