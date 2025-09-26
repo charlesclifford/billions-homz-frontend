@@ -11,6 +11,8 @@ export const connectSocket = (token: string) => {
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
+      timeout: 10000,
+      transports: ["websocket", "polling"], // Fallback to polling if websocket fails
     });
 
     socket.connect();
@@ -19,3 +21,11 @@ export const connectSocket = (token: string) => {
 };
 
 export const getSocket = () => socket;
+
+export const disconnectSocket = () => {
+  if (socket) {
+    console.log("🔌❌ Disconnecting socket...");
+    socket.disconnect();
+    socket = null;
+  }
+};

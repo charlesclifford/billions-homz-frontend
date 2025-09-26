@@ -8,73 +8,38 @@ import {
   getNotifications,
   getUnreadNotificationCounts,
 } from "@/lib/api/notifications";
-import { getSocket } from "@/lib/socket";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
-import { toast } from "sonner";
+import { useQuery } from "@tanstack/react-query";
 
 export function useNotifications() {
-  const queryClient = useQueryClient();
-
   // Fetch notifications
-  const { data: notifications, isPending: notificationLoading } = useQuery({
+  const {
+    data: notifications,
+    isPending: notificationLoading,
+    error: notificationError,
+  } = useQuery({
     queryKey: ["notifications"],
     queryFn: getNotifications,
     select: (data) => data.data as INotification[],
+    retry: 3,
+    staleTime: 30 * 1000, // 30 seconds
   });
 
-  const { data: count, isPending: countLoading } = useQuery({
+  const {
+    data: count,
+    isPending: countLoading,
+    error: countError,
+  } = useQuery({
     queryKey: ["notifications-counts"],
     queryFn: getUnreadNotificationCounts,
     select: (data) => data.data as INotificationCount,
+    retry: 3,
+    staleTime: 30 * 1000, // 30 seconds
   });
 
-  // Real-time updates
-  useEffect(() => {
-    const socket = getSocket();
-    if (!socket) return;
-
-    const handleNewNotification = (notification: INotification) => {
-      // Update notifications list
-      queryClient.setQueryData<INotification[]>(
-        ["notifications"],
-        (old = []) => [notification, ...old]
-      );
-
-      // console.log(
-      //   "Updated notifications:",
-      //   queryClient.getQueryData(["notifications"])
-      // );
-
-      // Update unread count
-      queryClient.setQueryData<INotificationCount>(
-        ["notifications-counts"],
-        (old = { unread: 0 }) => ({
-          unread: old.unread + 1,
-        })
-      );
-
-      // Show toast notification
-      toast(notification.title, {
-        description: notification.message,
-        action: notification.link
-          ? {
-              label: "View",
-              onClick: () => window.open(notification.link, "_blank"),
-            }
-          : undefined,
-      });
-    };
-
-    socket.on("new-notification", handleNewNotification);
-    return () => {
-      socket.off("new-notification", handleNewNotification);
-    };
-  }, [queryClient]);
-
   return {
-    notifications,
+    notifications: notifications || [],
     unreadCount: count?.unread || 0,
     isLoading: notificationLoading || countLoading,
+    error: notificationError || countError,
   };
 }
