@@ -6,19 +6,7 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
-      allow: [
-        "/",
-        "/about-us",
-        "/listings/estates",
-        "/listings/properties",
-        "/contact-us",
-        "/blogs",
-        "/post",
-        "/gallery",
-        "/login",
-        "/register",
-        "/academy"
-      ],
+      allow: ["/"],
       disallow: ["/admin", "/account", "/realtor"],
     },
     sitemap: `${baseUrl}/sitemap.xml`,
