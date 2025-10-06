@@ -2,7 +2,7 @@ import ClientPropertyDetails from "@/components/pages/property/ClientPropertyDet
 import PageHeader from "@/components/shared/PageHeader";
 import { Separator } from "@/components/ui/separator";
 import { IProperty } from "@/interfaces/property.interface";
-import { getPropertyBySlug } from "@/lib/api/properties";
+import { getAllProperties, getPropertyBySlug } from "@/lib/api/properties";
 import { formatCurrency } from "@/utils/helpers";
 import {
   BuildingIcon,
@@ -13,6 +13,81 @@ import {
 } from "lucide-react";
 import { notFound } from "next/navigation";
 import { SummaryItem } from "../../estates/[slug]/page";
+import { Metadata } from "next";
+import { config } from "@/utils/config";
+
+const { SITE_NAME, SITE_URL } = config;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const data = await getPropertyBySlug(slug);
+  const property = data.data as IProperty;
+
+  if (!property) {
+    notFound();
+  }
+
+  const url = `${SITE_URL}/listings/properties/${property.slug}`;
+
+  return {
+    title: `${property.title} | ${SITE_NAME}`,
+    description:
+      property.description?.slice(0, 160) ||
+      "View details about this property.",
+    alternates: {
+      canonical: url, // ✅ Correct canonical per property
+    },
+    openGraph: {
+      title: `${property.title} | ${SITE_NAME}`,
+      description: property.description,
+      url,
+      images: [
+        {
+          url:
+            property.images[0]?.imageUrl ||
+            `/images/logos/billions-whatsapp.jpg`,
+          width: 1200,
+          height: 630,
+          alt: property.title,
+        },
+      ],
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: property.title,
+      description: property.description,
+      images: [
+        property.images[0]?.imageUrl ||
+          `/images/logos/billions-whatsapp.jpg`,
+      ],
+    },
+  };
+}
+
+export const generateStaticParams = async () => {
+  let properties = [];
+  try {
+    const data = await getAllProperties({
+      page: 1,
+      limit: 50,
+    });
+
+    properties = data.data;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return properties.map((property: any) => ({
+      // id: post?._id,
+      slug: property?.slug,
+    }));
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const PropertyDetailsPage = async ({
   params,
