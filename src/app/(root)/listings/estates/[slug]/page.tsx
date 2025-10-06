@@ -3,11 +3,86 @@ import PageHeader from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { IEstate } from "@/interfaces/estate.interface";
-import { getEstateBySlug } from "@/lib/api/properties";
+import { getAllEstates, getEstateBySlug } from "@/lib/api/properties";
+import { config } from "@/utils/config";
+import { formatCurrency } from "@/utils/helpers";
 import { CurrencyIcon, MapPin, RulerDimensionLine } from "lucide-react";
+import { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import React from "react";
+
+const { SITE_NAME, SITE_URL } = config;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const data = await getEstateBySlug(slug);
+  const estate = data.data as IEstate;
+
+  if (!estate) {
+    notFound();
+  }
+
+  const url = `${SITE_URL}/listings/estates/${estate.slug}`;
+
+  return {
+    title: `${estate.name} | ${SITE_NAME}`,
+    description:
+      estate.description?.slice(0, 160) || "View details about this property.",
+    alternates: {
+      canonical: url, // ✅ Correct canonical per estate
+    },
+    openGraph: {
+      title: `${estate.name} | ${SITE_NAME}`,
+      description: estate.description,
+      url,
+      images: [
+        {
+          url:
+            estate.bannerImage?.imageUrl ||
+            `/images/logos/billions-whatsapp.jpg`,
+          width: 1200,
+          height: 630,
+          alt: estate.name,
+        },
+      ],
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: estate.name,
+      description: estate.description,
+      images: [
+        estate.bannerImage?.imageUrl ||
+          `${SITE_URL}/images/logos/billions-whatsapp.jpg`,
+      ],
+    },
+  };
+}
+
+export const generateStaticParams = async () => {
+  let estates = [];
+  try {
+    const data = await getAllEstates({
+      page: 1,
+      limit: 50,
+    });
+
+    estates = data.data;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return estates.map((estate: any) => ({
+      // id: post?._id,
+      slug: estate?.slug,
+    }));
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const EstateDetailsPage = async ({
   params,
@@ -62,7 +137,7 @@ const EstateDetailsPage = async ({
             <SummaryItem
               icon={<CurrencyIcon />}
               label="Price Range"
-              value={`₦${estate.price?.toLocaleString()}`}
+              value={`${formatCurrency(estate?.price || 0)}`}
             />
           </div>
         </div>
@@ -150,7 +225,6 @@ const EstateDetailsPage = async ({
               >
                 Contact Agent
               </Button>
-              
             </div>
           </div>
         </div>
@@ -177,9 +251,7 @@ export const SummaryItem = ({
         {icon}
       </div>
       <div className="flex flex-col">
-        <h3 className="text-muted-foreground font-semibold">
-          {label}
-        </h3>
+        <h3 className="text-muted-foreground font-semibold">{label}</h3>
         <p className="font-medium text-lg leading-[1.5em]">{value}</p>
       </div>
     </div>
