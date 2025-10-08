@@ -1,3 +1,4 @@
+import BookingInspectionCard from "@/components/pages/property/BookingInspectionCard";
 import EstateShareButtons from "@/components/pages/property/EstateShareButtons";
 import PageHeader from "@/components/shared/PageHeader";
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,12 @@ import { IEstate } from "@/interfaces/estate.interface";
 import { getAllEstates, getEstateBySlug } from "@/lib/api/properties";
 import { config } from "@/utils/config";
 import { formatCurrency } from "@/utils/helpers";
-import { CurrencyIcon, MapPin, RulerDimensionLine } from "lucide-react";
+import {
+  CurrencyIcon,
+  LucideSquareStack,
+  MapPin,
+  RulerDimensionLine,
+} from "lucide-react";
 import { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -127,6 +133,17 @@ const EstateDetailsPage = async ({
         <Separator className="mt-5" />
         <div className="flex flex-row mb-[50px]">
           <div className="pt-[45px] flex items-center gap-[65px]">
+            <SummaryItem
+              icon={<LucideSquareStack />}
+              label="Status"
+              value={
+                estate.soldUnits === estate.totalUnits
+                  ? "Sold Out"
+                  : estate.soldUnits && estate.soldUnits > 0
+                  ? "Now Selling"
+                  : "Available"
+              }
+            />
             {estate.plotSize && (
               <SummaryItem
                 icon={<RulerDimensionLine />}
@@ -212,19 +229,23 @@ const EstateDetailsPage = async ({
             </div>
 
             {/* Contact/CTA Card */}
-            <div className="bg-primary/20 p-8 rounded-[30px] sticky top-8">
-              <h3 className="text-lg font-semibold mb-3">
-                Interested in this property?
-              </h3>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
-                Contact us for more information or to schedule a viewing.
-              </p>
-              <Button
-                size={"lg"}
-                className="w-full rounded-[30px] cursor-pointer"
-              >
-                Contact Agent
-              </Button>
+            <div className=" sticky top-8 flex flex-col gap-8">
+              <div className="bg-primary/20 p-8 rounded-[30px]">
+                <h3 className="text-lg font-semibold mb-3">
+                  Interested in this property?
+                </h3>
+                <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-4">
+                  Contact us for more information or to schedule a viewing.
+                </p>
+                <Button
+                  size={"lg"}
+                  className="w-full rounded-[30px] cursor-pointer"
+                >
+                  Contact Agent
+                </Button>
+              </div>
+
+              <BookingInspectionCard property={estate} />
             </div>
           </div>
         </div>

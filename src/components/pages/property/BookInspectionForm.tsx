@@ -50,7 +50,13 @@ const formItemVariants = {
   },
 };
 
-const BookInspectionForm = ({ onSuccess }: { onSuccess: () => void }) => {
+const BookInspectionForm = ({
+  onSuccess,
+  selectedEstate,
+}: {
+  onSuccess: () => void;
+  selectedEstate?: string;
+}) => {
   const { estates } = useEstates({
     page: 1,
     limit: 10,
@@ -66,7 +72,7 @@ const BookInspectionForm = ({ onSuccess }: { onSuccess: () => void }) => {
       source: "",
       realtor: "",
       day: "",
-      estate: "",
+      estate: selectedEstate || "",
     },
   });
 
@@ -249,10 +255,20 @@ const BookInspectionForm = ({ onSuccess }: { onSuccess: () => void }) => {
             name="estate"
             render={({ field }) => (
               <FormItem>
-                <Select onValueChange={field.onChange} value={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  disabled={!!selectedEstate}
+                >
                   <FormControl>
                     <SelectTrigger className="focus-visible:ring-0 shadow-none px-[30px] py-[15px] bg-gray-100 rounded-[30px] text-sm leading-[1.75] w-full !h-12 transition-all duration-300 focus:bg-white focus:ring-2 focus:ring-primary/20 capitalize truncate">
-                      <SelectValue placeholder="Estate are you interested in?" />
+                      <SelectValue
+                        placeholder={
+                          selectedEstate
+                            ? selectedEstate
+                            : "Estate you are interested in?"
+                        }
+                      />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
