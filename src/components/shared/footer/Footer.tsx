@@ -126,7 +126,7 @@ const Footer = () => {
                   viewport={{ once: true }}
                 >
                   <motion.div
-                    className="flex flex-col justify-between gap-[30px] pb-0 lg:pb-5 pr-0 lg:pr-10"
+                    className="flex flex-col justify-between gap-[30px] pb-0 lg:pb-5 pr-0 lg:pr-10 lg:pl-10"
                     variants={itemVariants}
                   >
                     <div className="mx-auto lg:mx-0 font-bold">
@@ -137,7 +137,7 @@ const Footer = () => {
                         <Logo className="h-10" />
                       </Link>
                     </div>
-                    <div className="text-center lg:text-left">
+                    <div className="text-center lg:text-left max-w-sm mx-auto">
                       <p className="leading-[28px] ">
                         We are creators of transformative spaces that inspire,
                         innovate, and endure.
@@ -146,7 +146,7 @@ const Footer = () => {
                   </motion.div>
 
                   <motion.div
-                    className="flex justify-evenly lg:justify-between border-t lg:border-t-0 border-b lg:border-b-0 lg:border-l lg:border-l-border lg:border-r lg:border-r-border py-[30px] lg:py-0 px-10 pb-5"
+                    className="flex justify-around border-t lg:border-t-0 border-b lg:border-b-0 lg:border-l lg:border-l-border lg:border-r lg:border-r-border py-[30px] lg:py-0 px-10 pb-5"
                     variants={itemVariants}
                   >
                     <div>
