@@ -11,6 +11,7 @@ import salesReducer from "./features/sales/sale.slice";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { PERSIST_STORE_NAME } from "@/constants/app.constant";
+import inspectionReducer from "./features/inspections/inspection.slice"
 
 // Configuration for persisting state
 const persistConfig = {
@@ -30,6 +31,7 @@ const rootReducer = combineReducers({
   blog: blogReducer,
   commission: commissionsReducer,
   sale: salesReducer,
+  inspection: inspectionReducer
 });
 
 // Wrap reducers with persistReducer

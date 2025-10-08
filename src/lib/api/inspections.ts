@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { InspectionQueryParams } from "@/interfaces/inspection.interface";
 import instance from "@/services/axios";
 
 // Handle responses and errors
@@ -47,6 +48,33 @@ export const cancelInspection = async (
 ) => {
   try {
     const response = await instance.post(`/inspections/${id}/cancel`, data);
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const getInspections = async (params?: InspectionQueryParams) => {
+  try {
+    const response = await instance.get(`/inspections`, { params });
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const getInspectionStats = async () => {
+  try {
+    const response = await instance.get(`/inspections/stats`);
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const getInspectionById = async (id: string) => {
+  try {
+    const response = await instance.get(`/inspections/${id}`);
     return handleResponse(response);
   } catch (error) {
     handleError(error);
