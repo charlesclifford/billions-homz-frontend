@@ -7,7 +7,7 @@ import {
   Home,
   MapPin,
   Ruler,
-  Shield
+  Shield,
 } from "lucide-react";
 
 const InfoTabContent = ({
@@ -150,11 +150,16 @@ const InfoTabContent = ({
         {property.virtualTour && (
           <div className="mt-8">
             <div className="flex items-center justify-between pb-3 pt-5 mb-4">
-              <h2 className="text-4xl font-bold leading-tight tracking-[-0.015em]">
-                Virtual Tour
-              </h2>
+              <div className="flex flex-col gap-2">
+                <h2 className="text-4xl font-bold leading-tight tracking-[-0.015em]">
+                  Take a Virtual Tour of the Property
+                </h2>
+                <p className="text-muted-foreground text-sm">
+                  Explore the rooms and get a feel of the space before visiting.
+                </p>
+              </div>
             </div>
-            <div className="bg-primary/5 border border-primary/10 p-6 py-12 rounded-[30px] text-center">
+            <div className="">
               <button
                 type="button"
                 className="p-[5px] pl-[30px] border rounded-[30px] text-sm font-bold capitalize inline-grid relative group h-full cursor-pointer dark:bg-white"
