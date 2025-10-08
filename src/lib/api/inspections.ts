@@ -32,7 +32,7 @@ export const bookInspection = async (data: any) => {
 
 export const confirmInspection = async (
   id: string,
-  data: { confirmedDate: any }
+  data: { confirmedDate: string }
 ) => {
   try {
     const response = await instance.post(`/inspections/${id}/confirm`, data);

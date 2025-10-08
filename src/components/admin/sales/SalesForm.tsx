@@ -1056,6 +1056,10 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
           onAction={() => {
             if (dialog.type === "success") {
               setDialog((prev) => ({ ...prev, open: false }));
+              queryClient.invalidateQueries({ queryKey: ["sales"] });
+              queryClient.invalidateQueries({ queryKey: ["allEstates"] });
+              queryClient.invalidateQueries({ queryKey: ["allProperties"] });
+              queryClient.invalidateQueries({ queryKey: ["salesAnalytics"] });
             } else {
               setDialog((prev) => ({ ...prev, open: false }));
             }
