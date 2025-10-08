@@ -54,6 +54,7 @@ import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { formatNumberWithCommas } from "@/utils/helpers";
 import { nigeriaStates } from "@/data/nigeria-states";
+import { FeedbackDialog } from "@/components/shared/FeedbackDialog";
 
 // Define property schema with validation
 const propertySchema = z.object({
@@ -100,6 +101,13 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
     initialValues?.location?.state || ""
   );
 
+  const [dialog, setDialog] = useState({
+    open: false,
+    type: "success" as "success" | "error",
+    title: "",
+    message: "",
+  });
+
   const form = useForm<PropertyFormData>({
     resolver: zodResolver(propertySchema),
     defaultValues: {
@@ -121,7 +129,7 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
       },
       features: initialValues?.features || [],
       documents: initialValues?.documents || [],
-      virtualTour: initialValues?.virtualTour || false,
+      virtualTour: initialValues?.virtualTour || true,
     },
   });
 
@@ -214,13 +222,24 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
   const createMutation = useMutation({
     mutationFn: createProperty,
     onSuccess: (data) => {
-      toast.success(data?.message || "Property created successfully");
+      // toast.success(data?.message || "Property created successfully");
+      setDialog({
+        open: true,
+        type: "success",
+        title: "Success",
+        message: data?.message || "Property created successfully",
+      });
       queryClient.invalidateQueries({ queryKey: ["allProperties"] });
-      router.push("/admin/properties");
     },
     onError: (error: Error) => {
       console.error("Error creating property:", error);
-      toast.error(error.message || "Failed to create property");
+      // toast.error(error.message || "Failed to create property");
+      setDialog({
+        open: true,
+        type: "error",
+        title: "Error",
+        message: error.message || "Failed to create property",
+      });
     },
   });
 
@@ -228,13 +247,24 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
     mutationFn: (data: FormData) =>
       updateProperty(initialValues?._id as string, data),
     onSuccess: (data) => {
-      toast.success(data?.message || "Property updated successfully");
+      // toast.success(data?.message || "Property updated successfully");
+      setDialog({
+        open: true,
+        type: "success",
+        title: "Success",
+        message: data?.message || "Property updated successfully.",
+      });
       queryClient.invalidateQueries({ queryKey: ["allProperties"] });
-      router.push("/admin/properties");
     },
     onError: (error: Error) => {
       console.error("Error creating property:", error);
-      toast.error(error.message || "Failed to create property");
+      // toast.error(error.message || "Failed to create property");
+      setDialog({
+        open: true,
+        type: "error",
+        title: "Error",
+        message: error.message || "Failed to update property.",
+      });
     },
   });
 
@@ -1000,6 +1030,7 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
               <Button
                 type="submit"
                 className="cursor-pointer"
+                size={'lg'}
                 disabled={createMutation.isPending || updateMutation.isPending}
               >
                 {createMutation.isPending || updateMutation.isPending ? (
@@ -1017,6 +1048,26 @@ const PropertyForm = ({ initialValues }: PropertyFormProps) => {
           </form>
         </Form>
       </Card>
+
+      <FeedbackDialog
+        open={dialog.open}
+        type={dialog.type}
+        title={dialog.title}
+        message={dialog.message}
+        onClose={() => setDialog((prev) => ({ ...prev, open: false }))}
+        actionLabel={
+          dialog.type === "success" ? "Continue" : "Try Again"
+        }
+        onAction={() => {
+          if (dialog.type === "success") {
+            router.push("/admin/properties");
+          } else {
+            setDialog((prev) => ({ ...prev, open: false }));
+          }
+        }}
+        allowOutsideInteraction={false}
+        hideCloseButton
+      />
     </div>
   );
 };

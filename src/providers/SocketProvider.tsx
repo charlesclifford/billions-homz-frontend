@@ -6,6 +6,7 @@ import { connectSocket, disconnectSocket } from "@/lib/socket";
 import { useAppSelector } from "@/store/hooks";
 import { useQueryClient } from "@tanstack/react-query";
 import cookies from "js-cookie";
+import { useRouter } from "next/navigation";
 import { ReactNode, useCallback, useEffect, useRef } from "react";
 import { toast } from "sonner";
 
@@ -15,6 +16,7 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
   const hasJoinedRoom = useRef(false);
   const currentRoom = useRef<string | null>(null);
   const queryClient = useQueryClient();
+  const router = useRouter();
 
   // Reset room join status when user changes
   useEffect(() => {
@@ -80,9 +82,8 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
                 // Handle both relative and absolute links
                 if (notification.link?.startsWith("http")) {
                   window.open(notification.link, "_blank");
-                } else if (notification.link) {
-                  // For internal links, you might want to use Next.js router
-                  window.location.href = notification.link;
+                } else {
+                  router.push(notification.link);
                 }
               },
             }

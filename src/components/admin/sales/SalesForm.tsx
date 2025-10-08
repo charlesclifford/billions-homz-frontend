@@ -68,6 +68,8 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import useProperties from "@/hooks/useProperties";
+import { FeedbackDialog } from "@/components/shared/FeedbackDialog";
+import { AxiosError } from "axios";
 
 const formSchema = z
   .object({
@@ -146,6 +148,12 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
   const [pendingValues, setPendingValues] = useState<SalesFormValues | null>(
     null
   );
+  const [dialog, setDialog] = useState({
+    open: false,
+    type: "success" as "success" | "error",
+    title: "",
+    message: "",
+  });
 
   const form = useForm<SalesFormValues>({
     resolver: zodResolver(formSchema),
@@ -210,15 +218,24 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
   const createMutation = useMutation({
     mutationFn: createSale,
     onSuccess: async (data) => {
-      toast.success(data?.message || "Sale created successfully");
-      queryClient.invalidateQueries({ queryKey: ["sales"] });
-      queryClient.invalidateQueries({ queryKey: ["allEstates"] });
-      queryClient.invalidateQueries({ queryKey: ["allProperties"] });
+      // toast.success(data?.message || "Sale created successfully");
+      setDialog({
+        open: true,
+        type: "success",
+        title: "Success",
+        message: data?.message || "Sale created successfully",
+      });
       handleClose();
     },
-    onError: (error) => {
-      toast.error("Failed to create sale");
+    onError: (error: AxiosError<{ message: string }>) => {
+      // toast.error("Failed to create sale");
       console.error("Create sale error:", error);
+      setDialog({
+        open: true,
+        type: "error",
+        title: "Error",
+        message: error.message || "Failed to create sale",
+      });
     },
   });
 
@@ -488,7 +505,8 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
                       placeholder="Units sold"
                       {...field}
                       // disabled={selectedAssetType === "property"}
-                      value={selectedAssetType === "property" ? 1 : field.value}
+                      value={field.value}
+                      // value={selectedAssetType === "property" ? 1 : field.value}
                     />
                   </FormControl>
                   <FormMessage />
@@ -596,7 +614,7 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
             />
 
             {/* Payment Information */}
-            <FormField
+            {/* <FormField
               control={form.control}
               name="paymentType"
               render={({ field }) => (
@@ -616,7 +634,7 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
                   <FormMessage />
                 </FormItem>
               )}
-            />
+            /> */}
 
             <FormField
               control={form.control}
@@ -775,7 +793,7 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
 
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DialogContent className="!max-w-2xl max-h-[80vh]">
-          <DialogHeader>
+          <DialogHeader className="px-4">
             <DialogTitle className="text-xl flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-amber-500" />
               Confirm Sale Details
@@ -786,7 +804,7 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
             </DialogDescription>
           </DialogHeader>
 
-          <ScrollArea className="flex-1 h-[calc(80vh-240px)]">
+          <ScrollArea className="flex-1 h-[calc(80vh-240px)] px-4">
             <div className="space-y-4 py-4">
               {pendingValues && (
                 <>
@@ -941,7 +959,7 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
             </div>
           </ScrollArea>
 
-          <DialogFooter>
+          <DialogFooter className="px-4">
             <Button
               type="button"
               variant="outline"
@@ -949,7 +967,7 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
               disabled={createMutation.isPending}
               className="cursor-pointer"
             >
-              Go Back and Edit
+              Recheck
             </Button>
             <Button
               type="button"
@@ -1007,49 +1025,97 @@ const SalesForm = ({ children, initialValues }: SalesFormProps) => {
 
   if (isMobile) {
     return (
-      <Sheet open={open} onOpenChange={handleOpenChange}>
-        <SheetTrigger asChild>{children}</SheetTrigger>
-        <SheetContent
-          className="w-full sm:max-w-lg"
-          onInteractOutside={(e) => e.preventDefault()}
-        >
-          <SheetHeader className="border-b">
-            <SheetTitle className="text-xl">
-              {initialValues?._id ? "Edit Sale" : "Record New Sale"}
-            </SheetTitle>
-          </SheetHeader>
-          <ScrollArea className="flex-1 min-h-[calc(100dvh-180px)]">
-            {renderFormContent()}
-          </ScrollArea>
-          <SheetFooter className="flex flex-row justify-end gap-2 pt-4">
-            {renderFooter()}
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
+      <>
+        <Sheet open={open} onOpenChange={handleOpenChange}>
+          <SheetTrigger asChild>{children}</SheetTrigger>
+          <SheetContent
+            className="w-full sm:max-w-lg"
+            onInteractOutside={(e) => e.preventDefault()}
+          >
+            <SheetHeader className="border-b">
+              <SheetTitle className="text-xl">
+                {initialValues?._id ? "Edit Sale" : "Record New Sale"}
+              </SheetTitle>
+            </SheetHeader>
+            <ScrollArea className="flex-1 min-h-[calc(100dvh-180px)]">
+              {renderFormContent()}
+            </ScrollArea>
+            <SheetFooter className="flex flex-row justify-end gap-2 pt-4">
+              {renderFooter()}
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
+
+        <FeedbackDialog
+          open={dialog.open}
+          type={dialog.type}
+          title={dialog.title}
+          message={dialog.message}
+          onClose={() => setDialog((prev) => ({ ...prev, open: false }))}
+          actionLabel={dialog.type === "success" ? "Continue" : "Try Again"}
+          onAction={() => {
+            if (dialog.type === "success") {
+              setDialog((prev) => ({ ...prev, open: false }));
+              queryClient.invalidateQueries({ queryKey: ["sales"] });
+              queryClient.invalidateQueries({ queryKey: ["allEstates"] });
+              queryClient.invalidateQueries({ queryKey: ["allProperties"] });
+              queryClient.invalidateQueries({ queryKey: ["salesAnalytics"] });
+            } else {
+              setDialog((prev) => ({ ...prev, open: false }));
+            }
+          }}
+          allowOutsideInteraction={false}
+          hideCloseButton
+        />
+      </>
     );
   }
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent
-        className="!max-w-4xl w-full h-full lg:h-[calc(100vh-50px)]"
-        onInteractOutside={(e) => e.preventDefault()}
-      >
-        <DialogHeader>
-          <DialogTitle>
-            {initialValues?._id ? "Edit Sale" : "Record New Sale"}
-          </DialogTitle>
-          <DialogDescription>
-            Fill in the details of the property sale
-          </DialogDescription>
-        </DialogHeader>
-        <ScrollArea className="h-[calc(100vh-200px)]">
-          {renderFormContent()}
-        </ScrollArea>
-        <DialogFooter>{renderFooter()}</DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogTrigger asChild>{children}</DialogTrigger>
+        <DialogContent
+          className="!max-w-4xl w-full h-full lg:h-[calc(100vh-50px)]"
+          onInteractOutside={(e) => e.preventDefault()}
+        >
+          <DialogHeader>
+            <DialogTitle>
+              {initialValues?._id ? "Edit Sale" : "Record New Sale"}
+            </DialogTitle>
+            <DialogDescription>
+              Fill in the details of the property sale
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="h-[calc(100vh-200px)]">
+            {renderFormContent()}
+          </ScrollArea>
+          <DialogFooter>{renderFooter()}</DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <FeedbackDialog
+        open={dialog.open}
+        type={dialog.type}
+        title={dialog.title}
+        message={dialog.message}
+        onClose={() => setDialog((prev) => ({ ...prev, open: false }))}
+        actionLabel={dialog.type === "success" ? "Continue" : "Try Again"}
+        onAction={() => {
+          if (dialog.type === "success") {
+            setDialog((prev) => ({ ...prev, open: false }));
+            queryClient.invalidateQueries({ queryKey: ["sales"] });
+            queryClient.invalidateQueries({ queryKey: ["allEstates"] });
+            queryClient.invalidateQueries({ queryKey: ["allProperties"] });
+            queryClient.invalidateQueries({ queryKey: ["salesAnalytics"] });
+          } else {
+            setDialog((prev) => ({ ...prev, open: false }));
+          }
+        }}
+        allowOutsideInteraction={false}
+        hideCloseButton
+      />
+    </>
   );
 };
 

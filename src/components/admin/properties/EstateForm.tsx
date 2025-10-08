@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackDialog } from "@/components/shared/FeedbackDialog";
 import { InputWithAffix } from "@/components/shared/InputWithAffix";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -26,10 +27,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { nigeriaStates } from "@/data/nigeria-states";
 import { IEstate } from "@/interfaces/estate.interface";
 import { createEstate, updateEstate } from "@/lib/api/properties";
+import { formatNumberWithCommas } from "@/utils/helpers";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Tag } from "iconsax-reactjs";
@@ -42,8 +44,6 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 import { MapboxPicker } from "./MapboxPicker";
-import { formatNumberWithCommas } from "@/utils/helpers";
-import { nigeriaStates } from "@/data/nigeria-states";
 
 export const NairaIcon = () => <span className="font-medium">₦</span>;
 export const SquareMetreIcon = () => (
@@ -92,6 +92,12 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
   const [selectedState, setSelectedState] = useState<string>(
     initialValues?.location?.state || ""
   );
+  const [dialog, setDialog] = useState({
+    open: false,
+    type: "success" as "success" | "error",
+    title: "",
+    message: "",
+  });
 
   const form = useForm<EstateFormValues>({
     resolver: zodResolver(formSchema),
@@ -208,8 +214,13 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
     mutationFn: (data: FormData) => createEstate(data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["allEstates"] });
-      toast.success(data?.message || "Estate created successfully");
-      router.push("/admin/estates");
+      // toast.success(data?.message || "Estate created successfully");
+      setDialog({
+        open: true,
+        type: "success",
+        title: "Success",
+        message: data?.message || "Estate created successfully",
+      });
     },
     onError: (error: Error) => {
       console.error("Error creating estate:", error);
@@ -222,8 +233,13 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
       updateEstate(initialValues?._id as string, data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["allEstates"] });
-      toast.success(data?.message || "Estate updated successfully");
-      router.push("/admin/estates");
+      // toast.success(data?.message || "Estate updated successfully");
+      setDialog({
+        open: true,
+        type: "success",
+        title: "Success",
+        message: data?.message || "Estate updated successfully",
+      });
     },
     onError: (error: Error) => {
       console.error("Error updating estate:", error);
@@ -497,7 +513,7 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                         }}
                       />
                     </div>
-                    <FormField
+                    {/* <FormField
                       control={form.control}
                       name="allowInstallment"
                       render={({ field }) => (
@@ -517,7 +533,7 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
                           </FormControl>
                         </FormItem>
                       )}
-                    />
+                    /> */}
                   </div>
 
                   {/* Features */}
@@ -935,6 +951,26 @@ const EstateForm = ({ initialValues }: EstateFormProps) => {
           </form>
         </Form>
       </Card>
+
+      <FeedbackDialog
+        open={dialog.open}
+        type={dialog.type}
+        title={dialog.title}
+        message={dialog.message}
+        onClose={() => setDialog((prev) => ({ ...prev, open: false }))}
+        actionLabel={
+          dialog.type === "success" ? "Continue" : "Try Again"
+        }
+        onAction={() => {
+          if (dialog.type === "success") {
+            router.push("/admin/estates");
+          } else {
+            setDialog((prev) => ({ ...prev, open: false }));
+          }
+        }}
+        allowOutsideInteraction={false}
+        hideCloseButton
+      />
     </div>
   );
 };

@@ -32,6 +32,8 @@ import {
   useSidebar,
 } from "../ui/sidebar";
 import AdminSidebarUser from "./AdminSidebarUser";
+import { Eye } from "iconsax-reactjs";
+import { Separator } from "../ui/separator";
 
 interface ISidebarMenu {
   title: string;
@@ -40,7 +42,12 @@ interface ISidebarMenu {
   icon?: React.ComponentType<{ size?: number; className?: string }>;
 }
 
-const navGroups = [
+interface INavGroup {
+  title: string;
+  items: ISidebarMenu[];
+}
+
+const navGroups: INavGroup[] = [
   {
     title: "Main",
     items: [
@@ -58,6 +65,11 @@ const navGroups = [
         title: "Properties",
         url: "/admin/properties",
         icon: HomeIcon,
+      },
+      {
+        title: "Site Inspections",
+        url: "/admin/inspections",
+        icon: Eye,
       },
     ],
   },
@@ -177,7 +189,7 @@ const AdminSidebar = () => {
           </Link>
         </div>
       </SidebarHeader>
-      <SidebarContent >
+      <SidebarContent>
         <ScrollArea className="flex-1 flex flex-col min-h-0">
           {navGroups.map((group, groupIndex) => {
             // Filter items based on user role
@@ -220,6 +232,7 @@ const AdminSidebar = () => {
               </SidebarGroup>
             );
           })}
+          <Separator />
 
           <SidebarMenu className="space-y-1 p-2 mt-auto">
             {navSecondary.map((item, i) => {

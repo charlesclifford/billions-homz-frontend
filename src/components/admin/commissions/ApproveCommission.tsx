@@ -1,3 +1,4 @@
+import { FeedbackDialog } from "@/components/shared/FeedbackDialog";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -20,19 +21,34 @@ import { toast } from "sonner";
 const ApproveCommission = ({ commission }: { commission: ICommission }) => {
   const queryClient = useQueryClient();
   const [showDialog, setShowDialog] = useState(false);
+  const [dialog, setDialog] = useState({
+    open: false,
+    type: "success" as "success" | "error",
+    title: "",
+    message: "",
+  });
 
   const approveMutation = useMutation({
     mutationFn: approvePayout,
     onSuccess: (data) => {
-      toast.success(data?.message || "Commission approved successfully");
-      queryClient.invalidateQueries({ queryKey: ["allCommissions"] });
-      queryClient.invalidateQueries({ queryKey: ["realtorCommissions"] });
-      queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
+      // toast.success(data?.message || "Commission approved successfully");
       setShowDialog(false);
+      setDialog({
+        open: true,
+        type: "success",
+        title: "Success",
+        message: data?.message || "Commission approved successfully",
+      });
     },
     onError: (error: Error) => {
       console.error("Error approving commission:", error);
-      toast.error(error.message || "Failed to approve commission");
+      // toast.error(error.message || "Failed to approve commission");
+      setDialog({
+        open: true,
+        type: "error",
+        title: "Error",
+        message: error.message || "Failed to approve commission",
+      });
     },
   });
 
@@ -45,139 +61,162 @@ const ApproveCommission = ({ commission }: { commission: ICommission }) => {
   };
 
   return (
-    <Dialog open={showDialog} onOpenChange={setShowDialog}>
-      <DialogTrigger asChild>
-        <Button
-          size="sm"
-          className="cursor-pointer"
-          disabled={approveMutation.isPending}
-        >
-          {approveMutation.isPending ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            "Approve"
-          )}
-        </Button>
-      </DialogTrigger>
-      <DialogContent
-        className="sm:max-w-[600px] [&>button]:hidden"
-        onInteractOutside={(e) => e.preventDefault()}
-      >
-        <DialogHeader>
-          <DialogTitle>Approve Commission Payment</DialogTitle>
-          <DialogDescription>
-            Review commission details before approval
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <div className="text-sm font-medium text-muted-foreground">
-              Realtor:
-            </div>
-            <div className="col-span-3 font-medium capitalize">
-              {commission.realtor?.firstName} {commission.realtor?.lastName}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-4 items-center gap-4">
-            <div className="text-sm font-medium text-muted-foreground">
-              Estate:
-            </div>
-            <div className="col-span-3 font-medium capitalize">
-              {commission.sale?.estate?.name || "Unknown Property"}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-4 items-center gap-4">
-            <div className="text-sm font-medium text-muted-foreground">
-              Sale Amount:
-            </div>
-            <div className="col-span-3 font-medium">
-              {formatCurrency(commission.sale?.amountPaid)}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-4 items-center gap-4">
-            <div className="text-sm font-medium text-muted-foreground">
-              Commission Rate:
-            </div>
-            <div className="col-span-3 font-medium">
-              {formatRate(commission.rate, {
-                decimalPlaces: 0,
-              })}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-4 items-center gap-4">
-            <div className="text-sm font-medium text-muted-foreground">
-              Commission Amount:
-            </div>
-            <div className="col-span-3 font-medium text-green-600">
-              {formatCurrency(commission.amount)}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-4 items-center gap-4">
-            <div className="text-sm font-medium text-muted-foreground">
-              Sale Date:
-            </div>
-            <div className="col-span-3 font-medium">
-              {formatDate(commission.sale?.dateSold || new Date(), "PPP")}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-4 items-center gap-4">
-            <div className="text-sm font-medium text-muted-foreground">
-              Requested On:
-            </div>
-            <div className="col-span-3 font-medium">
-              {formatDate(
-                commission.paymentRequest.requestedAt || new Date(),
-                "PPPp"
-              )}
-            </div>
-          </div>
-
-          {commission.paymentRequest?.requestNote && (
-            <div className="grid grid-cols-4 items-start gap-4">
-              <div className="text-sm font-medium text-muted-foreground">
-                Notes:
-              </div>
-              <div className="col-span-3 p-3 bg-muted/50 rounded-md">
-                {commission.paymentRequest.requestNote}
-              </div>
-            </div>
-          )}
-        </div>
-
-        <DialogFooter>
+    <>
+      <Dialog open={showDialog} onOpenChange={setShowDialog}>
+        <DialogTrigger asChild>
           <Button
-            variant="outline"
+            size="sm"
             className="cursor-pointer"
-            onClick={() => setShowDialog(false)}
-            disabled={approveMutation.isPending}
-          >
-            Cancel
-          </Button>
-          <Button
-            variant="default"
-            className="cursor-pointer"
-            onClick={handleApproval}
             disabled={approveMutation.isPending}
           >
             {approveMutation.isPending ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Approving...
-              </>
+              <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
-              "Confirm Approval"
+              "Approve"
             )}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </DialogTrigger>
+        <DialogContent
+          className="sm:max-w-[600px] [&>button]:hidden"
+          onInteractOutside={(e) => e.preventDefault()}
+        >
+          <DialogHeader>
+            <DialogTitle>Approve Commission Payment</DialogTitle>
+            <DialogDescription>
+              Review commission details before approval
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-4 items-center gap-4">
+              <div className="text-sm font-medium text-muted-foreground">
+                Realtor:
+              </div>
+              <div className="col-span-3 font-medium capitalize">
+                {commission.realtor?.firstName} {commission.realtor?.lastName}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <div className="text-sm font-medium text-muted-foreground">
+                Estate:
+              </div>
+              <div className="col-span-3 font-medium capitalize">
+                {commission.sale?.estate?.name || "Unknown Property"}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <div className="text-sm font-medium text-muted-foreground">
+                Sale Amount:
+              </div>
+              <div className="col-span-3 font-medium">
+                {formatCurrency(commission.sale?.amountPaid)}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <div className="text-sm font-medium text-muted-foreground">
+                Commission Rate:
+              </div>
+              <div className="col-span-3 font-medium">
+                {formatRate(commission.rate, {
+                  decimalPlaces: 0,
+                })}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <div className="text-sm font-medium text-muted-foreground">
+                Commission Amount:
+              </div>
+              <div className="col-span-3 font-medium text-green-600">
+                {formatCurrency(commission.amount)}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <div className="text-sm font-medium text-muted-foreground">
+                Sale Date:
+              </div>
+              <div className="col-span-3 font-medium">
+                {formatDate(commission.sale?.dateSold || new Date(), "PPP")}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-4 items-center gap-4">
+              <div className="text-sm font-medium text-muted-foreground">
+                Requested On:
+              </div>
+              <div className="col-span-3 font-medium">
+                {formatDate(
+                  commission.paymentRequest.requestedAt || new Date(),
+                  "PPPp"
+                )}
+              </div>
+            </div>
+
+            {commission.paymentRequest?.requestNote && (
+              <div className="grid grid-cols-4 items-start gap-4">
+                <div className="text-sm font-medium text-muted-foreground">
+                  Notes:
+                </div>
+                <div className="col-span-3 p-3 bg-muted/50 rounded-md">
+                  {commission.paymentRequest.requestNote}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              className="cursor-pointer"
+              onClick={() => setShowDialog(false)}
+              disabled={approveMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="default"
+              className="cursor-pointer"
+              onClick={handleApproval}
+              disabled={approveMutation.isPending}
+            >
+              {approveMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Approving...
+                </>
+              ) : (
+                "Confirm"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <FeedbackDialog
+        open={dialog.open}
+        type={dialog.type}
+        title={dialog.title}
+        message={dialog.message}
+        onClose={() => setDialog((prev) => ({ ...prev, open: false }))}
+        actionLabel={dialog.type === "success" ? "Continue" : "Try Again"}
+        onAction={() => {
+          if (dialog.type === "success") {
+            setDialog((prev) => ({ ...prev, open: false }));
+            queryClient.invalidateQueries({ queryKey: ["allCommissions"] });
+            queryClient.invalidateQueries({ queryKey: ["realtorCommissions"] });
+            queryClient.invalidateQueries({ queryKey: ["dashboard-stats"] });
+          } else {
+            setDialog((prev) => ({ ...prev, open: false }));
+          }
+        }}
+        allowOutsideInteraction={false}
+        hideCloseButton
+      />
+    </>
   );
 };
 

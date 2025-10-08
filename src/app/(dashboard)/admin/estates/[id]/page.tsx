@@ -14,7 +14,6 @@ import { IEstate } from "@/interfaces/estate.interface";
 import { getEstateById } from "@/lib/api/properties";
 import { formatCurrency } from "@/utils/helpers";
 import {
-  CheckCircle,
   DollarSign,
   Edit,
   FileText,
@@ -92,12 +91,12 @@ const EstateDetailsPage = async ({
             <Home className="h-3 w-3" />
             {estate.estateType}
           </Badge>
-          {estate.allowInstallment && (
+          {/* {estate.allowInstallment && (
             <Badge className="flex items-center gap-1 bg-green-100 text-green-800 hover:bg-green-100">
               <CheckCircle className="h-3 w-3" />
               Installment Available
             </Badge>
-          )}
+          )} */}
           <Badge
             variant="outline"
             className="flex items-center gap-1 text-muted-foreground"
@@ -227,10 +226,10 @@ const EstateDetailsPage = async ({
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">Units Available</span>
                 <span className="font-medium">
-                  {(estate.totalUnits || 0) - (estate.soldUnits || 0)} units
+                  {(estate.totalUnits || 0) - (estate.soldUnits || 0)} unit(s)
                 </span>
               </div>
-              {estate.plotSize && (
+              {/* {estate.plotSize && (
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground flex items-center gap-1">
                     <Ruler className="h-4 w-4" />
@@ -238,7 +237,7 @@ const EstateDetailsPage = async ({
                   </span>
                   <span className="font-medium">{estate.plotSize} sqm</span>
                 </div>
-              )}
+              )} */}
             </CardContent>
           </Card>
 
@@ -248,12 +247,12 @@ const EstateDetailsPage = async ({
               <CardTitle>Property Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex justify-between">
+              {/* <div className="flex justify-between">
                 <span className="text-muted-foreground">Estate Type</span>
                 <span className="font-medium capitalize">
                   {estate.estateType}
                 </span>
-              </div>
+              </div> */}
               {estate.plotSize && (
                 <div className="flex justify-between">
                   <span className="text-muted-foreground flex items-center gap-1">
@@ -265,14 +264,14 @@ const EstateDetailsPage = async ({
               )}
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Total Units</span>
-                <span className="font-medium">{estate.totalUnits}</span>
+                <span className="font-medium">{estate.totalUnits} unit(s)</span>
               </div>
-              <div className="flex justify-between">
+              {/* <div className="flex justify-between">
                 <span className="text-muted-foreground">Installment Plan</span>
                 <span className="font-medium">
                   {estate.allowInstallment ? "Available" : "Not Available"}
                 </span>
-              </div>
+              </div> */}
             </CardContent>
           </Card>
 

@@ -48,6 +48,7 @@ import { setFilter } from "@/store/features/property/estate.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { formatCurrency } from "@/utils/helpers";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { formatDate } from "date-fns";
 import { Edit2, Eye, Loader2, MapPin, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -186,10 +187,8 @@ const EstateContent = () => {
           <CardDescription>
             {!isPending && estates ? (
               <p>
-                {` Showing $
-                {Math.min((filter.page - 1) * filter.limit + 1, totalEstates)} -
-                ${Math.min(filter.page * filter.limit, totalEstates)} of $
-                {totalEstates}
+                {`Showing ${Math.min((filter.page - 1) * filter.limit + 1, totalEstates)} -
+                ${Math.min(filter.page * filter.limit, totalEstates)} of ${totalEstates}
                 estates `}
               </p>
             ) : (
@@ -231,6 +230,7 @@ const EstateContent = () => {
                   <TableHead>Units</TableHead>
                   <TableHead>Features</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Date Created</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -396,6 +396,9 @@ const EstateContent = () => {
                             ? "Now Selling"
                             : "Available"}
                         </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {formatDate(estate.createdAt, "MMM dd, yyyy hh:mm a")}
                       </TableCell>
                       <TableCell className="text-right">
                         <ActionsComp item={estate} />

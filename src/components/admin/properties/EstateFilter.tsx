@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import useEstates from "@/hooks/useEstates";
 import {
   initialFilterState,
@@ -16,7 +16,6 @@ import {
   setFilter,
 } from "@/store/features/property/estate.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { TooltipTrigger, TooltipContent } from "@radix-ui/react-tooltip";
 import { RefreshCcw, SearchIcon, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
