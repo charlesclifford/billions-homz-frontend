@@ -82,7 +82,12 @@ export default function RootLayout({
         <Providers>
           <Suspense fallback={<Loading />}>{children}</Suspense>
         </Providers>
-        <Toaster position="top-right" richColors expand={true} closeButton />
+        <Toaster
+          position="top-center"
+          richColors
+          expand={true}
+          swipeDirections={["top", "left", "right"]}
+        />
       </body>
     </html>
   );

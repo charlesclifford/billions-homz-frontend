@@ -134,13 +134,13 @@ const PropertyRooms = ({ property }: { property: IProperty }) => {
     []
   );
 
-  const handleVirtualTourClick = useCallback(() => {
-    setShowVirtualTour(true);
-    if (property.rooms?.[0]?.imageUrl) {
-      setSelectedPanorama(property.rooms[0].imageUrl);
-      setSelectedRoomName(property.rooms[0].name);
-    }
-  }, [property.rooms]);
+  // const handleVirtualTourClick = useCallback(() => {
+  //   setShowVirtualTour(true);
+  //   if (property.rooms?.[0]?.imageUrl) {
+  //     setSelectedPanorama(property.rooms[0].imageUrl);
+  //     setSelectedRoomName(property.rooms[0].name);
+  //   }
+  // }, [property.rooms]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleViewerReady = useCallback((instance: any) => {
@@ -153,11 +153,22 @@ const PropertyRooms = ({ property }: { property: IProperty }) => {
 
   return (
     <>
+      {/* 🟢 Heading before the card */}
+      <div className="mb-4">
+        <h2 className="text-xl font-semibold text-foreground">
+          Build your virtual tour experience
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          Add panoramic rooms to let viewers explore your property in an
+          immersive 360° tour.
+        </p>
+      </div>
+
       <Card>
         <CardHeader className="flex flex-row justify-between items-center">
           <CardTitle>Rooms</CardTitle>
           <div className="flex gap-2">
-            {property.rooms?.length > 0 && (
+            {/* {property.rooms?.length > 0 && (
               <Button
                 variant="outline"
                 size="sm"
@@ -168,7 +179,7 @@ const PropertyRooms = ({ property }: { property: IProperty }) => {
                 <Globe className="h-4 w-4 mr-2" />
                 Virtual Tour
               </Button>
-            )}
+            )} */}
             <Dialog
               open={isAddRoomDialogOpen}
               onOpenChange={setIsAddRoomDialogOpen}
