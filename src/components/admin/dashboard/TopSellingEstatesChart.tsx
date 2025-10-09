@@ -1,4 +1,5 @@
 "use client";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -81,7 +82,7 @@ export function TopSellingEstatesChart() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Top Selling Estates</CardTitle>
+          <CardTitle>Top Selling Assets</CardTitle>
           <CardDescription>Error loading data</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center h-64">
