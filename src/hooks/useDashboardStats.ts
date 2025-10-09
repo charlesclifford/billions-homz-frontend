@@ -3,13 +3,13 @@
 import {
   IDashboardSalesPerformance,
   IDashboardStats,
-  ITopEstateResponse,
+  ITopAssetResponse
 } from "@/interfaces/admin.interface";
 import { SalesPerformanceFilter } from "@/interfaces/realtor.interface";
 import {
   getDashboardStats,
   getSalesPerformance,
-  getTopSellingEstates,
+  getTopSellingAssets
 } from "@/lib/api/admin";
 import { useQuery } from "@tanstack/react-query";
 
@@ -34,7 +34,7 @@ export function useAdminTopSellingEstates(
 ) {
   return useQuery({
     queryKey: ["top-estates", params],
-    queryFn: () => getTopSellingEstates(params),
-    select: (data) => data.data as ITopEstateResponse,
+    queryFn: () => getTopSellingAssets(params),
+    select: (data) => data.data as ITopAssetResponse,
   });
 }
