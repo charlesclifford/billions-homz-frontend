@@ -40,38 +40,55 @@ export interface IAdmin {
   role: "admin" | "super_admin";
 }
 
+// =========================
+// 📊 Dashboard Stats
+// =========================
 export interface IDashboardStats {
-  totalProperties: number;
-  available: number;
-  availablePercentage: number;
-  sold: {
+  estates: {
     total: number;
-    percentage: number;
+    available: number;
+    availablePercentage: number;
+    soldUnits: number;
+    soldPercentage: number;
+  };
+  properties: {
+    total: number;
+    available: number;
+    availablePercentage: number;
+    sold: number;
+    soldPercentage: number;
   };
   totalRevenue: number;
-  requested: number;
+  pendingCommissionRequests: number;
 }
 
+// =========================
+// 📈 Sales Performance
+// =========================
 export interface IDashboardSalesPerformance {
   year: number;
-  monthlyData: MonthlyData[];
+  monthlyData: IMonthlySalesPerformance[];
 }
 
-interface MonthlyData {
-  month: number;
+interface IMonthlySalesPerformance {
+  month: number; // 1–12
+  name: string; // e.g. "Jan", "Feb"
+  estates: number; // estate sales count
+  properties: number; // property sales count
+  totalAmount: number; // ₦ total sales amount
+}
+
+// =========================
+// 🏆 Top Selling Assets
+// =========================
+export interface ITopAssetResponse {
+  year: number;
+  topAssets: ITopAsset[];
+}
+
+export interface ITopAsset {
+  assetType: "estate" | "property";
   name: string;
   salesCount: number;
-  salesAmount: number;
-}
-
-export interface ITopEstateResponse {
-  year: number;
-  topEstates: ITopEstate[];
-}
-
-export interface ITopEstate {
-  salesCount: number;
   totalAmount: number;
-  estateId: string;
-  estateName: string;
 }

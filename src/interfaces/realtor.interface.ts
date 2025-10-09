@@ -75,4 +75,5 @@ interface TopEstate {
 
 export interface SalesPerformanceFilter {
   year: number;
+  type?: string;
 }
