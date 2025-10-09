@@ -6,10 +6,35 @@ import Link from "next/link";
 import React from "react";
 
 const EstateCard = ({ estate }: { estate: IEstate }) => {
+  const isSoldOut = estate.soldUnits === estate.totalUnits;
+  const isSelling = estate.soldUnits && estate.soldUnits > 0 && !isSoldOut;
+
+  const getStatus = () => {
+    if (isSoldOut) return "Sold Out";
+    if (isSelling) return "Now Selling";
+    return "Available";
+  };
+
+  const isNew = (() => {
+    if (!estate.createdAt) return false;
+    const created = new Date(estate.createdAt);
+    const now = new Date();
+    const diffDays =
+      (now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
+    return diffDays <= 7; // visible for 1 weeks
+  })();
+
   return (
     <div
       className={cn("rounded-[30px] relative overflow-hidden", "group/card")}
     >
+      {/* Ribbon tag (top-right corner) */}
+      {isNew && (
+        <div className="absolute right-[-40px] top-[20px] rotate-45 bg-primary text-white text-xs font-semibold py-1 px-14 shadow-md z-20">
+          NEW
+        </div>
+      )}
+
       {/* thumbnail */}
       <div
         className="pt-[150%] relative rounded-[30px] group overflow-hidden after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-full after:h-full after:opacity-90 after:z-[1]
@@ -31,18 +56,14 @@ const EstateCard = ({ estate }: { estate: IEstate }) => {
           <span
             className={cn(
               "py-2.5 px-5 font-semibold text-xs leading-[1.25] uppercase rounded-[20px] inline-flex",
-              estate.soldUnits === estate.totalUnits
+              isSoldOut
                 ? "bg-red-500/80 backdrop-blur-sm"
-                : estate.soldUnits && estate.soldUnits > 0
+                : isSelling
                 ? "bg-primary/80 backdrop-blur-sm"
                 : "bg-background/80 backdrop-blur-sm text-black dark:text-white"
             )}
           >
-            {estate.soldUnits === estate.totalUnits
-              ? "Sold Out"
-              : estate.soldUnits && estate.soldUnits > 0
-              ? "Now Selling"
-              : "Available"}
+            {getStatus()}
           </span>
         </div>
         {/* location */}

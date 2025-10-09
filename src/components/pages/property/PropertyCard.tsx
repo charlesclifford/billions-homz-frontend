@@ -13,11 +13,7 @@ import {
 import { IProperty } from "@/interfaces/property.interface";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/utils/helpers";
-import {
-  CameraIcon,
-  Loader2,
-  MapPin
-} from "lucide-react";
+import { CameraIcon, Loader2, MapPin } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -61,8 +57,30 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
     }
   }, [api]);
 
+  const isNew = (() => {
+    if (!property.createdAt) return false;
+    const created = new Date(property.createdAt);
+    const now = new Date();
+    const diffDays =
+      (now.getTime() - created.getTime()) / (1000 * 60 * 60 * 24);
+    return diffDays <= 7;
+  })();
+
   return (
-    <div className="overflow-hidden transition-all duration-300 flex flex-col h-auto group">
+    <div className="overflow-hidden transition-all duration-300 flex flex-col h-auto group relative">
+      {/* ✅ 3D Ribbon (NEW) */}
+      {isNew && (
+        <div className="absolute right-[-40px] top-[25px] rotate-45 z-20">
+          <div className="relative bg-primary text-white text-xs font-semibold py-1 px-14 shadow-md rounded-t-full">
+            NEW
+            {/* left fold */}
+            <span className="absolute left-0 top-full w-0 h-0 border-l-[6px] border-l-transparent border-t-[6px] border-t-primary" />
+            {/* right fold */}
+            <span className="absolute right-0 top-full w-0 h-0 border-r-[6px] border-r-transparent border-t-[6px] border-t-primary" />
+          </div>
+        </div>
+      )}
+
       {/* Image Carousel */}
       <div className="relative w-full rounded-[30px] overflow-hidden mb-5 border">
         {property?.images?.length > 0 ? (
