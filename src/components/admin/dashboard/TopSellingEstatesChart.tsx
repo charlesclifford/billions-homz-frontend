@@ -30,9 +30,11 @@ export function TopSellingEstatesChart() {
   const [selectedYear, setSelectedYear] = useState<number>(
     new Date().getFullYear()
   );
+
   const { data, isPending, error } = useAdminTopSellingEstates({
     year: selectedYear,
     limit: 3,
+    type: "estate",
   });
 
   const yearOptions = useMemo(() => {
@@ -42,12 +44,13 @@ export function TopSellingEstatesChart() {
 
   // Transform data for the chart
   const chartData = useMemo(() => {
-    if (!data?.topEstates) return [];
+    if (!data?.topAssets?.length) return [];
 
-    return data.topEstates.map((estate, index) => ({
-      name: estate.estateName,
-      value: estate.totalAmount,
-      count: estate.salesCount,
+    return data.topAssets.map((asset, index) => ({
+      name: asset.name,
+      type: asset.assetType,
+      value: asset.totalAmount,
+      count: asset.salesCount,
       fill: `hsl(var(--chart-${index + 1}))`,
     }));
   }, [data]);
@@ -64,9 +67,9 @@ export function TopSellingEstatesChart() {
       },
     };
 
-    chartData.forEach((estate, index) => {
-      config[estate.name] = {
-        label: estate.name,
+    chartData.forEach((asset, index) => {
+      config[asset.name] = {
+        label: `${asset.name}`,
         color: `hsl(var(--chart-${index + 1}))`,
       };
     });
@@ -78,11 +81,11 @@ export function TopSellingEstatesChart() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Top Selling Estates</CardTitle>
+          <CardTitle>Top Selling Assets</CardTitle>
           <CardDescription>Error loading data</CardDescription>
         </CardHeader>
         <CardContent className="flex items-center justify-center h-64">
-          <p className="text-red-500">Failed to load top selling estates</p>
+          <p className="text-red-500">Failed to load data</p>
         </CardContent>
       </Card>
     );
@@ -90,34 +93,39 @@ export function TopSellingEstatesChart() {
 
   return (
     <Card className="h-full">
-      <CardHeader className="flex items-center gap-2 space-y-0 sm:flex-row">
-        <div className="grid flex-1 gap-1">
-          <CardTitle>Top Selling Estates</CardTitle>
-          <CardDescription>
-            {data?.year ? `Showing top estates for ${data.year}` : "Loading..."}
-          </CardDescription>
+      <CardHeader className="flex gap-4 flex-col">
+        <div className="flex items-center gap-2 space-y-0 sm:flex-row w-full">
+          <div className="grid flex-1 gap-1">
+            <CardTitle>Top Selling Estates</CardTitle>
+            <CardDescription>
+              {data?.year
+                ? `Showing top assets for ${data.year}`
+                : "Loading..."}
+            </CardDescription>
+          </div>
+          <Select
+            value={selectedYear.toString()}
+            onValueChange={handleYearChange}
+            disabled={isPending}
+          >
+            <SelectTrigger className="w-[80px] cursor-pointer rounded-lg sm:ml-auto">
+              <SelectValue placeholder="Year" />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl">
+              {yearOptions.map((year) => (
+                <SelectItem
+                  key={year}
+                  value={year.toString()}
+                  className="rounded-lg"
+                >
+                  {year}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
-        <Select
-          value={selectedYear.toString()}
-          onValueChange={handleYearChange}
-          disabled={isPending}
-        >
-          <SelectTrigger className="w-[80px] cursor-pointer rounded-lg sm:ml-auto">
-            <SelectValue placeholder="Select year" />
-          </SelectTrigger>
-          <SelectContent className="rounded-xl">
-            {yearOptions.map((year) => (
-              <SelectItem
-                key={year}
-                value={year.toString()}
-                className="rounded-lg"
-              >
-                {year}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
       </CardHeader>
+
       <CardContent className="h-[300px]">
         <ChartContainer config={chartConfig} className="h-full w-full">
           {isPending ? (
@@ -128,17 +136,12 @@ export function TopSellingEstatesChart() {
           ) : (
             <PieChart>
               <ChartTooltip
-                // content={
-                //   <ChartTooltipContent
-                //     formatter={(value, name) => [
-                //       `${Number(value).toLocaleString()} ₦`,
-                //       name,
-                //     ]}
-                //   />
-                // }
                 content={
                   <ChartTooltipContent
-                    hideLabel
+                    formatter={(value, name) => [
+                      `${Number(value).toLocaleString()} ₦`,
+                      name,
+                    ]}
                     className="capitalize"
                   />
                 }
@@ -147,12 +150,8 @@ export function TopSellingEstatesChart() {
                 data={chartData}
                 dataKey="value"
                 nameKey="name"
-                // cx="50%"
-                // cy="50%"
                 innerRadius={50}
-                // outerRadius={80}
                 paddingAngle={5}
-                // stroke="var(--background)"
                 strokeWidth={5}
               >
                 <Label
@@ -185,6 +184,7 @@ export function TopSellingEstatesChart() {
                         </g>
                       );
                     }
+                    return null;
                   }}
                 />
               </Pie>

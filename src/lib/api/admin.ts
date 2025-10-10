@@ -80,9 +80,9 @@ export const getSalesPerformance = async (params?: SalesPerformanceFilter) => {
   }
 };
 
-export const getTopSellingEstates = async (params?: SalesPerformanceFilter) => {
+export const getTopSellingAssets = async (params?: SalesPerformanceFilter) => {
   try {
-    const response = await instance.get(`/admins/stats/top-estates`, {
+    const response = await instance.get(`/admins/stats/top-assets`, {
       params,
     });
 

@@ -5,6 +5,7 @@ import { SalesPerformanceChart } from "@/components/admin/dashboard/SalesPerform
 import { RecentPropertiesTable } from "@/components/admin/dashboard/RecentPropertiesTable";
 import { StatsGrid } from "@/components/admin/dashboard/StatsGrid";
 import { TopSellingEstatesChart } from "@/components/admin/dashboard/TopSellingEstatesChart";
+import { RecentEstatesTable } from "@/components/admin/dashboard/RecentEstatesTable";
 
 const OverviewPage = () => {
   return (
@@ -20,10 +21,13 @@ const OverviewPage = () => {
         </div>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <RecentEstatesTable />
         <RecentPropertiesTable />
-        <PendingCommissions />
       </div>
-      <PendingApprovals />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <PendingCommissions />
+        <PendingApprovals />
+      </div>
     </div>
   );
 };

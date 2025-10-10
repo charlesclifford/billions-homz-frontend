@@ -9,13 +9,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import useEstates from "@/hooks/useEstates";
+import useProperties from "@/hooks/useProperties";
 import { formatCurrency } from "@/utils/helpers";
 import { formatDate } from "date-fns";
 import { Loader2 } from "lucide-react";
 
 export function RecentPropertiesTable() {
-  const { estates, isPending, error } = useEstates({
+  const { properties, isPending, error } = useProperties({
     page: 1,
     limit: 5,
   });
@@ -64,48 +64,44 @@ export function RecentPropertiesTable() {
                   </div>
                 </TableCell>
               </TableRow>
-            ) : estates && estates.length === 0 ? (
+            ) : properties && properties.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="text-center py-8">
                   <p className="text-muted-foreground">No properties found</p>
                 </TableCell>
               </TableRow>
             ) : (
-              estates &&
-              estates.map((estate) => (
-                <TableRow key={estate._id}>
+              properties &&
+              properties.map((property) => (
+                <TableRow key={property._id}>
                   <TableCell>
-                    <span className="capitalize">{estate.name}</span>
+                    <span className="capitalize">{property.title}</span>
                   </TableCell>
                   <TableCell className="">
-                    {estate.location?.city && (
-                      <p className="capitalize">{estate.location.city}</p>
+                    {property.location?.city && (
+                      <p className="capitalize">{property.location.city}</p>
                     )}
                   </TableCell>
                   <TableCell>
-                    {estate.price ? formatCurrency(estate.price) : "N/A"}
+                    {property.price ? formatCurrency(property.price) : "N/A"}
                   </TableCell>
                   <TableCell>
                     <Badge
                       variant={
-                        estate.soldUnits === estate.totalUnits
-                          ? "destructive"
-                          : estate.soldUnits && estate.soldUnits > 0
+                        property.status === "available"
                           ? "default"
+                          : property.status === "sold"
+                          ? "destructive"
                           : "secondary"
                       }
                     >
-                      {estate.soldUnits === estate.totalUnits
-                        ? "Sold Out"
-                        : estate.soldUnits && estate.soldUnits > 0
-                        ? "Now Selling"
-                        : "Available"}
+                      {property.status}
                     </Badge>
                   </TableCell>
 
                   <TableCell>
-                    {estate.createdAt
-                      ? formatDate(estate.createdAt, "MMM dd, yyyy")
+                    {property.createdAt
+                      ? formatDate(property.createdAt, "MMM dd, yyyy")
                       : "N/A"}
                   </TableCell>
                 </TableRow>

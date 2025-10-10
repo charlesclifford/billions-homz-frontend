@@ -68,7 +68,7 @@ export function PendingApprovals() {
           <TableBody>
             {isPending ? (
               <TableRow>
-                <TableCell colSpan={7}>
+                <TableCell colSpan={6}>
                   <div className="py-8 flex flex-col gap-2 items-center justify-center">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
                     <p className="text-sm text-muted-foreground">
@@ -79,7 +79,7 @@ export function PendingApprovals() {
               </TableRow>
             ) : commissions.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8">
+                <TableCell colSpan={6} className="text-center py-8">
                   <p className="text-muted-foreground">
                     No pending approvals found
                   </p>
