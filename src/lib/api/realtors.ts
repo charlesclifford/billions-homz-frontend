@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { SalesPerformanceFilter } from "@/interfaces/realtor.interface";
+import {
+  BankDetails,
+  SalesPerformanceFilter,
+  UplineDetails,
+} from "@/interfaces/realtor.interface";
 import instance from "@/services/axios";
 
 // Handle responses and errors
@@ -39,6 +43,18 @@ export const getRealtorSalesPerformance = async (
       params,
     });
 
+    return handleResponse(response);
+  } catch (error) {
+    handleError(error);
+  }
+};
+
+export const updateRealtorDetails = async (
+  id: string,
+  data: { bankDetails: BankDetails; uplineDetails: UplineDetails }
+) => {
+  try {
+    const response = await instance.patch(`/realtors/${id}/details`, data);
     return handleResponse(response);
   } catch (error) {
     handleError(error);

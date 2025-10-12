@@ -20,6 +20,7 @@ export interface IUser {
   updatedAt: string;
   isActive: boolean;
   role?: UserRole;
+  isProfileComplete: boolean;
 }
 
 export interface IImage {

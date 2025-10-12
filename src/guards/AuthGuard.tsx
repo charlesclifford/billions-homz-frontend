@@ -21,7 +21,11 @@ export interface ApiError {
   status: number;
 }
 
-const PROTECTED_ROUTES = [/^\/admin(\/.*)?$/, /^\/profile(\/.*)?$/];
+const PROTECTED_ROUTES = [
+  /^\/admin(\/.*)?$/,
+  /^\/profile(\/.*)?$/,
+  /^\/realtor(\/.*)?$/,
+];
 
 const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const dispatch = useAppDispatch();
@@ -54,10 +58,15 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     if (error) {
       const apiError = error as unknown as ApiError;
 
-      if (
-        apiError?.status === 400 &&
-        apiError.details?.message.includes("token")
-      ) {
+      const message =
+        apiError?.details?.message || apiError?.message || "Unauthorized";
+
+      const shouldLogout =
+        apiError.status === 400 ||
+        apiError.status === 401 ||
+        /unauthorized|token|authentication/i.test(message);
+
+      if (shouldLogout) {
         // Clear invalid session
         cookies.remove(TOKEN_NAME);
         cookies.remove(USER_DETAILS);

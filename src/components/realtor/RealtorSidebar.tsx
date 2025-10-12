@@ -5,7 +5,7 @@ import {
   CircleGaugeIcon,
   FileText,
   HandCoinsIcon,
-  Settings
+  Settings,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,6 +22,7 @@ import {
   useSidebar,
 } from "../ui/sidebar";
 import RealtorSidebarUser from "./RealtorSidebarUser";
+import { useAppSelector } from "@/store/hooks";
 
 interface ISidebarMenu {
   title: string;
@@ -68,6 +69,9 @@ const navSecondary: ISidebarMenu[] = [
 const RealtorSidebar = () => {
   const pathname = usePathname();
   const { setOpenMobile } = useSidebar();
+  const { user } = useAppSelector((state) => state.auth);
+
+  const isProfileComplete = user?.isProfileComplete;
 
   const isItemActive = (itemUrl: string) => pathname.startsWith(itemUrl);
 
@@ -105,30 +109,32 @@ const RealtorSidebar = () => {
       </SidebarHeader>
 
       <SidebarContent className="flex-1 overflow-y-auto">
-        <SidebarMenu className="space-y-1 p-2">
-          {navMain.map((item) => (
-            <SidebarMenuItem key={item.url}>
-              <SidebarMenuButton
-                asChild
-                isActive={isItemActive(item.url)}
-                tooltip={item.title}
-                onClick={() => setOpenMobile(false)}
-              >
-                <Link
-                  href={item.url}
-                  className="h-full w-full flex items-center px-4 py-2 relative"
+        {isProfileComplete && (
+          <SidebarMenu className="space-y-1 p-2">
+            {navMain.map((item) => (
+              <SidebarMenuItem key={item.url}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isItemActive(item.url)}
+                  tooltip={item.title}
+                  onClick={() => setOpenMobile(false)}
                 >
-                  {item.icon && <item.icon size={18} className="mr-2" />}
-                  <span className="sidebar-collapsed:hidden text-nowrap">
-                    {item.title}
-                  </span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
+                  <Link
+                    href={item.url}
+                    className="h-full w-full flex items-center px-4 py-2 relative"
+                  >
+                    {item.icon && <item.icon size={18} className="mr-2" />}
+                    <span className="sidebar-collapsed:hidden text-nowrap">
+                      {item.title}
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
+        )}
 
-        <SidebarMenu className="space-y-1 p-2 mt-4 border-t">
+        <SidebarMenu className="space-y-1 p-2 border-t">
           {navSecondary.map((item) => (
             <SidebarMenuItem key={item.url}>
               <SidebarMenuButton

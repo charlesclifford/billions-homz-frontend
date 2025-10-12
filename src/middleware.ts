@@ -99,6 +99,22 @@ export default async function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL("/realtor/unauthorized", req.url));
     }
 
+    const isCompleteProfilePage = pathname.startsWith(
+      "/realtor/complete-profile"
+    );
+
+    // 🚫 Block all realtor routes if profile incomplete
+    if (!user?.isProfileComplete && !isCompleteProfilePage) {
+      return NextResponse.redirect(
+        new URL("/realtor/complete-profile", req.url)
+      );
+    }
+
+    // ✅ Prevent access to complete-profile if profile already complete
+    if (user?.isProfileComplete && isCompleteProfilePage) {
+      return NextResponse.redirect(new URL("/realtor/dashboard", req.url));
+    }
+
     return NextResponse.next();
   }
 
