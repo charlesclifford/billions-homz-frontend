@@ -398,7 +398,7 @@ const RegisterFormComp = ({ type }: { type: string }) => {
               setTurnstileToken(token);
               setTurnstileError(null);
 
-              console.log("token received:", token);
+              // console.log("token received:", token);
             }}
             scriptOptions={{
               async: true,

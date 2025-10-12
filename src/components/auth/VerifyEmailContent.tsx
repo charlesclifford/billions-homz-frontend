@@ -5,7 +5,6 @@ import { AxiosError } from "axios";
 import { AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { toast } from "sonner";
 import { Button } from "../ui/button";
 
 const VerifyEmailContent = ({ token }: { token: string }) => {
@@ -23,12 +22,16 @@ const VerifyEmailContent = ({ token }: { token: string }) => {
       setTimeout(() => router.push("/auth/login"), 3000);
     },
     onError: (error: AxiosError<{ message: string }>) => {
-      toast.error("Verification Failed", {
-        description:
-          error.response?.data?.message ||
-          "Invalid or expired verification link",
-        icon: <AlertCircle className="h-5 w-5 text-red-500" />,
-      });
+      console.log(
+        "verification failed:",
+        error.response?.data?.message || "Invalid or expired verification link"
+      );
+      // toast.error("Verification Failed", {
+      //   description:
+      //     error.response?.data?.message ||
+      //     "Invalid or expired verification link",
+      //   icon: <AlertCircle className="h-5 w-5 text-red-500" />,
+      // });
     },
   });
 

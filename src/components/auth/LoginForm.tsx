@@ -5,16 +5,18 @@ import { loginUser } from "@/lib/api/auth";
 import { loginFailure, loginSuccess } from "@/store/features/auth/auth.slice";
 import { useAppDispatch } from "@/store/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Turnstile, TurnstileInstance } from "@marsidev/react-turnstile";
 import { useMutation } from "@tanstack/react-query";
-import { AxiosError } from "axios";
 import cookies from "js-cookie";
 import { AlertCircle, Eye, EyeOff, Loader2Icon } from "lucide-react";
+import { useTheme } from "next-themes";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { PageLoader } from "../shared/PageLoader";
 import { Button } from "../ui/button";
 import {
   Form,
@@ -24,9 +26,15 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { PageLoader } from "../shared/PageLoader";
-import { Turnstile, TurnstileInstance } from "@marsidev/react-turnstile";
-import { useTheme } from "next-themes";
+
+interface ApiErrorResponse {
+  message: string;
+  status: number;
+  details?: {
+    success: boolean;
+    message: string;
+  };
+}
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -64,33 +72,57 @@ const LoginForm = () => {
 
   const loginMutation = useMutation({
     mutationFn: loginUser,
-    onSuccess: async (data) => {
+    onSuccess: async (response) => {
+      const data = response;
+
+      // Handle first-login password change (admin/super_admin)
       if (data?.requiresPasswordChange) {
         setRedirecting(true);
         router.push(
           `/auth/update-password?token=${data?.tempToken}&userId=${data?.userId}`
         );
-      } else {
-        toast.success(data?.message);
-        cookies.set(TOKEN_NAME, data?.accessToken);
-        // Fetch user data after successful login
-        try {
-          const { data } = await refetch();
-          cookies.set(USER_DETAILS, JSON.stringify(data?.data));
-          dispatch(loginSuccess({ user: data?.data || data.user }));
-        } catch (error) {
-          console.log(error);
-          // Fallback to the user data from login response if user fetch fails
-          dispatch(loginSuccess({ user: data?.data || data.user }));
+        return;
+      }
+
+      // Normal login
+      toast.success(data?.message || "Login successful");
+      cookies.set(TOKEN_NAME, data?.accessToken);
+
+      try {
+        // Fetch current user details after login
+        const userResponse = await refetch();
+        const user = userResponse?.data?.data || data?.data;
+
+        // Store in cookies + Redux
+        cookies.set(USER_DETAILS, JSON.stringify(user));
+        dispatch(loginSuccess({ user }));
+
+        // 🔍 Realtor profile completion check (from login response)
+        if (data?.requiresProfileCompletion && user?.role === "realtor") {
+          setRedirecting(true);
+          router.push("/realtor/complete-profile");
+          return;
         }
+
+        // ✅ Default redirect
+        setRedirecting(true);
+        router.push(callbackUrl);
+      } catch (error) {
+        console.log("Error fetching user:", error);
+        // Fallback to the login response user data
+        dispatch(loginSuccess({ user: data?.data }));
         setRedirecting(true);
         router.push(callbackUrl);
       }
     },
-    onError: (error: AxiosError<{ message: string }>) => {
-      console.log("error", error?.response?.data?.message);
-      dispatch(loginFailure(error?.response?.data?.message || "Login failed"));
-      toast.error(error?.response?.data?.message || error?.message);
+    onError: (error: ApiErrorResponse) => {
+      console.log("error", error);
+
+      const apiMessage =
+        error?.details?.message || error.message || "Login failed";
+
+      dispatch(loginFailure(apiMessage));
+      toast.error(apiMessage);
     },
   });
 

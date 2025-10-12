@@ -1,4 +1,3 @@
-import { IProperty } from "./property.interface";
 import { IImage } from "./user.interface";
 
 export interface IRealtor {
@@ -16,23 +15,26 @@ export interface IRealtor {
   bio?: string;
   experienceYears: number;
   personalCode: string;
-  propertiesSold: [];
-  totalEarnings: number;
-  pendingCommissions: number;
-  paidCommissions: number;
-  commissionPayments: ICommissionPayment[];
+
   createdAt: string;
   updatedAt: string;
   isActive: boolean;
   lastLogin?: Date;
+
+  bankDetails?: BankDetails;
+  uplineDetails?: UplineDetails;
+  isProfileComplete: boolean;
 }
 
-interface ICommissionPayment {
-  amount: number;
-  paymentDate: Date;
-  property: IProperty;
-  // recordedBy: IAdmin
-  note: string;
+export interface BankDetails {
+  bankName: string;
+  accountName: string;
+  accountNumber: string;
+}
+
+export interface UplineDetails extends BankDetails {
+  uplineName: string;
+  uplinePhone: string;
 }
 
 export interface RealtorsFilterInput {
