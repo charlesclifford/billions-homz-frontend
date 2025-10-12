@@ -45,3 +45,11 @@ export const verifyEmail = async (data: { token: string }) => {
   const res = await instance.post("/auth/verify", data);
   return res.data;
 };
+
+export const resetPassword = async (data: {
+  token: string;
+  newPassword: string;
+}) => {
+  const res = await instance.post("/auth/reset-password", data);
+  return res.data;
+};

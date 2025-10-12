@@ -46,10 +46,10 @@ const SuccessScreen: React.FC<SuccessScreenProps> = ({ email, onContinue }) => {
         Continue to Login
       </Button>
 
-      <p className="text-center text-xs text-muted-foreground">
+      {/* <p className="text-center text-xs text-muted-foreground">
         **If you don&apos;t receive the email, please check your spam folder or
         contact support.**
-      </p>
+      </p> */}
     </div>
   );
 };

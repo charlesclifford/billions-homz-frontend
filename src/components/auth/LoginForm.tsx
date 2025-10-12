@@ -115,11 +115,15 @@ const LoginForm = () => {
         router.push(callbackUrl);
       }
     },
-    onError: (error: ApiErrorResponse) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onError: (error: ApiErrorResponse | any) => {
       console.log("error", error);
 
       const apiMessage =
-        error?.details?.message || error.message || "Login failed";
+        error?.details?.message ||
+        error?.response?.data?.message ||
+        error.message ||
+        "Login failed";
 
       dispatch(loginFailure(apiMessage));
       toast.error(apiMessage);
