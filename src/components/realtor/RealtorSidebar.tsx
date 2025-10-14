@@ -110,50 +110,53 @@ const RealtorSidebar = () => {
 
       <SidebarContent className="flex-1 overflow-y-auto">
         {isProfileComplete && (
-          <SidebarMenu className="space-y-1 p-2">
-            {navMain.map((item) => (
-              <SidebarMenuItem key={item.url}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={isItemActive(item.url)}
-                  tooltip={item.title}
-                  onClick={() => setOpenMobile(false)}
-                >
-                  <Link
-                    href={item.url}
-                    className="h-full w-full flex items-center px-4 py-2 relative"
+          <>
+            <SidebarMenu className="space-y-1 p-2">
+              {navMain.map((item) => (
+                <SidebarMenuItem key={item.url}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isItemActive(item.url)}
+                    tooltip={item.title}
+                    onClick={() => setOpenMobile(false)}
                   >
-                    {item.icon && <item.icon size={18} className="mr-2" />}
-                    <span className="sidebar-collapsed:hidden text-nowrap">
-                      {item.title}
-                    </span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
-          </SidebarMenu>
+                    <Link
+                      href={item.url}
+                      className="h-full w-full flex items-center px-4 py-2 relative"
+                    >
+                      {item.icon && <item.icon size={18} className="mr-2" />}
+                      <span className="sidebar-collapsed:hidden text-nowrap">
+                        {item.title}
+                      </span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+            <SidebarMenu className="space-y-1 p-2 border-t">
+              {navSecondary.map((item) => (
+                <SidebarMenuItem key={item.url}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isItemActive(item.url)}
+                    tooltip={item.title}
+                    onClick={() => setOpenMobile(false)}
+                  >
+                    <Link
+                      href={item.url}
+                      className="h-full w-full flex items-center px-4 py-2"
+                    >
+                      {item.icon && <item.icon size={18} className="mr-2" />}
+                      <span className="sidebar-collapsed:hidden">
+                        {item.title}
+                      </span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </>
         )}
-
-        <SidebarMenu className="space-y-1 p-2 border-t">
-          {navSecondary.map((item) => (
-            <SidebarMenuItem key={item.url}>
-              <SidebarMenuButton
-                asChild
-                isActive={isItemActive(item.url)}
-                tooltip={item.title}
-                onClick={() => setOpenMobile(false)}
-              >
-                <Link
-                  href={item.url}
-                  className="h-full w-full flex items-center px-4 py-2"
-                >
-                  {item.icon && <item.icon size={18} className="mr-2" />}
-                  <span className="sidebar-collapsed:hidden">{item.title}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
       </SidebarContent>
 
       <SidebarFooter className="p-2 border-t">

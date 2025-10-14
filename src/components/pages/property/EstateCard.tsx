@@ -1,11 +1,31 @@
+import { Button } from "@/components/ui/button";
+import { useFavorites } from "@/hooks/useFavorites";
 import { IEstate } from "@/interfaces/estate.interface";
 import { cn } from "@/lib/utils";
-import { MapPin } from "lucide-react";
+import { useAppSelector } from "@/store/hooks";
+import { Heart, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const EstateCard = ({ estate }: { estate: IEstate }) => {
+  const { user } = useAppSelector((state) => state.auth);
+  const { data: favorites, toggleFavorite } = useFavorites();
+
+  const isFavorited =
+    favorites?.estates?.some((e) => e._id === estate._id) ?? false;
+
+  const onFavoriteToggle = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!user) return;
+    toggleFavorite({ type: "estate", id: estate._id });
+  };
+
   const isSoldOut = estate.soldUnits === estate.totalUnits;
   const isSelling = estate.soldUnits && estate.soldUnits > 0 && !isSoldOut;
 
@@ -35,6 +55,36 @@ const EstateCard = ({ estate }: { estate: IEstate }) => {
         </div>
       )}
 
+      {user && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              size="icon"
+              variant="secondary"
+              onClick={onFavoriteToggle}
+              className={cn(
+                "absolute top-4 right-4 z-30 rounded-full w-9 h-9 transition-all duration-200",
+                isFavorited
+                  ? "bg-primary text-white hover:bg-primary/90"
+                  : "bg-background/80 backdrop-blur-sm hover:bg-background/90"
+              )}
+            >
+              <Heart
+                className={cn(
+                  "w-5 h-5 transition-transform duration-200",
+                  isFavorited
+                    ? "fill-current scale-110"
+                    : "text-muted-foreground"
+                )}
+              />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            {isFavorited ? "Remove from favorites" : "Add to favorites"}
+          </TooltipContent>
+        </Tooltip>
+      )}
+
       {/* thumbnail */}
       <div
         className="pt-[150%] relative rounded-[30px] group overflow-hidden after:content-[''] after:absolute after:left-0 after:bottom-0 after:w-full after:h-full after:opacity-90 after:z-[1]
@@ -50,7 +100,7 @@ const EstateCard = ({ estate }: { estate: IEstate }) => {
       </div>
 
       {/* content */}
-      <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-end p-8 z-[3] text-white">
+      <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-end p-4 z-[3] text-white">
         {/* status */}
         <div className="mb-auto">
           <span

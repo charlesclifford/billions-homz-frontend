@@ -18,6 +18,8 @@ const RealtorHeader = () => {
   const { user } = useAppSelector((state) => state.auth);
   const [currentTime, setCurrentTime] = useState(new Date());
 
+  const isProfileComplete = user?.isProfileComplete;
+
   const { notifications, unreadCount } = useNotifications();
 
   // Update time every minute
@@ -126,23 +128,25 @@ const RealtorHeader = () => {
             </div>
 
             {/* Notifications */}
-            <Notifications
-              notifications={notifications as INotification[]}
-              unreadCount={unreadCount}
-              onMarkAllAsRead={handleMarkAllAsRead}
-              onNotificationClick={handleNotificationClick}
-              emptyState={
-                <div className="p-6 text-center">
-                  <InboxIcon className="mx-auto h-8 w-8 text-muted-foreground" />
-                  <h4 className="mt-2 text-sm font-medium ">
-                    No notifications
-                  </h4>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    You&apos;re all caught up!
-                  </p>
-                </div>
-              }
-            />
+            {isProfileComplete && (
+              <Notifications
+                notifications={notifications as INotification[]}
+                unreadCount={unreadCount}
+                onMarkAllAsRead={handleMarkAllAsRead}
+                onNotificationClick={handleNotificationClick}
+                emptyState={
+                  <div className="p-6 text-center">
+                    <InboxIcon className="mx-auto h-8 w-8 text-muted-foreground" />
+                    <h4 className="mt-2 text-sm font-medium ">
+                      No notifications
+                    </h4>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      You&apos;re all caught up!
+                    </p>
+                  </div>
+                }
+              />
+            )}
 
             <ThemeToggler />
           </nav>

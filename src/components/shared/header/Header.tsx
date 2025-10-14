@@ -80,11 +80,17 @@ const Header = () => {
   }, [handleScroll]);
 
   const accountOptions = [
-    { name: "Profile", href: "/#" },
+    { name: "Profile", href: "/profile" },
+    { name: "Favorites", href: "/profile/favorites" },
     {
       name: "Dashboard",
       href: "/admin",
       roles: ["admin", "super_admin"],
+    },
+    {
+      name: "Dashboard",
+      href: "/realtor/dashboard",
+      roles: ["realtor"],
     },
   ];
 
