@@ -1,4 +1,16 @@
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -7,34 +19,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import {
-  Mail,
-  Phone,
-  MapPin,
   Calendar,
+  Clock,
   Edit,
   Heart,
-  Clock,
+  Mail,
+  MapPin,
   MessageSquare,
+  Phone,
   Settings,
   Trash2,
 } from "lucide-react";
 import Link from "next/link";
-import {
-  AlertDialogHeader,
-  AlertDialogFooter,
-} from "@/components/ui/alert-dialog";
-import {
-  AlertDialog,
-  AlertDialogTrigger,
-  AlertDialogContent,
-  AlertDialogTitle,
-  AlertDialogDescription,
-  AlertDialogCancel,
-  AlertDialogAction,
-} from "@/components/ui/alert-dialog";
 
 export default async function ProfilePage() {
   // Fetch user from your API/cookies
@@ -267,48 +264,7 @@ export default async function ProfilePage() {
         </CardContent>
       </Card>
 
-      {/* Account Security */}
-      <Card className="border-none shadow-sm">
-        <CardHeader>
-          <CardTitle className="text-xl">Account Security</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between py-3">
-            <div>
-              <p className="font-medium">Password</p>
-              <p className="text-sm text-muted-foreground">
-                Last changed 3 months ago
-              </p>
-            </div>
-            <Button asChild variant="outline" size="sm">
-              <Link href="/auth/reset-password">Change</Link>
-            </Button>
-          </div>
-          <Separator />
-          <div className="flex items-center justify-between py-3">
-            <div>
-              <p className="font-medium">Email Verification</p>
-              <p className="text-sm text-muted-foreground">
-                {user.verified
-                  ? "Your email is verified"
-                  : "Email not verified"}
-              </p>
-            </div>
-            {user.verified ? (
-              <Badge
-                variant="secondary"
-                className="bg-green-500/10 text-green-600"
-              >
-                Verified
-              </Badge>
-            ) : (
-              <Button variant="outline" size="sm">
-                Verify
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      
 
       {/* Danger Zone */}
       <Card className="border-destructive/50 border-none shadow-sm">

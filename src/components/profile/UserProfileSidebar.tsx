@@ -2,7 +2,6 @@
 import useLogout from "@/hooks/useLogout";
 import { cn } from "@/lib/utils";
 import {
-  Clock,
   Heart,
   LogOut,
   Settings,
@@ -22,7 +21,7 @@ const UserProfileSidebar = () => {
       label: "Favorites",
       icon: Heart,
     },
-    { href: "/profile/inspections", label: "My Inspections", icon: Clock },
+    // { href: "/profile/inspections", label: "My Inspections", icon: Clock },
     // { href: "/profile/inquiries", label: "Inquiries", icon: MessageSquare },
     { href: "/profile/settings", label: "Settings", icon: Settings },
   ];

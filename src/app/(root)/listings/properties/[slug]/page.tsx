@@ -16,7 +16,7 @@ import { SummaryItem } from "../../estates/[slug]/page";
 import { Metadata } from "next";
 import { config } from "@/utils/config";
 
-const { SITE_NAME, SITE_URL } = config;
+const { SITE_URL } = config;
 
 export async function generateMetadata({
   params,
@@ -34,7 +34,7 @@ export async function generateMetadata({
   const url = `${SITE_URL}/listings/properties/${property.slug}`;
 
   return {
-    title: `${property.title} | ${SITE_NAME}`,
+    title: property.title,
     description:
       property.description?.slice(0, 160) ||
       "View details about this property.",
@@ -42,14 +42,12 @@ export async function generateMetadata({
       canonical: url, // ✅ Correct canonical per property
     },
     openGraph: {
-      title: `${property.title} | ${SITE_NAME}`,
+      title: property.title,
       description: property.description,
       url,
       images: [
         {
-          url:
-            property.images[0]?.imageUrl ||
-            `/images/logos/billions-whatsapp.jpg`,
+          url: property.images[0]?.imageUrl || `/logos/billions-whatsapp.jpg`,
           width: 1200,
           height: 630,
           alt: property.title,
@@ -61,10 +59,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: property.title,
       description: property.description,
-      images: [
-        property.images[0]?.imageUrl ||
-          `/images/logos/billions-whatsapp.jpg`,
-      ],
+      images: [property.images[0]?.imageUrl || `/logos/billions-whatsapp.jpg`],
     },
   };
 }

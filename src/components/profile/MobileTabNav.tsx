@@ -1,8 +1,8 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { Clock, Heart, Settings, User } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { Heart, Settings, User } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const MobileTabNav = () => {
   const pathname = usePathname();
@@ -14,14 +14,14 @@ const MobileTabNav = () => {
       label: "Favorites",
       icon: Heart,
     },
-    { href: "/profile/inspections", label: "My Inspections", icon: Clock },
+    // { href: "/profile/inspections", label: "My Inspections", icon: Clock },
     // { href: "/profile/inquiries", label: "Inquiries", icon: MessageSquare },
     { href: "/profile/settings", label: "Settings", icon: Settings },
   ];
 
   return (
     <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-background border-t shadow-lg">
-      <nav className="w-full container mx-auto px-2 grid grid-cols-4 gap-2 py-3">
+      <nav className="w-full container mx-auto px-2 grid grid-cols-3 gap-2 py-3">
         {navItems.slice(0, 4).map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -43,7 +43,7 @@ const MobileTabNav = () => {
                     : "text-muted-foreground group-hover:text-primary"
                 )}
               />
-              <span className="text-xs font-medium text-center hidden">
+              <span className="text-xs font-medium text-center">
                 {item.label}
               </span>
             </Link>

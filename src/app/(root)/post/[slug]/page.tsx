@@ -36,7 +36,7 @@ export const generateMetadata = async ({
         cardType: "summary_large_image",
         title: post.title,
         description: post.excerpt,
-        image: post.image?.imageUrl,
+        image: post.image?.imageUrl || `/logos/billions-whatsapp.jpg`,
       },
     };
   } catch (error) {
