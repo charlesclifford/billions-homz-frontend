@@ -18,7 +18,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import React from "react";
 
-const { SITE_NAME, SITE_URL } = config;
+const { SITE_URL } = config;
 
 export async function generateMetadata({
   params,
@@ -36,21 +36,21 @@ export async function generateMetadata({
   const url = `${SITE_URL}/listings/estates/${estate.slug}`;
 
   return {
-    title: `${estate.name} | ${SITE_NAME}`,
+    title: estate.name,
     description:
       estate.description?.slice(0, 160) || "View details about this property.",
     alternates: {
       canonical: url, // ✅ Correct canonical per estate
     },
     openGraph: {
-      title: `${estate.name} | ${SITE_NAME}`,
+      title: estate.name,
       description: estate.description,
       url,
       images: [
         {
           url:
             estate.bannerImage?.imageUrl ||
-            `/images/logos/billions-whatsapp.jpg`,
+            `/logos/billions-whatsapp.jpg`,
           width: 1200,
           height: 630,
           alt: estate.name,
@@ -64,7 +64,7 @@ export async function generateMetadata({
       description: estate.description,
       images: [
         estate.bannerImage?.imageUrl ||
-          `${SITE_URL}/images/logos/billions-whatsapp.jpg`,
+          `/logos/billions-whatsapp.jpg`,
       ],
     },
   };

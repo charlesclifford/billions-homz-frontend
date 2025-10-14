@@ -34,7 +34,7 @@ export async function generateMetadata({
   const url = `${SITE_URL}/listings/properties/${property.slug}`;
 
   return {
-    title: `${property.title} | ${SITE_NAME}`,
+    title: property.title,
     description:
       property.description?.slice(0, 160) ||
       "View details about this property.",
@@ -49,7 +49,7 @@ export async function generateMetadata({
         {
           url:
             property.images[0]?.imageUrl ||
-            `/images/logos/billions-whatsapp.jpg`,
+            `/logos/billions-whatsapp.jpg`,
           width: 1200,
           height: 630,
           alt: property.title,
@@ -63,7 +63,7 @@ export async function generateMetadata({
       description: property.description,
       images: [
         property.images[0]?.imageUrl ||
-          `/images/logos/billions-whatsapp.jpg`,
+          `/logos/billions-whatsapp.jpg`,
       ],
     },
   };
