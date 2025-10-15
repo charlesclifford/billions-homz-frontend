@@ -121,7 +121,7 @@ const PropertyDetailsPage = async ({
 
         <Separator className="mt-5" />
         <div className="mb-[50px]">
-          <div className="pt-[45px] items-center gap-4 grid md:grid-cols-3 lg:grid-cols-5">
+          <div className="pt-[45px] items-center gap-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             <SummaryItem
               icon={<LucideSquareStack />}
               label="Status"

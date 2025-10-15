@@ -12,6 +12,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 
 const EstateCard = ({ estate }: { estate: IEstate }) => {
   const { user } = useAppSelector((state) => state.auth);
@@ -48,11 +49,14 @@ const EstateCard = ({ estate }: { estate: IEstate }) => {
     <div
       className={cn("rounded-[30px] relative overflow-hidden", "group/card")}
     >
-      {/* Ribbon tag (top-right corner) */}
+      {/* New Badge */}
       {isNew && (
-        <div className="absolute right-[-40px] top-[20px] rotate-45 bg-primary text-white text-xs font-semibold py-1 px-14 shadow-md z-20">
-          NEW
-        </div>
+        <Badge
+          variant="secondary"
+          className="absolute top-14 left-4 py-2.5 px-5 rounded-[20px] bg-primary backdrop-blur-sm z-10"
+        >
+          New
+        </Badge>
       )}
 
       {user && (

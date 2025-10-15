@@ -11,7 +11,11 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useFavorites } from "@/hooks/useFavorites";
 import { IProperty } from "@/interfaces/property.interface";
 import { cn } from "@/lib/utils";
@@ -85,19 +89,6 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
 
   return (
     <div className="overflow-hidden transition-all duration-300 flex flex-col h-auto group relative">
-      {/* ✅ 3D Ribbon (NEW) */}
-      {isNew && (
-        <div className="absolute right-[-40px] top-[25px] rotate-45 z-20">
-          <div className="relative bg-primary text-white text-xs font-semibold py-1 px-14 shadow-md rounded-t-full">
-            NEW
-            {/* left fold */}
-            <span className="absolute left-0 top-full w-0 h-0 border-l-[6px] border-l-transparent border-t-[6px] border-t-primary" />
-            {/* right fold */}
-            <span className="absolute right-0 top-full w-0 h-0 border-r-[6px] border-r-transparent border-t-[6px] border-t-primary" />
-          </div>
-        </div>
-      )}
-
       {/* Image Carousel */}
       <div className="relative w-full rounded-[30px] overflow-hidden mb-5 border">
         {property?.images?.length > 0 ? (
@@ -172,7 +163,7 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
                 variant="secondary"
                 onClick={handleFavorite}
                 className={cn(
-                  "absolute top-15 right-4 z-20 rounded-full w-9 h-9 transition-colors",
+                  "absolute top-4 right-4 z-20 rounded-full w-9 h-9 transition-colors",
                   isFavorited
                     ? "bg-primary text-white hover:bg-primary/90"
                     : "bg-background/80 backdrop-blur-sm hover:bg-background/90"
@@ -199,14 +190,13 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
           {property.status}
         </div>
 
-        {/* Image Count Badge */}
-        {property.images?.length > 0 && (
+        {/* New Badge */}
+        {isNew && (
           <Badge
             variant="secondary"
-            className="absolute top-4 right-4 py-2.5 px-5 rounded-[20px] bg-background/80 backdrop-blur-sm"
+            className="absolute top-14 left-4 py-2.5 px-5 rounded-[20px] bg-primary backdrop-blur-sm"
           >
-            <CameraIcon className="w-3 h-3 mr-1" />
-            {property.images.length}
+            New
           </Badge>
         )}
       </div>
@@ -234,7 +224,7 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
         {/* Property Details */}
         {/* <div className="flex flex-wrap gap-3 text-muted-foreground">
           {detailItem(
-            <Bed className="w-4 h-4" />,
+            <Bed className="w4 h-4" />,
             "Beds",
             property.bedrooms || 0
           )}

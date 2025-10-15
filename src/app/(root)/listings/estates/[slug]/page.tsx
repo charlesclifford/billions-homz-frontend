@@ -48,9 +48,7 @@ export async function generateMetadata({
       url,
       images: [
         {
-          url:
-            estate.bannerImage?.imageUrl ||
-            `/logos/billions-whatsapp.jpg`,
+          url: estate.bannerImage?.imageUrl || `/logos/billions-whatsapp.jpg`,
           width: 1200,
           height: 630,
           alt: estate.name,
@@ -62,10 +60,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: estate.name,
       description: estate.description,
-      images: [
-        estate.bannerImage?.imageUrl ||
-          `/logos/billions-whatsapp.jpg`,
-      ],
+      images: [estate.bannerImage?.imageUrl || `/logos/billions-whatsapp.jpg`],
     },
   };
 }
@@ -104,8 +99,8 @@ const EstateDetailsPage = async ({
   // Create share URL
   const shareUrl =
     typeof window !== "undefined"
-      ? `${window.location.origin}/properties/${estate.slug}`
-      : `https://yourdomain.com/properties/${estate.slug}`;
+      ? `${window.location.origin}/listings/estates/${estate.slug}`
+      : `${config.SITE_URL}/listings/estates/${estate.slug}`;
   const shareTitle = `Check out ${estate.name} in ${estate.location?.city}`;
 
   return (
@@ -132,7 +127,7 @@ const EstateDetailsPage = async ({
 
         <Separator className="mt-5" />
         <div className="flex flex-row mb-[50px]">
-          <div className="pt-[45px] flex items-center gap-[65px]">
+          <div className="pt-[45px] flex items-center flex-wrap gap-[65px] gap-y-10">
             <SummaryItem
               icon={<LucideSquareStack />}
               label="Status"
@@ -185,7 +180,7 @@ const EstateDetailsPage = async ({
                     Project description
                   </h3>
                 </div>
-                <p className="text-gray-700 leading-relaxed">
+                <p className=" leading-relaxed">
                   {estate.description || "No description available."}
                 </p>
               </div>
@@ -266,15 +261,13 @@ export const SummaryItem = ({
   value: string;
   icon: React.ReactNode;
 }) => (
-  <div className="h-full">
-    <div className="flex items-center">
-      <div className="mr-[15px] flex border p-[18px] rounded-full tracking-[0px] leading-[1.5em]">
-        {icon}
-      </div>
-      <div className="flex flex-col">
-        <h3 className="text-muted-foreground font-semibold">{label}</h3>
-        <p className="font-medium text-lg leading-[1.5em]">{value}</p>
-      </div>
+  <div className="flex items-center">
+    <div className="mr-[15px] flex border p-[18px] rounded-full tracking-[0px] leading-[1.5em]">
+      {icon}
+    </div>
+    <div className="flex flex-col">
+      <h3 className="text-muted-foreground font-semibold">{label}</h3>
+      <p className="font-medium text-lg leading-[1.5em]">{value}</p>
     </div>
   </div>
 );
