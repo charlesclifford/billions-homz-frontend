@@ -2,6 +2,7 @@
 
 import { AnimatedLink } from "@/components/shared/AnimatedLink";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Carousel,
   CarouselApi,
@@ -10,12 +11,19 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useFavorites } from "@/hooks/useFavorites";
 import { IProperty } from "@/interfaces/property.interface";
 import { cn } from "@/lib/utils";
+import { useAppSelector } from "@/store/hooks";
 import { formatCurrency } from "@/utils/helpers";
-import { CameraIcon, Loader2, MapPin } from "lucide-react";
+import { CameraIcon, Heart, Loader2, MapPin } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface PropertyCardProps {
   property: IProperty;
@@ -40,6 +48,9 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
   const [api, setApi] = useState<CarouselApi>();
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const { user } = useAppSelector((state) => state.auth);
+  const { data: favorites, toggleFavorite } = useFavorites();
+
   // Update current index when slide changes
   const onSelect = () => {
     if (api) {
@@ -57,6 +68,16 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
     }
   }, [api]);
 
+  const isFavorited = useMemo(() => {
+    return favorites?.properties?.some((p) => p._id === property._id);
+  }, [favorites, property._id]);
+
+  const handleFavorite = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!user) return;
+    toggleFavorite({ type: "property", id: property._id });
+  };
+
   const isNew = (() => {
     if (!property.createdAt) return false;
     const created = new Date(property.createdAt);
@@ -68,19 +89,6 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
 
   return (
     <div className="overflow-hidden transition-all duration-300 flex flex-col h-auto group relative">
-      {/* ✅ 3D Ribbon (NEW) */}
-      {isNew && (
-        <div className="absolute right-[-40px] top-[25px] rotate-45 z-20">
-          <div className="relative bg-primary text-white text-xs font-semibold py-1 px-14 shadow-md rounded-t-full">
-            NEW
-            {/* left fold */}
-            <span className="absolute left-0 top-full w-0 h-0 border-l-[6px] border-l-transparent border-t-[6px] border-t-primary" />
-            {/* right fold */}
-            <span className="absolute right-0 top-full w-0 h-0 border-r-[6px] border-r-transparent border-t-[6px] border-t-primary" />
-          </div>
-        </div>
-      )}
-
       {/* Image Carousel */}
       <div className="relative w-full rounded-[30px] overflow-hidden mb-5 border">
         {property?.images?.length > 0 ? (
@@ -146,19 +154,49 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
           </div>
         )}
 
+        {/* ❤️ Favorite button */}
+        {user && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="icon"
+                variant="secondary"
+                onClick={handleFavorite}
+                className={cn(
+                  "absolute top-4 right-4 z-20 rounded-full w-9 h-9 transition-colors",
+                  isFavorited
+                    ? "bg-primary text-white hover:bg-primary/90"
+                    : "bg-background/80 backdrop-blur-sm hover:bg-background/90"
+                )}
+              >
+                <Heart
+                  className={cn(
+                    "w-5 h-5 transition-transform duration-200",
+                    isFavorited
+                      ? "fill-current scale-110"
+                      : "text-muted-foreground"
+                  )}
+                />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {isFavorited ? "Remove from favorites" : "Add to favorites"}
+            </TooltipContent>
+          </Tooltip>
+        )}
+
         {/* Status Badge */}
         <div className="absolute top-4 left-4 py-2.5 px-5 rounded-[20px] text-xs capitalize bg-background/80 backdrop-blur-sm">
           {property.status}
         </div>
 
-        {/* Image Count Badge */}
-        {property.images?.length > 0 && (
+        {/* New Badge */}
+        {isNew && (
           <Badge
             variant="secondary"
-            className="absolute top-4 right-4 py-2.5 px-5 rounded-[20px] bg-background/80 backdrop-blur-sm"
+            className="absolute top-14 left-4 py-2.5 px-5 rounded-[20px] bg-primary backdrop-blur-sm"
           >
-            <CameraIcon className="w-3 h-3 mr-1" />
-            {property.images.length}
+            New
           </Badge>
         )}
       </div>
@@ -186,7 +224,7 @@ const PropertyCard = ({ property }: PropertyCardProps) => {
         {/* Property Details */}
         {/* <div className="flex flex-wrap gap-3 text-muted-foreground">
           {detailItem(
-            <Bed className="w-4 h-4" />,
+            <Bed className="w4 h-4" />,
             "Beds",
             property.bedrooms || 0
           )}
