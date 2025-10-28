@@ -13,6 +13,7 @@ export interface IRealtor {
   country?: string;
   licenseNumber: string;
   bio?: string;
+  gender: "male" | "female";
 
   isVerified: boolean;
   isBlocked: boolean;

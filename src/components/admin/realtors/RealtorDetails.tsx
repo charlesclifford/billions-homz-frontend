@@ -41,6 +41,7 @@ const RealtorDetails = ({ id }: { id: string }) => {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
 
   const {
     data: realtor,
@@ -74,20 +75,34 @@ const RealtorDetails = ({ id }: { id: string }) => {
   });
 
   const promoteMutation = useMutation({
-    mutationFn: () => promoteToAdmin({ targetId: id, targetType: "realtor" }),
+    mutationFn: () =>
+      promoteToAdmin({
+        targetId: id,
+        targetType: "realtor",
+        permissions: selectedPermissions,
+      }),
     onSuccess: (data) => {
       toast.success(data.message || "Realtor promoted to admin");
       queryClient.invalidateQueries({ queryKey: ["allRealtors"] });
       setConfirmOpen(false);
       setIsOpen(false);
+      setSelectedPermissions([]);
     },
     onError: (error: AxiosError<{ message: string }>) => {
-      console.log("error>>", error)
+      console.log("error>>", error);
       toast.error(
-        error?.response?.data?.message || error.message || "Failed to promote realtor"
+        error?.response?.data?.message ||
+          error.message ||
+          "Failed to promote realtor"
       );
     },
   });
+
+  const handlePermissionToggle = (perm: string) => {
+    setSelectedPermissions((prev) =>
+      prev.includes(perm) ? prev.filter((p) => p !== perm) : [...prev, perm]
+    );
+  };
 
   const handlePromoteConfirm = () => {
     promoteMutation.mutate();
@@ -452,6 +467,37 @@ const RealtorDetails = ({ id }: { id: string }) => {
                           privileges.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
+
+                      {/* PERMISSIONS CHECKBOXES */}
+                      <div className="grid grid-cols-2 gap-3 mt-4 mb-6">
+                        {[
+                          "manage_users",
+                          "manage_properties",
+                          "manage_content",
+                          // "manage_settings",
+                          // "view_analytics",
+                          // "manage_transactions",
+                          // "manage_realtors",
+                          // "manage_commissions",
+                          // "manage_banners",
+                          // "view_reports",
+                        ].map((perm) => (
+                          <label
+                            key={perm}
+                            className="flex items-center space-x-2"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={selectedPermissions.includes(perm)}
+                              onChange={() => handlePermissionToggle(perm)}
+                              className="w-4 h-4 accent-primary"
+                            />
+                            <span className="text-sm capitalize">
+                              {perm.replace(/_/g, " ")}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
 
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>

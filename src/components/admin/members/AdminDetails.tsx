@@ -22,6 +22,7 @@ import { AxiosError } from "axios";
 import { Separator } from "@/components/ui/separator";
 import { formatUnderscoreText } from "@/utils/helpers";
 import { toast } from "sonner";
+import DemoteAdminButton from "./DemoteAdminButton";
 
 const AdminDetails = ({ id }: { id: string }) => {
   const queryClient = useQueryClient();
@@ -312,6 +313,23 @@ const AdminDetails = ({ id }: { id: string }) => {
                           : "Never"}
                       </p>
                     </div>
+                  </div>
+                </div>
+
+                {/* Divider */}
+                <Separator />
+
+                {/* Demote to Realtor Action */}
+                <div className="space-y-3">
+                  <h3 className="font-medium text-lg text-destructive">
+                    Danger Zone
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    This will remove this admin and create a realtor account
+                    using the same details.
+                  </p>
+                  <div>
+                    <DemoteAdminButton id={admin._id} />
                   </div>
                 </div>
               </div>

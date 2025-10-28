@@ -118,9 +118,23 @@ export const updateSettings = async (data: {
 export const promoteToAdmin = async (data: {
   targetId: string;
   targetType: "user" | "realtor";
+  permissions: string[];
 }) => {
   try {
     const response = await instance.post("/admins/make-admin", data);
+    return handleResponse(response);
+  } catch (error) {
+    console.log("err>>", error);
+    handleError(error);
+  }
+};
+
+export const demoteAdmin = async (data: {
+  adminId: string;
+  targetType: "user" | "realtor";
+}) => {
+  try {
+    const response = await instance.post("/admins/demote", data);
     return handleResponse(response);
   } catch (error) {
     console.log("err>>", error);

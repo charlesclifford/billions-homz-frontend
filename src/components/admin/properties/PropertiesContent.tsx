@@ -48,6 +48,7 @@ import { setFilter } from "@/store/features/property/property.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { formatCurrency } from "@/utils/helpers";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { Edit2, Eye, Loader2, MapPin, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -65,8 +66,10 @@ const PropertyActions = ({ property }: { property: IProperty }) => {
       queryClient.invalidateQueries({ queryKey: ["allProperties"] });
       setShowDeleteDialog(false);
     },
-    onError: (error) => {
-      toast.error("Failed to delete property");
+    onError: (error: AxiosError<{ message: string }>) => {
+      toast.error(
+        error?.response?.data?.message || "Failed to delete property"
+      );
       console.error("Delete error:", error);
     },
   });

@@ -25,6 +25,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { AdminPermission } from "@/interfaces/admin.interface";
 import { inviteAdmin } from "@/lib/api/admin";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,14 +38,6 @@ import PhoneInputWithCountrySelect, {
 } from "react-phone-number-input";
 import { toast } from "sonner";
 import { z } from "zod";
-
-type AdminPermission =
-  | "manage_users"
-  | "manage_properties"
-  | "manage_content"
-  | "manage_settings"
-  | "view_analytics"
-  | "manage_admins";
 
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -64,8 +57,8 @@ const permissionLabels: Record<AdminPermission, string> = {
   manage_users: "Manage Users",
   manage_properties: "Manage Properties",
   manage_content: "Manage Content",
-  manage_settings: "Manage Settings",
-  view_analytics: "View Analytics",
+  // manage_settings: "Manage Settings",
+  // view_analytics: "View Analytics",
   manage_admins: "Manage Admins",
 };
 
