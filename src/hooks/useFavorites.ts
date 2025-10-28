@@ -1,6 +1,6 @@
 import { IEstate } from "@/interfaces/estate.interface";
 import { IProperty } from "@/interfaces/property.interface";
-import { getUserFavorites, toggleFavorite } from "@/lib/api/users";
+import { getUserFavorites, toggleFavorite } from "@/lib/api/favourites";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "sonner";
