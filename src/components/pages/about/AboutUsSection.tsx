@@ -95,7 +95,7 @@ const AboutUsSection = () => {
             <div className="max-w-full w-[520px]">
               <div className="mt-[30px]">
                 <h2 className="text-[42px] lg:text-[70px] font-bold leading-[1.06em] tracking-[-1px] lg:tracking-[-2px]">
-                  Shaping the world of things to come
+                  Landlord Fits You
                 </h2>
               </div>
             </div>
@@ -105,18 +105,18 @@ const AboutUsSection = () => {
             <div>
               <div className="mb-5">
                 <div className="text-[22px] font-semibold leading-[32px]">
-                  We&apos;d love to share more with you, please complete this
-                  form and our dedicated team will get back to you shortly.
+                  At Billionshomz Properties, we don’t just sell lands , we put you right where the future is happening.
                 </div>
               </div>
             </div>
             <div>
               <div className="mb-10">
+                <p className="text-lg leading-[28px] mb-4">
+                  We’re a fast-growing real estate and development company based in Port Harcourt, Nigeria, focused on helping individuals and investors own genuine lands and properties with ease, confidence, and peace of mind.
+
+                </p>
                 <p className="text-lg leading-[28px]">
-                  In markets from renewable energy, sports and entertainment, to
-                  data centers and healthcare, we work to ensure the built
-                  environment leaves a lasting positive impact. Together, we
-                  strive to make your project better than you imagined possible.
+                  Our work goes beyond transactions we build communities, and redefine what real estate means for everyday Nigerians.
                 </p>
               </div>
             </div>
