@@ -28,14 +28,6 @@ const HeaderUser = () => {
 
   const dropdownMenuList = [
     {
-      name: "Profile",
-      href: "/profile",
-    },
-    {
-      name: "Favorites",
-      href: "/profile/favorites",
-    },
-    {
       name: "Dashboard",
       href: "/admin",
       roles: ["admin", "super_admin"],
@@ -44,6 +36,14 @@ const HeaderUser = () => {
       name: "Dashboard",
       href: "/realtor/dashboard",
       roles: ["realtor"],
+    },
+    {
+      name: "Profile",
+      href: "/profile",
+    },
+    {
+      name: "Favorites",
+      href: "/profile/favorites",
     },
   ];
 

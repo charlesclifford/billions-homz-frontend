@@ -16,7 +16,7 @@ const handleResponse = (response: any) => {
 
 const handleError = (error: any) => {
   if (error.response) {
-    throw new Error(error.response.data.error || "Request failed");
+    throw new Error(error.response.data.message || "Request failed");
   } else if (error.request) {
     throw new Error("No response received from the server");
   } else {
@@ -111,6 +111,19 @@ export const updateSettings = async (data: {
 
     return handleResponse(response);
   } catch (error) {
+    handleError(error);
+  }
+};
+
+export const promoteToAdmin = async (data: {
+  targetId: string;
+  targetType: "user" | "realtor";
+}) => {
+  try {
+    const response = await instance.post("/admins/make-admin", data);
+    return handleResponse(response);
+  } catch (error) {
+    console.log("err>>", error);
     handleError(error);
   }
 };
