@@ -26,6 +26,9 @@ const formSchema = z.object({
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Invalid email address"),
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  gender: z.enum(["male", "female"], {
+    required_error: "Please select your gender",
+  }),
 });
 
 export type InviteAdminFormValues = z.infer<typeof formSchema>;
@@ -41,6 +44,7 @@ const ProfilePage = () => {
       lastName: user?.lastName,
       email: user?.email,
       phone: user?.phone,
+      gender: user?.gender
     },
   });
 
