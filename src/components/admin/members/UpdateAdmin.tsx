@@ -34,7 +34,9 @@ import { AxiosError } from "axios";
 import { Edit2Icon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import PhoneInputWithCountrySelect, { isValidPhoneNumber } from "react-phone-number-input";
+import PhoneInputWithCountrySelect, {
+  isValidPhoneNumber,
+} from "react-phone-number-input";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -45,6 +47,9 @@ const formSchema = z.object({
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
   role: z.enum(["admin", "super_admin"]).optional(),
   permissions: z.array(z.string()).optional(),
+  gender: z.enum(["male", "female"], {
+    required_error: "Please select your gender",
+  }),
 });
 
 export type InviteAdminFormValues = z.infer<typeof formSchema>;
@@ -53,8 +58,8 @@ const permissionLabels: Record<AdminPermission, string> = {
   manage_users: "Manage Users",
   manage_properties: "Manage Properties",
   manage_content: "Manage Content",
-  manage_settings: "Manage Settings",
-  view_analytics: "View Analytics",
+  // manage_settings: "Manage Settings",
+  // view_analytics: "View Analytics",
   manage_admins: "Manage Admins",
 };
 
@@ -71,6 +76,7 @@ const UpdateAdmin = ({ user }: { user: IAdmin }) => {
       phone: user.phone,
       role: user.role,
       permissions: user.permissions || [],
+      gender: user.gender,
     },
   });
 
@@ -210,6 +216,31 @@ const UpdateAdmin = ({ user }: { user: IAdmin }) => {
                           }
                         />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="gender"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Gender</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="focus-visible:ring-0 shadow-none rounded-sm w-full cursor-pointer">
+                            <SelectValue placeholder="Select gender" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="male">Male</SelectItem>
+                          <SelectItem value="female">Female</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}

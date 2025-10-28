@@ -4,8 +4,8 @@ export type AdminPermission =
   | "manage_users"
   | "manage_properties"
   | "manage_content"
-  | "manage_settings"
-  | "view_analytics"
+  // | "manage_settings"
+  // | "view_analytics"
   | "manage_admins";
 
 export interface CreateAdminInput {
@@ -38,6 +38,7 @@ export interface IAdmin {
   isActive: boolean;
   isVerified: boolean;
   role: "admin" | "super_admin";
+  gender: "male" | "female"
 }
 
 // =========================

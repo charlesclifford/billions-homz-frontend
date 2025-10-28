@@ -21,6 +21,7 @@ export interface IUser {
   isActive: boolean;
   role?: UserRole;
   isProfileComplete: boolean;
+  gender: "male" | "female";
 }
 
 export interface IImage {

@@ -48,6 +48,7 @@ import { setFilter } from "@/store/features/property/estate.slice";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { formatCurrency } from "@/utils/helpers";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { formatDate } from "date-fns";
 import { Edit2, Eye, Loader2, MapPin, Trash2 } from "lucide-react";
 import Image from "next/image";
@@ -67,8 +68,8 @@ const ActionsComp = ({ item }: { item: IEstate }) => {
       queryClient.invalidateQueries({ queryKey: ["allEstates"] });
       setShowDeleteDialog(false);
     },
-    onError: (error) => {
-      toast.error("Failed to delete post");
+    onError: (error: AxiosError<{ message: string }>) => {
+      toast.error(error?.response?.data?.message || "Failed to delete estate");
       console.error("Delete error:", error);
     },
   });
@@ -187,8 +188,14 @@ const EstateContent = () => {
           <CardDescription>
             {!isPending && estates ? (
               <p>
-                {`Showing ${Math.min((filter.page - 1) * filter.limit + 1, totalEstates)} -
-                ${Math.min(filter.page * filter.limit, totalEstates)} of ${totalEstates}
+                {`Showing ${Math.min(
+                  (filter.page - 1) * filter.limit + 1,
+                  totalEstates
+                )} -
+                ${Math.min(
+                  filter.page * filter.limit,
+                  totalEstates
+                )} of ${totalEstates}
                 estates `}
               </p>
             ) : (

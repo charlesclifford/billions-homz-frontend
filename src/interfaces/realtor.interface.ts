@@ -1,4 +1,4 @@
-import { IImage } from "./user.interface";
+import { IImage, UserRole } from "./user.interface";
 
 export interface IRealtor {
   _id: string;
@@ -13,8 +13,12 @@ export interface IRealtor {
   country?: string;
   licenseNumber: string;
   bio?: string;
-  experienceYears: number;
-  personalCode: string;
+  gender: "male" | "female";
+
+  isVerified: boolean;
+  isBlocked: boolean;
+  isFirstLogin: boolean;
+  role?: UserRole;
 
   createdAt: string;
   updatedAt: string;
