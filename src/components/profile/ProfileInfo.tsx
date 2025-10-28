@@ -29,12 +29,25 @@ import {
   MessageSquare,
   Phone,
   Settings,
-  Trash2
+  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 
 const ProfileInfo = () => {
   const { user } = useAppSelector((state) => state.auth);
+
+  const getEditProfileLink = (role?: string) => {
+    switch (role) {
+      case "admin":
+      case "super_admin":
+        return "/admin/settings";
+      case "realtor":
+        return "/realtor/settings";
+      case "user":
+      default:
+        return "/profile/edit";
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -60,7 +73,7 @@ const ProfileInfo = () => {
                 variant="outline"
                 className="w-full md:w-auto"
               >
-                <Link href="/profile/edit">
+                <Link href={getEditProfileLink(user?.role)}>
                   <Edit className="size-4 mr-2" />
                   Edit Profile
                 </Link>

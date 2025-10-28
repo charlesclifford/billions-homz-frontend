@@ -25,7 +25,15 @@ import PhoneInputWithCountrySelect, {
   isValidPhoneNumber,
 } from "react-phone-number-input";
 import { cn } from "@/lib/utils";
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { nigeriaStates } from "@/data/nigeria-states";
 
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -45,6 +53,7 @@ export default function EditProfilePage() {
   const router = useRouter();
   const { user } = useAppSelector((state) => state.auth);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedState, setSelectedState] = useState(user?.state || "");
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -290,15 +299,48 @@ export default function EditProfilePage() {
                 )}
               />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Address</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter address" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                 <FormField
                   control={form.control}
-                  name="address"
+                  name="state"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Address</FormLabel>
+                      <FormLabel>State</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter address" {...field} />
+                        <Select
+                          value={field.value}
+                          onValueChange={(value) => {
+                            field.onChange(value);
+                            setSelectedState(value);
+                            // reset city when state changes
+                            form.setValue("city", "");
+                          }}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select a state" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.keys(nigeriaStates).map((state) => (
+                              <SelectItem key={state} value={state}>
+                                {state}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -311,40 +353,23 @@ export default function EditProfilePage() {
                     <FormItem>
                       <FormLabel>City</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter city" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <FormField
-                  control={form.control}
-                  name="state"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>State</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter state" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="country"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Country</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter country"
-                          {...field}
-                          disabled
-                        />
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          disabled={!selectedState}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select a city" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {selectedState &&
+                              nigeriaStates[selectedState]?.map((city) => (
+                                <SelectItem key={city} value={city}>
+                                  {city}
+                                </SelectItem>
+                              ))}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
