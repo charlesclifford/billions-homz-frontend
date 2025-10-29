@@ -27,9 +27,9 @@ const serviceList: IServiceList[] = [
         <path d="M20.266 24.001c0-2.057 1.674-3.734 3.734-3.734s3.734 1.674 3.734 3.734c0 2.060-1.674 3.734-3.734 3.734s-3.734-1.677-3.734-3.734zM15.999 24.001c0 4.418 3.581 7.999 7.999 7.999s7.999-3.581 7.999-7.999c0-4.418-3.581-7.999-7.999-7.999s-7.999 3.581-7.999 7.999z"></path>
       </svg>
     ),
-    title: "High quality products",
+    title: "Lands at strategic location",
     content:
-      "The luxurious and exquisite design harmonious with the surrounding architecture provide the best living.",
+      "Our lands are located at prime areas , your investment is 100% safe and return on investment sure.",
   },
   {
     icon: (
@@ -47,7 +47,7 @@ const serviceList: IServiceList[] = [
     ),
     title: "Professional services",
     content:
-      "The customer service center is ready to serve 24/7, support the residents to provide information.",
+      "We are here for you right from when you buy from us till you move into your dream home. We are are just one call or text message away.",
   },
   {
     icon: (
@@ -61,9 +61,9 @@ const serviceList: IServiceList[] = [
         <path d="M15.999 7.466c-4.117 0-7.466-3.348-7.466-7.466h-8.533c0 8.837 7.162 15.999 15.999 15.999s16.001-7.162 16.001-15.999h-8.533c0 4.117-3.351 7.466-7.468 7.466z"></path>
       </svg>
     ),
-    title: "Real partnership",
+    title: "Partnership",
     content:
-      "We work with both investors and developers to create landmarks that make an impact.",
+      "At billionshomz ,we believe true success comes from collaboration .we work hand in hand with investors,developers to create landmarks that define luxury and provide satisfaction.",
   },
 ];
 
@@ -143,7 +143,7 @@ const HeroSection = () => {
           >
             <motion.div className="mb-5" variants={titleVariants}>
               <h1 className="text-white font-bold text-[52px] lg:text-[90px] leading-[1]">
-                Shaping future through excellence
+                Paragon of Luxury and Satisfaction
               </h1>
             </motion.div>
           </motion.div>
@@ -156,8 +156,7 @@ const HeroSection = () => {
           >
             <div className="mb-[50px] lg:mb-[125px]">
               <h1 className="text-neutral-300 font-semibold text-[22px] leading-[1.5]">
-                We are a top 25 builder and developer fully invested in our
-                customers&apos; success and improving the communities we serve.
+                Making Landlords Daily, One Landlord at a Time.
               </h1>
             </div>
           </motion.div>
