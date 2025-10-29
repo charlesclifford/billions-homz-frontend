@@ -11,9 +11,9 @@ const containerVariants = {
     opacity: 1,
     transition: {
       staggerChildren: 0.2,
-      delayChildren: 0.3
-    }
-  }
+      delayChildren: 0.3,
+    },
+  },
 };
 
 const itemVariants = {
@@ -23,9 +23,9 @@ const itemVariants = {
     opacity: 1,
     transition: {
       duration: 0.7,
-      ease: "easeOut"
-    }
-  }
+      ease: "easeOut",
+    },
+  },
 };
 
 const slideInLeft = {
@@ -35,9 +35,9 @@ const slideInLeft = {
     opacity: 1,
     transition: {
       duration: 0.8,
-      ease: "easeOut"
-    }
-  }
+      ease: "easeOut",
+    },
+  },
 };
 
 const slideInRight = {
@@ -47,9 +47,9 @@ const slideInRight = {
     opacity: 1,
     transition: {
       duration: 0.8,
-      ease: "easeOut"
-    }
-  }
+      ease: "easeOut",
+    },
+  },
 };
 
 const scaleUp = {
@@ -59,9 +59,9 @@ const scaleUp = {
     opacity: 1,
     transition: {
       duration: 0.6,
-      ease: "easeOut"
-    }
-  }
+      ease: "easeOut",
+    },
+  },
 };
 
 const numberCount = {
@@ -71,15 +71,15 @@ const numberCount = {
     scale: 1,
     transition: {
       duration: 0.8,
-      ease: "easeOut"
-    }
-  }
+      ease: "easeOut",
+    },
+  },
 };
 
 const AboutSection = () => {
   return (
     <div className="about-section w-full container mx-auto px-4  py-16 lg:py-28">
-      <motion.div 
+      <motion.div
         className="w-full max-w-[min(100%,1290px)] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-[30px] mb-[80px]"
         initial="hidden"
         whileInView="visible"
@@ -89,24 +89,27 @@ const AboutSection = () => {
         <motion.div className="col-span-1" variants={itemVariants}>
           <SmallTitle text="Who we are" />
         </motion.div>
-        
-        <motion.div className="col-span-2 flex flex-col" variants={containerVariants}>
+
+        <motion.div
+          className="col-span-2 flex flex-col"
+          variants={containerVariants}
+        >
           <motion.div variants={itemVariants}>
             <div className="mb-5 lg:mb-10">
               <h2 className="text-[42px] lg:text-[70px] font-bold leading-[1.06em] tracking-[-2px]">
-                The largest privately held real estate investors and managers in
-                the world
+                We are the No.1 Real Estate Company in Port Harcourt providing
+                luxury and satisfaction to our esteemed clients.
               </h2>
             </div>
           </motion.div>
-          
-          <motion.div 
+
+          <motion.div
             className="grid grid-cols-1 lg:grid-cols-2 gap-y-[30px] gap-x-[70px] pr-10"
             variants={containerVariants}
           >
             <motion.div className="flex flex-col" variants={slideInLeft}>
               <div className="mb-[15px] inline-flex items-center">
-                <motion.span 
+                <motion.span
                   className="pr-[5px]"
                   whileHover={{ rotate: 180, transition: { duration: 0.5 } }}
                 >
@@ -119,15 +122,14 @@ const AboutSection = () => {
 
               <div className="text-neutral-600 dark:text-neutral-400">
                 <p className="text-lg">
-                  To empower businesses with cutting-edge web solutions that
-                  enhance their digital presence and drive growth.
+                  To become Africa’s most trusted and people-driven real estate brand, known for innovation, integrity, and impact.
                 </p>
               </div>
             </motion.div>
 
             <motion.div className="flex flex-col" variants={slideInRight}>
               <div className="mb-[15px] inline-flex items-center">
-                <motion.span 
+                <motion.span
                   className="pr-[5px]"
                   whileHover={{ rotate: 180, transition: { duration: 0.5 } }}
                 >
@@ -140,9 +142,8 @@ const AboutSection = () => {
 
               <div className="text-neutral-600 dark:text-neutral-400">
                 <p className="text-lg">
-                  Our solutions are designed to meet the needs of modern
-                  enterprises, ensuring they thrive in today&apos;s competitive
-                  online landscape.
+                  Our mission is simply yet profound to provide affordable yet
+                  luxurious housing solutions to our clients.
                 </p>
               </div>
             </motion.div>
@@ -150,7 +151,7 @@ const AboutSection = () => {
         </motion.div>
       </motion.div>
 
-      <motion.div 
+      <motion.div
         className="w-full max-w-[min(100%,1290px)] mx-auto"
         initial="hidden"
         whileInView="visible"
@@ -158,7 +159,7 @@ const AboutSection = () => {
         variants={containerVariants}
       >
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-[15px]">
-          <motion.div 
+          <motion.div
             className="bg-[url(/images/bg/h1_img-1.jpg)] bg-cover bg-center bg-no-repeat rounded-[30px] min-h-[350px]"
             variants={scaleUp}
           >
@@ -174,18 +175,18 @@ const AboutSection = () => {
               <div className="bg-background w-[30px] h-[30px] absolute bottom-[-30px] left-0 rotate-90 border-shape"></div>
             </div>
           </motion.div>
-          
+
           {/* grids */}
-          <motion.div 
+          <motion.div
             className="grid grid-cols-1 lg:grid-cols-2 gap-[15px] grid-flow-row"
             variants={containerVariants}
           >
-            <motion.div 
+            <motion.div
               className="bg-gray-100 dark:bg-card min-h-[200px] lg:min-h-[350px] py-[30px] lg:py-[40px] px-[15px] lg:px-[30px] pb-[30px] flex justify-between flex-col rounded-[25px] gap-5"
               variants={itemVariants}
-              whileHover={{ 
-                y: -5, 
-                transition: { duration: 0.3 } 
+              whileHover={{
+                y: -5,
+                transition: { duration: 0.3 },
               }}
             >
               <div className="">
@@ -200,7 +201,7 @@ const AboutSection = () => {
                   <div className="flex items-center text-lg leading-[1.5em] text-neutral-500">
                     offices worldwide
                   </div>
-                  <motion.div 
+                  <motion.div
                     className="text-[60px] flex text-center font-bold leading-[1.06em] tracking-[-2px]"
                     variants={numberCount}
                   >
@@ -215,13 +216,13 @@ const AboutSection = () => {
                 </div>
               </div>
             </motion.div>
-            
-            <motion.div 
+
+            <motion.div
               className="bg-gray-100 dark:bg-card min-h-[200px] lg:min-h-[350px] py-[30px] lg:py-[40px] px-[15px] lg:px-[30px] pb-[30px] flex justify-between flex-col rounded-[25px] gap-5"
               variants={itemVariants}
-              whileHover={{ 
-                y: -5, 
-                transition: { duration: 0.3 } 
+              whileHover={{
+                y: -5,
+                transition: { duration: 0.3 },
               }}
             >
               <div className="">
@@ -236,7 +237,7 @@ const AboutSection = () => {
                   <div className="flex items-center text-lg leading-[1.5em] text-neutral-500">
                     employees
                   </div>
-                  <motion.div 
+                  <motion.div
                     className="text-[60px] flex text-center font-bold leading-[1.06em] tracking-[-2px]"
                     variants={numberCount}
                   >
@@ -251,13 +252,13 @@ const AboutSection = () => {
                 </div>
               </div>
             </motion.div>
-            
-            <motion.div 
+
+            <motion.div
               className="bg-gray-100 dark:bg-card min-h-[200px] lg:min-h-[350px] py-[30px] lg:py-[40px] px-[15px] lg:px-[30px] pb-[30px] flex justify-between flex-col rounded-[25px] gap-5"
               variants={itemVariants}
-              whileHover={{ 
-                y: -5, 
-                transition: { duration: 0.3 } 
+              whileHover={{
+                y: -5,
+                transition: { duration: 0.3 },
               }}
             >
               <div className="">
@@ -272,7 +273,7 @@ const AboutSection = () => {
                   <div className="flex items-center text-lg leading-[1.5em] text-neutral-500">
                     projects done
                   </div>
-                  <motion.div 
+                  <motion.div
                     className="text-[60px] flex text-center font-bold leading-[1.06em] tracking-[-2px]"
                     variants={numberCount}
                   >
@@ -289,7 +290,7 @@ const AboutSection = () => {
             </motion.div>
 
             {/* hide on mobile */}
-            <motion.div 
+            <motion.div
               className="bg-[url(/images/bg/h1_img-2.jpg)] bg-no-repeat bg-center bg-cover min-h-[200px] lg:min-h-[350px] rounded-[25px] hidden md:block"
               variants={scaleUp}
             ></motion.div>

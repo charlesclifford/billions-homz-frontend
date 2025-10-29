@@ -24,36 +24,37 @@ export interface IServiceList {
 const serviceList: IServiceList[] = [
   {
     icon: Building2,
-    title: "Real Estate Development",
+    title: "Land Sales",
     content:
-      "We engage as early as possible, typically during the conceptual or schematic stage.",
+      "At Billionshomz, we offer verified and strategically located lands with proper documentation, ensuring peace of mind and guaranteed return on investment for our clients and investors.",
     className: "col-span-1 lg:col-span-2",
   },
   {
     icon: Layers3Icon,
     title: "Project Development",
     content:
-      "Our comprehensive estimates also reflect available lower-price options.",
+      "From concept to completion, we develop real estate projects that combine innovation, functionality, and elegance  creating spaces that meet modern lifestyle and investment needs.",
     className: "col-span-1 lg:col-span-2",
   },
   {
     icon: WalletCards,
-    title: "Investment & Capital",
-    content: "We are focused on improving the way capital projects get done",
+    title: "Property Management",
+    content:
+      "We provide professional property management services that protect your investment, maximize rental income, and maintain property value ,giving you a hassle-free ownership experience.",
     className: "col-span-1 lg:col-span-2",
   },
   {
     icon: WrenchIcon,
-    title: "Construction Management",
+    title: "Construction",
     content:
-      "From design to operations, we love to solve complex challenges and exceed expectations",
+      "Our construction team delivers high-quality, durable, and aesthetically pleasing structures tailored to client specifications, ensuring every project stands as a mark of excellence and reliability.",
     className: "col-span-1 lg:col-span-3",
   },
   {
     icon: MessageCircleIcon,
-    title: "Sales & Marketing",
+    title: "Academy",
     content:
-      "Building a real estate development is a complicated task requiring both deep understanding..",
+      "Through the Billions Academy, we empower aspiring real estate consultants and investors with practical knowledge, sales mastery, and leadership skills to succeed and build wealth in the real estate industry.",
     className: "col-span-1 lg:col-span-3",
   },
 ];
@@ -224,7 +225,7 @@ const WhatWeOffer = () => {
                   transition={{ delay: 0.3, duration: 0.5 }}
                   viewport={{ once: true }}
                 >
-                  <p className="text-lg leading-[1.55] text-ellipsis line-clamp-3 group-hover/card:text-white dark:group-hover/card:text-white transition duration-300 ">
+                  <p className="text-lg leading-[1.55] text-ellipsis line-clamp- group-hover/card:text-white dark:group-hover/card:text-white transition duration-300 ">
                     {content}
                   </p>
                 </motion.div>
