@@ -357,6 +357,7 @@ const CreateTestimonialForm = () => {
                                   controls
                                   src={mediaPreview}
                                   className="mt-4 rounded-md max-h-60 mx-auto"
+                                  controlsList="nodownload"
                                 />
                               ))}
                           </div>
@@ -393,7 +394,7 @@ const CreateTestimonialForm = () => {
                 className="cursor-pointer"
               >
                 {createMutation.isPending && (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                 )}
                 {createMutation.isPending
                   ? "Creating..."
