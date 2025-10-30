@@ -90,7 +90,7 @@ export const UpdateTestimonialMediaForm = ({
       "video/*": [".mp4", ".webm"],
     },
     maxFiles: 1,
-    maxSize: 20 * 1024 * 1024, // 20MB
+    maxSize: 50 * 1024 * 1024, // 50MB
     onDrop: (acceptedFiles, rejectedFiles) => {
       if (acceptedFiles.length > 0) {
         const file = acceptedFiles[0];
@@ -106,7 +106,7 @@ export const UpdateTestimonialMediaForm = ({
         const errorCode = rejectedFiles[0].errors[0]?.code;
         const message =
           errorCode === "file-too-large"
-            ? "File size must be less than 20MB"
+            ? "File size must be less than 50MB"
             : "Invalid file type. Only JPEG, PNG, WebP, MP4, or WebM allowed";
         toast.error(message);
       }
@@ -219,7 +219,7 @@ export const UpdateTestimonialMediaForm = ({
                                 </p>
                               </div>
                               <p className="mt-2 text-xs text-gray-400">
-                                Supports: JPEG, PNG, WebP, MP4, WebM (Max: 20MB)
+                                Supports: JPEG, PNG, WebP, MP4, WebM (Max: 50MB)
                               </p>
                             </div>
                           </div>
@@ -273,7 +273,7 @@ export const UpdateTestimonialMediaForm = ({
                     </FormControl>
                     <FormDescription>
                       Upload a new image or video to replace the current media
-                      (Max: 20MB)
+                      (Max: 50MB)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
