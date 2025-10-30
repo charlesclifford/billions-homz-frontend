@@ -28,7 +28,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 const GalleryList = () => {
   const [filter, setFilter] = useState<PhotosFilterInput>({
     page: 1,
-    limit: 12,
+    limit: 20,
   });
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(
     null

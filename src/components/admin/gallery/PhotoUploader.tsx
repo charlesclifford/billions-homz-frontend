@@ -54,6 +54,7 @@ const CATEGORIES = [
   { value: "land", label: "Land" },
   { value: "event", label: "Event" },
   { value: "estate", label: "Estate" },
+  { value: "inspection", label: "Inspection" },
   { value: "other", label: "Other" },
 ];
 
