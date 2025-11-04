@@ -1,4 +1,5 @@
 "use client";
+import BlockedUserDialog from "@/components/auth/BlockedUserDialog";
 import { SessionExpiredDialog } from "@/components/auth/SessionExpiredDialog";
 import { TOKEN_NAME, USER_DETAILS } from "@/constants/app.constant";
 import { useUser } from "@/hooks/use-user";
@@ -32,6 +33,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const { data, isPending, error } = useUser();
   const [showExpiredDialog, setShowExpiredDialog] = useState(false);
+  const [showBlockedDialog, setShowBlockedDialog] = useState(false);
   const [shouldShowChildren, setShouldShowChildren] = useState(true);
 
   const isProtectedRoute = PROTECTED_ROUTES.some((pattern) =>
@@ -49,6 +51,7 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
       cookies.set(USER_DETAILS, JSON.stringify(data.data));
       dispatch(loginSuccess({ user: data.data }));
       setShowExpiredDialog(false);
+      setShowBlockedDialog(false);
       setShouldShowChildren(true);
     }
   }, [data, dispatch]);
@@ -66,6 +69,9 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
         apiError.status === 401 ||
         /unauthorized|token|authentication/i.test(message);
 
+      const isBlocked =
+        apiError.status === 403 || /blocked|suspended|banned/i.test(message);
+
       if (shouldLogout) {
         // Clear invalid session
         cookies.remove(TOKEN_NAME);
@@ -76,6 +82,16 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
         if (isProtectedRoute) {
           setShowExpiredDialog(true);
           setShouldShowChildren(false); // Hide children when session expires
+        }
+      } else if (isBlocked) {
+        // Handle blocked user
+        cookies.remove(TOKEN_NAME);
+        cookies.remove(USER_DETAILS);
+        dispatch(logout());
+
+        if (isProtectedRoute) {
+          setShowBlockedDialog(true);
+          setShouldShowChildren(false); // Hide children when user is blocked
         }
       }
     }
@@ -88,16 +104,29 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
     window.location.href = `/auth/login?redirect=${returnUrl}`;
   };
 
+  const handleBlockedRedirect = () => {
+    // Redirect to login with a specific parameter to show blocked message
+    window.location.href = `/auth/login?blocked=true`;
+  };
+
   return (
     <>
       {shouldShowChildren && children}
 
       {/* Session dialog only for protected routes */}
       {isProtectedRoute && (
-        <SessionExpiredDialog
-          open={showExpiredDialog}
-          onConfirm={handleLogoutRedirect}
-        />
+        <>
+          <SessionExpiredDialog
+            open={showExpiredDialog}
+            onConfirm={handleLogoutRedirect}
+          />
+
+          {/* Blocked user dialog */}
+          <BlockedUserDialog
+            open={showBlockedDialog}
+            onConfirm={handleBlockedRedirect}
+          />
+        </>
       )}
     </>
   );
