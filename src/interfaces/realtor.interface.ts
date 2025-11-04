@@ -50,6 +50,8 @@ export interface RealtorsFilterInput {
   sortBy?: string;
   sortOrder?: "asc" | "desc";
   status?: string;
+  includeDeleted?: boolean;
+  includeWithoutAuth?: boolean;
 }
 
 export interface IRealtorStats {
