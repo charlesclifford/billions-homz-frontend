@@ -61,6 +61,7 @@ const LoginForm = () => {
   const turnstileRef = useRef<TurnstileInstance>(null);
 
   const callbackUrl = searchParams.get("redirect") || "/";
+  const isBlocked = searchParams.get("blocked") === "true";
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(formSchema),
@@ -140,6 +141,16 @@ const LoginForm = () => {
 
   return (
     <>
+      {isBlocked && (
+        <div className="mb-4 p-4 bg-red-400/20 border border-red-400/30 text-red-400 rounded">
+          <p className="font-medium">Account Blocked</p>
+          <p className="text-sm">
+            Your account has been suspended. Please contact our support team for
+            assistance.
+          </p>
+        </div>
+      )}
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
