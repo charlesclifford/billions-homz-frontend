@@ -104,7 +104,7 @@ export function CompleteProfileForm({ onSuccess }: CompleteProfileFormProps) {
 
       // Default behavior - redirect to dashboard after 2 seconds
       setTimeout(() => {
-        router.push("/realtor/dashboard");
+        router.replace("/realtor/dashboard");
       }, 2000);
     },
     onError: (error: AxiosError<{ message: string }>) => {
@@ -130,25 +130,27 @@ export function CompleteProfileForm({ onSuccess }: CompleteProfileFormProps) {
 
   if (isSubmitted) {
     return (
-      <Card className="w-full max-w-md mx-auto">
-        <CardContent className="pt-6">
-          <div className="text-center space-y-4">
-            <div className="flex justify-center">
-              <CheckCircle2 className="h-16 w-16 text-green-500" />
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-white/80 dark:bg-black/80 backdrop-blur-xs mb-0">
+        <Card className="w-full max-w-md mx-auto">
+          <CardContent className="pt-6">
+            <div className="text-center space-y-4">
+              <div className="flex justify-center">
+                <CheckCircle2 className="h-16 w-16 text-green-500" />
+              </div>
+              <h2 className="text-2xl font-bold text-card-foreground">
+                Profile Completed!
+              </h2>
+              <p className="text-muted-foreground">
+                Your profile has been successfully updated. You will be
+                redirected to your dashboard shortly.
+              </p>
+              <div className="flex justify-center">
+                <Loader2Icon className="h-6 w-6 animate-spin text-primary" />
+              </div>
             </div>
-            <h2 className="text-2xl font-bold text-card-foreground">
-              Profile Completed!
-            </h2>
-            <p className="text-muted-foreground">
-              Your profile has been successfully updated. You will be redirected
-              to your dashboard shortly.
-            </p>
-            <div className="flex justify-center">
-              <Loader2Icon className="h-6 w-6 animate-spin text-blue-500" />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 

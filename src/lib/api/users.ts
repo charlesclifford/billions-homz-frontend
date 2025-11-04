@@ -44,6 +44,11 @@ export const updateRealtor = async (id: string, data: Partial<IRealtor>) => {
   return res.data;
 };
 
+export const deleteRealtor = async (id: string) => {
+  const res = await instance.delete(`/realtors/${id}/delete`);
+  return res.data;
+};
+
 export const uploadUserAvatar = async (
   id: string,
   data: FormData,
