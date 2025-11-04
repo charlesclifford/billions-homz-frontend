@@ -10,6 +10,8 @@ interface RealtorsFilterState {
   sortOrder?: "asc" | "desc";
   startDate?: string;
   endDate?: string;
+  includeDeleted?: boolean;
+  includeWithoutAuth?: boolean;
 }
 
 interface Realtorstate {
