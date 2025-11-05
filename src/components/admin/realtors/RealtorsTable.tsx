@@ -24,13 +24,13 @@ import { AxiosError } from "axios";
 import { Loader2, Loader2Icon, Trash2Icon } from "lucide-react";
 import moment from "moment";
 import { useState } from "react";
-import { toast } from "sonner";
 import RealtorDetails from "./RealtorDetails";
 import UpdateRealtor from "./UpdateRealtor";
 import { FeedbackDialog } from "@/components/shared/FeedbackDialog";
 
 const ActionsComp = ({ user }: { user: IRealtor }) => {
   const queryClient = useQueryClient();
+  const { user: authUser } = useAppSelector((state) => state.auth);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const [dialog, setDialog] = useState({
@@ -49,7 +49,7 @@ const ActionsComp = ({ user }: { user: IRealtor }) => {
         title: "Success",
         message: data?.message || "Realtor deleted successfully",
       });
-      queryClient.invalidateQueries({ queryKey: ["allRealtors"] });
+
       setShowDeleteDialog(false);
     },
     onError: (error: AxiosError<{ message: string }>) => {
@@ -71,22 +71,25 @@ const ActionsComp = ({ user }: { user: IRealtor }) => {
     <div className="flex items-center gap-2">
       <RealtorDetails id={user._id} />
       <UpdateRealtor user={user} />
-      <Button
-        size={"icon"}
-        variant={"destructive"}
-        className="cursor-pointer"
-        onClick={() => setShowDeleteDialog(true)}
-      >
-        <Trash2Icon size={16} />
-      </Button>
+
+      {authUser?.role === "super_admin" && (
+        <Button
+          size={"icon"}
+          variant={"destructive"}
+          className="cursor-pointer"
+          onClick={() => setShowDeleteDialog(true)}
+        >
+          <Trash2Icon size={16} />
+        </Button>
+      )}
 
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete Realtor</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete this realtor? This action cannot
-              be undone.
+              {`Are you sure you want to delete ${user.firstName}? This action cannot
+              be undone.`}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -103,7 +106,7 @@ const ActionsComp = ({ user }: { user: IRealtor }) => {
             >
               {deleteMutation.isPending ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Deleting...
                 </>
               ) : (
@@ -122,7 +125,12 @@ const ActionsComp = ({ user }: { user: IRealtor }) => {
         onClose={() => setDialog((prev) => ({ ...prev, open: false }))}
         actionLabel={dialog.type === "success" ? "Continue" : "Try Again"}
         onAction={() => {
-          setDialog((prev) => ({ ...prev, open: false }));
+          if (dialog.type === "success") {
+            queryClient.invalidateQueries({ queryKey: ["allRealtors"] });
+            setDialog((prev) => ({ ...prev, open: false }));
+          } else {
+            setDialog((prev) => ({ ...prev, open: false }));
+          }
         }}
         allowOutsideInteraction={false}
         hideCloseButton
@@ -135,22 +143,36 @@ const BlockAction = ({ user }: { user: IRealtor }) => {
   const queryClient = useQueryClient();
   const [showDialog, setShowDialog] = useState(false);
   const [intendedStatus, setIntendedStatus] = useState<boolean | null>(null);
+  const [dialog, setDialog] = useState({
+    open: false,
+    type: "success" as "success" | "error",
+    title: "",
+    message: "",
+  });
 
   const blockUserMutation = useMutation({
     mutationFn: (block: boolean) => blockUser(user._id, block),
     onSuccess: (data) => {
-      toast.success(
-        data.message ||
-          `User ${data.isActive ? "activated" : "blocked"} successfully`
-      );
-      queryClient.invalidateQueries({ queryKey: ["allRealtors"] });
+      setDialog({
+        open: true,
+        type: "success",
+        title: "Success",
+        message:
+          data?.message ||
+          `realtor ${data.isActive ? "activated" : "blocked"} successfully`,
+      });
       queryClient.invalidateQueries({ queryKey: ["getRealtorById", user._id] });
 
       setShowDialog(false);
     },
     onError: (error: AxiosError<{ message: string }>) => {
       console.log("error", error?.response?.data?.message);
-      toast.error(error?.response?.data?.message || error?.message);
+      setDialog({
+        open: true,
+        type: "error",
+        title: "Error",
+        message: error?.response?.data?.message || error?.message || "",
+      });
     },
   });
 
@@ -166,7 +188,7 @@ const BlockAction = ({ user }: { user: IRealtor }) => {
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1 flex-col">
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogTrigger asChild>
           <div className="flex items-center gap-2">
@@ -177,7 +199,7 @@ const BlockAction = ({ user }: { user: IRealtor }) => {
               checked={user.isActive}
               onCheckedChange={handleSwitchToggle}
               disabled={blockUserMutation.isPending}
-              className="data-[state=checked]:bg-green-500"
+              className="data-[state=checked]:bg-green-500 cursor-pointer"
             />
           </div>
         </DialogTrigger>
@@ -207,7 +229,7 @@ const BlockAction = ({ user }: { user: IRealtor }) => {
             >
               {blockUserMutation.isPending ? (
                 <>
-                  <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2Icon className="h-4 w-4 animate-spin" />
                   {intendedStatus ? "Activating..." : "Blocking..."}
                 </>
               ) : intendedStatus ? (
@@ -220,7 +242,10 @@ const BlockAction = ({ user }: { user: IRealtor }) => {
         </DialogContent>
       </Dialog>
 
-      <Badge variant={user.isActive ? "default" : "destructive"}>
+      <Badge
+        variant={user.isActive ? "default" : "destructive"}
+        className="text-[10px]"
+      >
         {blockUserMutation.isPending
           ? intendedStatus
             ? "Activating..."
@@ -229,6 +254,25 @@ const BlockAction = ({ user }: { user: IRealtor }) => {
           ? "Active"
           : "Blocked"}
       </Badge>
+
+      <FeedbackDialog
+        open={dialog.open}
+        type={dialog.type}
+        title={dialog.title}
+        message={dialog.message}
+        onClose={() => setDialog((prev) => ({ ...prev, open: false }))}
+        actionLabel={dialog.type === "success" ? "Continue" : "Try Again"}
+        onAction={() => {
+          if (dialog.type === "success") {
+            queryClient.invalidateQueries({ queryKey: ["allRealtors"] });
+            setDialog((prev) => ({ ...prev, open: false }));
+          } else {
+            setDialog((prev) => ({ ...prev, open: false }));
+          }
+        }}
+        allowOutsideInteraction={false}
+        hideCloseButton
+      />
     </div>
   );
 };
