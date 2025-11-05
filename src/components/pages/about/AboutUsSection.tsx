@@ -1,10 +1,10 @@
 "use client";
 import SmallTitle from "@/components/shared/SmallTitle";
-import { ArrowUpRight } from "lucide-react";
-import Link from "next/link";
-import React from "react";
-import { Buildings, RulerPen, Setting2 } from "iconsax-reactjs";
 import { motion } from "framer-motion";
+import { Buildings, People, RulerPen } from "iconsax-reactjs";
+import { ArrowUpRight } from "lucide-react";
+import Image from "next/image"; // Import Next.js Image component
+import Link from "next/link";
 
 // Animation variants
 const containerVariants = {
@@ -105,18 +105,22 @@ const AboutUsSection = () => {
             <div>
               <div className="mb-5">
                 <div className="text-[22px] font-semibold leading-[32px]">
-                  At Billionshomz Properties, we don’t just sell lands , we put you right where the future is happening.
+                  At Billionshomz Properties, we don&apos;t just sell lands , we
+                  put you right where the future is happening.
                 </div>
               </div>
             </div>
             <div>
               <div className="mb-10">
                 <p className="text-lg leading-[28px] mb-4">
-                  We’re a fast-growing real estate and development company based in Port Harcourt, Nigeria, focused on helping individuals and investors own genuine lands and properties with ease, confidence, and peace of mind.
-
+                  We&apos;re a fast-growing real estate and development company
+                  based in Port Harcourt, Nigeria, focused on helping
+                  individuals and investors own genuine lands and properties
+                  with ease, confidence, and peace of mind.
                 </p>
                 <p className="text-lg leading-[28px]">
-                  Our work goes beyond transactions we build communities, and redefine what real estate means for everyday Nigerians.
+                  Our work goes beyond transactions we build communities, and
+                  redefine what real estate means for everyday Nigerians.
                 </p>
               </div>
             </div>
@@ -156,29 +160,49 @@ const AboutUsSection = () => {
         viewport={{ once: true, margin: "-100px" }}
         variants={containerVariants}
       >
-        <div className="w-full container max-w-[min(100%,1290px)] mx-auto px-4">
+        <div className="w-full container max-w-[min(100%,1290px)] mx-auto px-4 pb-[80px]">
           <motion.div
-            className="bg-[url(https://demo2.wpopal.com/spaciaz/wp-content/uploads/2025/03/h2_img1.jpg)] bg-no-repeat bg-cover bg-center w-full h-full rounded-[30px] grid grid-cols-1 lg:grid-cols-2"
+            className="relative bg-no-repeat bg-cover bg-center w-full h-full rounded-[30px] grid grid-cols-1 lg:grid-cols-2 gap-2 overflow-hidden"
             variants={scaleUp}
           >
-            <div>
-              <div className="max-w-full relative w-[150px] lg:w-[220px]">
-                <div className="bg-background rounded-br-[30px] w-full h-full">
-                  <div className="w-full h-full">
-                    <div className="h-full">
-                      <div className="h-[60px]"></div>
+            {/* Background Image Section */}
+            <div className="relative">
+              {/* Background Image using Next.js Image */}
+              <div className="absolute inset-0 -z-10 w-full h-full min-h-[350px] rounded-[30px] overflow-hidden">
+                <Image
+                  src="/images/bg/IMG_7894.jpg"
+                  alt="About us background"
+                  fill
+                  sizes="100vw"
+                  className="object-cover w-full object-top"
+                  priority
+                  quality={70}
+                  placeholder={"empty"}
+                />
+              </div>
+
+              {/* Content overlay */}
+              <div className="relative z-10">
+                <div className="max-w-full relative w-[150px] lg:w-[220px]">
+                  <div className="bg-background rounded-br-[30px] w-full h-full">
+                    <div className="w-full h-full">
+                      <div className="h-full">
+                        <div className="h-[60px]"></div>
+                      </div>
                     </div>
                   </div>
+                  {/* top-right */}
+                  <div className="bg-background w-[30px] h-[30px] absolute top-0 right-[-30px] rotate-90 border-shape"></div>
+                  {/* bottom-left */}
+                  <div className="bg-background w-[30px] h-[30px] absolute bottom-[-30px] left-0 rotate-90 border-shape"></div>
                 </div>
-                {/* top-right */}
-                <div className="bg-background w-[30px] h-[30px] absolute top-0 right-[-30px] rotate-90 border-shape"></div>
-                {/* bottom-left */}
-                <div className="bg-background w-[30px] h-[30px] absolute bottom-[-30px] left-0 rotate-90 border-shape"></div>
               </div>
             </div>
-            <div className="lg:pt-[130px] pb-[60px] lg:pb-2.5 px-2.5  flex flex-col">
+
+            {/* Stats Section */}
+            <div className="lg:pt-[130px] pb-[60px] lg:pb-0 lg:px-2.5 flex flex-col ">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-2.5">
-                <div className="min-h-[200px] lg:min-h-[250px]"></div>
+                <div className="min-h-[290px] lg:min-h-[250px]"></div>
 
                 {/* Stats Cards */}
                 {[
@@ -206,14 +230,10 @@ const AboutUsSection = () => {
                   },
                   {
                     icon: (
-                      <Setting2
-                        size="56"
-                        color="var(--primary)"
-                        variant="Bulk"
-                      />
+                      <People size="56" color="var(--primary)" variant="Bulk" />
                     ),
-                    label: "total projects cost",
-                    value: "2.5b",
+                    label: "Landlords",
+                    value: "500",
                   },
                 ].map((stat, index) => (
                   <motion.div

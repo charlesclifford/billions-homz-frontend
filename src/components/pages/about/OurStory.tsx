@@ -62,8 +62,8 @@ const OurStory = () => {
   ];
 
   return (
-    <div id="team" className="w-full about-section">
-      <div className="w-full container max-w-[min(100%,1290px)] mx-auto px-4 pt-[150px] flex flex-col ">
+    <div id="team" className="w-full about-section bg-[#F6F3EC] dark:bg-background">
+      <div className="w-full container max-w-[min(100%,1290px)] mx-auto px-4 py-[80px] flex flex-col ">
         <motion.div
           initial="hidden"
           whileInView="visible"
