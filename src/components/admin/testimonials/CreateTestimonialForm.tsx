@@ -33,6 +33,7 @@ import { File, ImageIcon, Loader2, Upload, Video, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import Image from "next/image";
+import { Progress } from "@/components/ui/progress";
 
 const testimonialFormSchema = z.object({
   name: z.string().min(1, "Name is required").max(100, "Name is too long"),
@@ -41,10 +42,7 @@ const testimonialFormSchema = z.object({
     .min(1, "Position is required")
     .max(100, "Position is too long"),
   company: z.string().max(100, "Company name is too long").optional(),
-  content: z
-    .string()
-    .min(1, "Content is required")
-    .max(1000, "Content is too long"),
+  content: z.string().max(1000, "Content is too long").optional(),
   isFeatured: z.boolean().default(false).optional(),
 });
 
@@ -55,6 +53,8 @@ const CreateTestimonialForm = () => {
   const queryClient = useQueryClient();
   const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [mediaPreview, setMediaPreview] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
   const [dialog, setDialog] = useState({
     open: false,
     type: "success" as "success" | "error",
@@ -74,8 +74,16 @@ const CreateTestimonialForm = () => {
   });
 
   const createMutation = useMutation({
-    mutationFn: createTestimonial,
+    mutationFn: async (data: {
+      formData: FormData;
+      onProgress?: (progress: number) => void;
+    }) => {
+      return createTestimonial(data.formData, data.onProgress);
+    },
     onSuccess: () => {
+      setUploadProgress(0);
+      setIsUploading(false);
+
       // Invalidate queries to refresh data
       queryClient.invalidateQueries({ queryKey: testimonialKeys.lists() });
       queryClient.invalidateQueries({ queryKey: testimonialKeys.featured() });
@@ -94,6 +102,8 @@ const CreateTestimonialForm = () => {
     },
     onError: (error: Error) => {
       console.log(error);
+      setUploadProgress(0);
+      setIsUploading(false);
       setDialog({
         open: true,
         type: "error",
@@ -112,19 +122,27 @@ const CreateTestimonialForm = () => {
     formData.append("name", data.name);
     formData.append("position", data.position);
     if (data.company) formData.append("company", data.company);
-    formData.append("content", data.content);
+    if (data.content) formData.append("content", data.content);
     if (data.isFeatured !== undefined) {
       formData.append("isFeatured", data.isFeatured.toString());
     }
     if (mediaFile) formData.append("media", mediaFile);
 
-    createMutation.mutate(formData);
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    createMutation.mutate({
+      formData,
+      onProgress: (progress) => {
+        setUploadProgress(progress);
+      },
+    });
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
       "image/*": [".jpeg", ".jpg", ".png", ".webp"],
-      "video/*": [".mp4", ".webm"],
+      "video/*": [".mp4", ".webm", ".mov"],
     },
     maxFiles: 1,
     maxSize: 50 * 1024 * 1024, // 50MB
@@ -143,7 +161,7 @@ const CreateTestimonialForm = () => {
         const message =
           errorCode === "file-too-large"
             ? "File size must be less than 50MB"
-            : "Invalid file type. Only JPEG, PNG, WebP, MP4, or WebM allowed";
+            : "Invalid file type. Only JPEG, PNG, WebP, MP4, WebM, or MOV allowed";
 
         toast.error(message);
       }
@@ -153,6 +171,7 @@ const CreateTestimonialForm = () => {
   const removeFile = () => {
     setMediaFile(null);
     setMediaPreview(null);
+    setUploadProgress(0);
   };
 
   const getFileIcon = (file: File) => {
@@ -238,7 +257,7 @@ const CreateTestimonialForm = () => {
                     name="content"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Testimonial Content *</FormLabel>
+                        <FormLabel>Testimonial Content</FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="Share your testimonial experience..."
@@ -311,55 +330,94 @@ const CreateTestimonialForm = () => {
                                 </p>
                               </div>
                               <p className="mt-2 text-xs text-gray-400">
-                                Supports: JPEG, PNG, WebP, MP4, WebM (Max: 50MB)
+                                Supports: JPEG, PNG, WebP, MP4, WebM, MOV (Max:
+                                50MB)
                               </p>
                             </div>
                           </div>
                         ) : (
-                          <div className="relative aspect-video rounded-lg border-2 border-input border-dashed">
-                            <div className="flex items-center justify-between p-2">
-                              <div className="flex items-center space-x-3">
-                                {getFileIcon(mediaFile)}
-                                <div>
-                                  <p className="font-medium text-sm">
-                                    {mediaFile.name}
-                                  </p>
-                                  <p className="text-xs text-gray-500">
-                                    {formatFileSize(mediaFile.size)} •{" "}
-                                    {mediaFile.type.startsWith("image/")
-                                      ? "Image"
-                                      : "Video"}
-                                  </p>
+                          <div className="space-y-4">
+                            <div className="relative rounded-lg border-2 border-input border-dashed p-4">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-3">
+                                  {getFileIcon(mediaFile)}
+                                  <div>
+                                    <p className="font-medium text-sm">
+                                      {mediaFile.name}
+                                    </p>
+                                    <p className="text-xs text-gray-500">
+                                      {formatFileSize(mediaFile.size)} •{" "}
+                                      {mediaFile.type.startsWith("image/")
+                                        ? "Image"
+                                        : "Video"}
+                                    </p>
+                                  </div>
                                 </div>
+                                {!isUploading && (
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon-sm"
+                                    onClick={removeFile}
+                                    className="text-gray-500 hover:text-gray-700"
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                )}
                               </div>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon-sm"
-                                onClick={removeFile}
-                                className="text-gray-500 hover:text-gray-700"
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </div>
 
-                            {mediaPreview &&
-                              (mediaFile.type.startsWith("image/") ? (
-                                <Image
-                                  src={mediaPreview}
-                                  alt="Preview"
-                                  className="mt-4 rounded-md max-h-60 w-full h-full object-contain mx-auto"
-                                  width={300}
-                                  height={300}
-                                />
-                              ) : (
-                                <video
-                                  controls
-                                  src={mediaPreview}
-                                  className="mt-4 rounded-md max-h-60 mx-auto"
-                                  controlsList="nodownload"
-                                />
-                              ))}
+                              {/* Upload Progress */}
+                              {isUploading && (
+                                <div className="mt-4 space-y-2 p-3 bg-muted rounded-lg">
+                                  <div className="flex justify-between text-sm">
+                                    <span className="font-medium">
+                                      Uploading {mediaFile?.name}
+                                    </span>
+                                    <span className="font-semibold">
+                                      {uploadProgress}%
+                                    </span>
+                                  </div>
+                                  <Progress
+                                    value={uploadProgress}
+                                    className="h-2"
+                                  />
+                                  <div className="flex justify-between text-xs text-muted-foreground">
+                                    <span>
+                                      {mediaFile &&
+                                        formatFileSize(
+                                          (uploadProgress / 100) *
+                                            mediaFile.size
+                                        )}
+                                    </span>
+                                    <span>
+                                      {mediaFile &&
+                                        formatFileSize(mediaFile.size)}
+                                    </span>
+                                  </div>
+                                </div>
+                              )}
+
+                              {mediaPreview && !isUploading && (
+                                <div className="mt-4">
+                                  {mediaFile.type.startsWith("image/") ? (
+                                    <Image
+                                      src={mediaPreview}
+                                      alt="Preview"
+                                      className="rounded-md max-h-60 w-full h-full object-contain mx-auto"
+                                      width={300}
+                                      height={300}
+                                    />
+                                  ) : (
+                                    <video
+                                      controls
+                                      src={mediaPreview}
+                                      className="rounded-md max-h-60 mx-auto"
+                                      controlsList="nodownload"
+                                    />
+                                  )}
+                                </div>
+                              )}
+                            </div>
                           </div>
                         )}
                       </div>
@@ -371,7 +429,7 @@ const CreateTestimonialForm = () => {
                     )}
                     <FormDescription>
                       Upload an image or video (Max: 50MB, Supported: JPEG, PNG,
-                      WebP, MP4, WebM)
+                      WebP, MP4, WebM, MOV)
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -385,20 +443,28 @@ const CreateTestimonialForm = () => {
                 variant="outline"
                 className="cursor-pointer"
                 onClick={() => router.back()}
+                disabled={createMutation.isPending || isUploading}
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
-                disabled={createMutation.isPending}
+                disabled={createMutation.isPending || isUploading}
                 className="cursor-pointer"
               >
-                {createMutation.isPending && (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                {isUploading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Uploading... ({uploadProgress}%)
+                  </>
+                ) : createMutation.isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  "Create Testimonial"
                 )}
-                {createMutation.isPending
-                  ? "Creating..."
-                  : "Create Testimonial"}
               </Button>
             </CardFooter>
           </form>

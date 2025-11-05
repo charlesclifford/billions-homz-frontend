@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/pagination";
 import { cn } from "@/lib/utils";
 import { getPaginationRange } from "@/components/shared/DataTable";
+import Link from "next/link";
 
 const TestimonialsContent = () => {
   const dispatch = useAppDispatch();
@@ -93,8 +94,10 @@ const TestimonialsContent = () => {
         <Card>
           <CardContent className="pt-6">
             <p className="text-muted-foreground">No testimonials found.</p>
-            <Button variant="outline" className="mt-4">
-              Create First Testimonial
+            <Button asChild variant="outline" className="mt-4">
+              <Link href="/admin/testimonials/new">
+                Create First Testimonial
+              </Link>
             </Button>
           </CardContent>
         </Card>

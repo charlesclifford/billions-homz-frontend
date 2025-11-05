@@ -1,19 +1,8 @@
 "use client";
 import { DataTable } from "@/components/shared/DataTable";
+import { FeedbackDialog } from "@/components/shared/FeedbackDialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import useUsers from "@/hooks/useUsers";
-import { IUser } from "@/interfaces/user.interface";
-import { blockUser } from "@/lib/api/admin";
-import { setFilter } from "@/store/features/user/user.slice";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ColumnDef } from "@tanstack/react-table";
-import { Loader2Icon, Trash2Icon } from "lucide-react";
-import moment from "moment";
-import { toast } from "sonner";
-import UpdateUser from "./UpdateUser";
-import UserDetails from "./UserDetails";
 import {
   Dialog,
   DialogContent,
@@ -23,29 +12,124 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useState } from "react";
-import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import useUsers from "@/hooks/useUsers";
+import { IUser } from "@/interfaces/user.interface";
+import { blockUser } from "@/lib/api/admin";
+import { deleteUser } from "@/lib/api/users";
+import { setFilter } from "@/store/features/user/user.slice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ColumnDef } from "@tanstack/react-table";
 import { AxiosError } from "axios";
+import { Loader2, Loader2Icon, Trash2Icon } from "lucide-react";
+import moment from "moment";
+import { useState } from "react";
+import UpdateUser from "./UpdateUser";
+import UserDetails from "./UserDetails";
 
-const ActionsComp = ({
-  user,
-  refetch,
-}: {
-  user: IUser;
-  refetch: () => void;
-}) => {
-  const handleDelete = () => {
-    toast.success(`${user?.firstName} deleted`);
-    refetch();
+const ActionsComp = ({ user }: { user: IUser }) => {
+  const queryClient = useQueryClient();
+  const { user: authUser } = useAppSelector((state) => state.auth);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  const [dialog, setDialog] = useState({
+    open: false,
+    type: "success" as "success" | "error",
+    title: "",
+    message: "",
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteUser,
+    onSuccess: (data) => {
+      setDialog({
+        open: true,
+        type: "success",
+        title: "Success",
+        message: data?.message || "User deleted successfully",
+      });
+      queryClient.invalidateQueries({ queryKey: ["allRealtors"] });
+      setShowDeleteDialog(false);
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      setDialog({
+        open: true,
+        type: "error",
+        title: "Delete Failed",
+        message: error.message || error?.response?.data?.message || "",
+      });
+      setShowDeleteDialog(false);
+      console.error("Delete error:", error);
+    },
+  });
+  const confirmDelete = () => {
+    deleteMutation.mutate(user._id);
   };
 
   return (
     <div className="flex items-center gap-2">
       <UserDetails id={user._id} />
       <UpdateUser user={user} />
-      <Button size={"icon"} variant={"destructive"} onClick={handleDelete}>
-        <Trash2Icon size={16} />
-      </Button>
+
+      {authUser?.role === "super_admin" && (
+        <Button
+          size={"icon"}
+          variant={"destructive"}
+          className="cursor-pointer"
+          onClick={() => setShowDeleteDialog(true)}
+        >
+          <Trash2Icon size={16} />
+        </Button>
+      )}
+
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete User</DialogTitle>
+            <DialogDescription>
+              {`Are you sure you want to delete ${user.firstName}? This action cannot
+                    be undone.`}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDelete}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <FeedbackDialog
+        open={dialog.open}
+        type={dialog.type}
+        title={dialog.title}
+        message={dialog.message}
+        onClose={() => setDialog((prev) => ({ ...prev, open: false }))}
+        actionLabel={dialog.type === "success" ? "Continue" : "Try Again"}
+        onAction={() => {
+          setDialog((prev) => ({ ...prev, open: false }));
+        }}
+        allowOutsideInteraction={false}
+        hideCloseButton
+      />
     </div>
   );
 };
@@ -55,21 +139,35 @@ const BlockAction = ({ user }: { user: IUser }) => {
   const [showDialog, setShowDialog] = useState(false);
   const [intendedStatus, setIntendedStatus] = useState<boolean | null>(null);
 
+  const [dialog, setDialog] = useState({
+    open: false,
+    type: "success" as "success" | "error",
+    title: "",
+    message: "",
+  });
+
   const blockUserMutation = useMutation({
     mutationFn: (block: boolean) => blockUser(user._id, block),
     onSuccess: (data) => {
-      toast.success(
-        data.message ||
-          `User ${data.isActive ? "activated" : "blocked"} successfully`
-      );
-      queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+      setDialog({
+        open: true,
+        type: "success",
+        title: "Success",
+        message:
+          data?.message ||
+          `User ${data.isActive ? "activated" : "blocked"} successfully`,
+      });
       queryClient.invalidateQueries({ queryKey: ["getUserById", user._id] });
-
       setShowDialog(false);
     },
     onError: (error: AxiosError<{ message: string }>) => {
       console.log("error", error?.response?.data?.message);
-      toast.error(error?.response?.data?.message || error?.message);
+      setDialog({
+        open: true,
+        type: "error",
+        title: "Delete Failed",
+        message: error.message || error?.response?.data?.message || "",
+      });
     },
   });
 
@@ -85,7 +183,7 @@ const BlockAction = ({ user }: { user: IUser }) => {
   };
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1 flex-col">
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
         <DialogTrigger asChild>
           <div className="flex items-center gap-2">
@@ -96,7 +194,7 @@ const BlockAction = ({ user }: { user: IUser }) => {
               checked={user.isActive}
               onCheckedChange={handleSwitchToggle}
               disabled={blockUserMutation.isPending}
-              className="data-[state=checked]:bg-green-500"
+              className="data-[state=checked]:bg-green-500 cursor-pointer"
             />
           </div>
         </DialogTrigger>
@@ -126,7 +224,7 @@ const BlockAction = ({ user }: { user: IUser }) => {
             >
               {blockUserMutation.isPending ? (
                 <>
-                  <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2Icon className="h-4 w-4 animate-spin" />
                   {intendedStatus ? "Activating..." : "Blocking..."}
                 </>
               ) : intendedStatus ? (
@@ -139,7 +237,10 @@ const BlockAction = ({ user }: { user: IUser }) => {
         </DialogContent>
       </Dialog>
 
-      <Badge variant={user.isActive ? "default" : "destructive"}>
+      <Badge
+        variant={user.isActive ? "default" : "destructive"}
+        className="text-[10px]"
+      >
         {blockUserMutation.isPending
           ? intendedStatus
             ? "Activating..."
@@ -148,6 +249,25 @@ const BlockAction = ({ user }: { user: IUser }) => {
           ? "Active"
           : "Blocked"}
       </Badge>
+
+      <FeedbackDialog
+        open={dialog.open}
+        type={dialog.type}
+        title={dialog.title}
+        message={dialog.message}
+        onClose={() => setDialog((prev) => ({ ...prev, open: false }))}
+        actionLabel={dialog.type === "success" ? "Continue" : "Try Again"}
+        onAction={() => {
+          if (dialog.type === "success") {
+            queryClient.invalidateQueries({ queryKey: ["allUsers"] });
+            setDialog((prev) => ({ ...prev, open: false }));
+          } else {
+            setDialog((prev) => ({ ...prev, open: false }));
+          }
+        }}
+        allowOutsideInteraction={false}
+        hideCloseButton
+      />
     </div>
   );
 };
@@ -157,8 +277,7 @@ const UsersTable = () => {
 
   // Get filter state from Redux
   const { filter } = useAppSelector((state) => state.user);
-  const { users, totalPages, totalUsers, isPending, refetch } =
-    useUsers(filter);
+  const { users, totalPages, totalUsers, isPending } = useUsers(filter);
 
   const columns: ColumnDef<IUser>[] = [
     {
@@ -226,7 +345,7 @@ const UsersTable = () => {
       accessorKey: "",
       header: "Actions",
       cell: ({ row }) => {
-        return <ActionsComp user={row.original} refetch={refetch} />;
+        return <ActionsComp user={row.original} />;
       },
     },
   ];

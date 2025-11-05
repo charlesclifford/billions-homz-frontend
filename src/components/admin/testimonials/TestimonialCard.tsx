@@ -239,6 +239,7 @@ export const TestimonialCard = ({
                   src={testimonial.media.url}
                   poster={testimonial.media.thumbnailUrl}
                   className="w-full h-full object-cover"
+                  controlsList="nodownload"
                 />
                 <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/20 transition-all">
                   <div className="bg-black/50 rounded-full p-3 transform scale-100 group-hover:scale-110 transition-transform">
@@ -269,9 +270,11 @@ export const TestimonialCard = ({
 
           {/* Content */}
           <div>
-            <p className=" line-clamp-2 text-ellipsis">
-              &quot;{testimonial.content}&quot;
-            </p>
+            {testimonial.company && (
+              <p className=" line-clamp-2 text-ellipsis">
+                &quot;{testimonial.content}&quot;
+              </p>
+            )}
           </div>
 
           {/* Metadata */}

@@ -2,9 +2,12 @@ import PropertiesList from "@/components/pages/property/PropertiesList";
 import PropertiesListFilter from "@/components/pages/property/PropertiesListFilter";
 import PageHeader from "@/components/shared/PageHeader";
 import { Separator } from "@/components/ui/separator";
+import { redirect } from "next/navigation";
 import React from "react";
 
 const PropertiesPage = () => {
+  redirect("/listings/estates");
+
   return (
     <div className="w-full">
       <PageHeader

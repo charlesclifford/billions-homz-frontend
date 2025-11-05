@@ -71,20 +71,21 @@ export default function PropertiesSection() {
         </motion.div>
 
         {/* Tabs for Estates / Properties */}
-        <Tabs defaultValue="properties" className="w-full">
+        <Tabs defaultValue="estates" className="w-full">
           <div className="flex justify-center mb-10">
             <TabsList className="grid w-[300px] grid-cols-2 bg-muted/50 rounded-full">
-              <TabsTrigger
-                value="properties"
-                className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-white"
-              >
-                Properties
-              </TabsTrigger>
               <TabsTrigger
                 value="estates"
                 className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-white"
               >
                 Estates
+              </TabsTrigger>
+              <TabsTrigger
+                value="properties"
+                className="rounded-full data-[state=active]:bg-primary data-[state=active]:text-white"
+                disabled
+              >
+                Properties
               </TabsTrigger>
             </TabsList>
           </div>
