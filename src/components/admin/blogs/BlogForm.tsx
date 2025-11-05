@@ -101,7 +101,7 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
   });
 
   useEffect(() => {
-    if (initialValues) {
+    if (open && initialValues) {
       form.reset({
         ...initialValues,
         tags: initialValues.tags || [],
@@ -112,7 +112,7 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
         setPreviewImage(initialValues.image.imageUrl);
       }
     }
-  }, [initialValues, form]);
+  }, [initialValues, open, form]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
