@@ -59,6 +59,7 @@ export const MediaPreviewModal = ({
                     controls
                     autoPlay
                     className="w-full h-auto max-h-[70vh] object-contain"
+                    controlsList="nodownload"
                   >
                     Your browser does not support the video tag.
                   </video>

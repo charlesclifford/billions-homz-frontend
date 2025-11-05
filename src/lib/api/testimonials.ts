@@ -64,11 +64,22 @@ export const getTestimonial = async (id: string) => {
 /**
  * Create new testimonial
  */
-export const createTestimonial = async (data: FormData) => {
+export const createTestimonial = async (
+  data: FormData,
+  onProgress?: (progress: number) => void
+) => {
   try {
     const response = await instance.post("/testimonials/create", data, {
       headers: {
         "Content-Type": "multipart/form-data",
+      },
+      onUploadProgress: (progressEvent) => {
+        if (onProgress && progressEvent.total) {
+          const progress = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          onProgress(progress);
+        }
       },
     });
     return handleResponse(response);
@@ -95,7 +106,11 @@ export const updateTestimonial = async (
 /**
  * Update testimonial media (image/video)
  */
-export const updateTestimonialMedia = async (id: string, mediaFile: File) => {
+export const updateTestimonialMedia = async (
+  id: string,
+  mediaFile: File,
+  onProgress?: (progress: number) => void
+) => {
   try {
     const formData = new FormData();
     formData.append("media", mediaFile);
@@ -103,6 +118,14 @@ export const updateTestimonialMedia = async (id: string, mediaFile: File) => {
     const response = await instance.put(`/testimonials/${id}/media`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
+      },
+      onUploadProgress: (progressEvent) => {
+        if (onProgress && progressEvent.total) {
+          const progress = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          onProgress(progress);
+        }
       },
     });
     return handleResponse(response);

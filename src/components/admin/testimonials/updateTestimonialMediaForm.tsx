@@ -17,6 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Progress } from "@/components/ui/progress";
 import { testimonialKeys } from "@/hooks/useTestimonials";
 import { ITestimonial } from "@/interfaces/testimonial.interface";
 import { updateTestimonialMedia } from "@/lib/api/testimonials";
@@ -43,6 +44,9 @@ export const UpdateTestimonialMediaForm = ({
   const queryClient = useQueryClient();
   const [mediaFile, setMediaFile] = useState<File | null>(null);
   const [mediaPreview, setMediaPreview] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
+
   const [dialog, setDialog] = useState({
     open: false,
     type: "success" as "success" | "error",
@@ -55,15 +59,30 @@ export const UpdateTestimonialMediaForm = ({
   });
 
   const updateMediaMutation = useMutation({
-    mutationFn: ({ id, mediaFile }: { id: string; mediaFile: File }) =>
-      updateTestimonialMedia(id, mediaFile),
+    mutationFn: async ({
+      id,
+      mediaFile,
+      onProgress,
+    }: {
+      id: string;
+      mediaFile: File;
+      onProgress?: (progress: number) => void;
+    }) => {
+      return updateTestimonialMedia(id, mediaFile, onProgress);
+    },
     onSuccess: (data, variables) => {
+      setUploadProgress(0);
+      setIsUploading(false);
+
       queryClient.invalidateQueries({ queryKey: testimonialKeys.lists() });
       queryClient.invalidateQueries({ queryKey: testimonialKeys.featured() });
       queryClient.invalidateQueries({
         queryKey: testimonialKeys.detail(variables.id),
       });
+
+      setMediaFile(null);
       setMediaPreview(null);
+      form.reset();
 
       setDialog({
         open: true,
@@ -74,6 +93,8 @@ export const UpdateTestimonialMediaForm = ({
     },
     onError: (error: Error) => {
       console.log(error);
+      setUploadProgress(0);
+      setIsUploading(false);
       setDialog({
         open: true,
         type: "error",
@@ -87,7 +108,7 @@ export const UpdateTestimonialMediaForm = ({
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
       "image/*": [".jpeg", ".jpg", ".png", ".webp"],
-      "video/*": [".mp4", ".webm"],
+      "video/*": [".mp4", ".webm", ".mov"],
     },
     maxFiles: 1,
     maxSize: 50 * 1024 * 1024, // 50MB
@@ -107,7 +128,7 @@ export const UpdateTestimonialMediaForm = ({
         const message =
           errorCode === "file-too-large"
             ? "File size must be less than 50MB"
-            : "Invalid file type. Only JPEG, PNG, WebP, MP4, or WebM allowed";
+            : "Invalid file type. Only JPEG, PNG, WebP, MP4, WebM, or MOV allowed";
         toast.error(message);
       }
     },
@@ -116,6 +137,7 @@ export const UpdateTestimonialMediaForm = ({
   const removeFile = () => {
     setMediaFile(null);
     setMediaPreview(null);
+    setUploadProgress(0);
     form.reset();
   };
 
@@ -142,9 +164,15 @@ export const UpdateTestimonialMediaForm = ({
       return;
     }
 
+    setIsUploading(true);
+    setUploadProgress(0);
+
     updateMediaMutation.mutate({
       id: testimonial._id,
       mediaFile: data.media,
+      onProgress: (progress) => {
+        setUploadProgress(progress);
+      },
     });
   };
 
@@ -240,18 +268,47 @@ export const UpdateTestimonialMediaForm = ({
                                   </p>
                                 </div>
                               </div>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon-sm"
-                                onClick={removeFile}
-                                className="text-gray-500 hover:text-gray-700"
-                              >
-                                <X className="h-4 w-4" />
-                              </Button>
+                              {!isUploading && (
+                                <Button
+                                  type="button"
+                                  variant="ghost"
+                                  size="icon-sm"
+                                  onClick={removeFile}
+                                  className="text-gray-500 hover:text-gray-700"
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              )}
                             </div>
 
+                            {/* Upload Progress */}
+                            {isUploading && (
+                              <div className="mt-4 space-y-2">
+                                <div className="flex justify-between text-sm">
+                                  <span className="font-medium">
+                                    Uploading...
+                                  </span>
+                                  <span className="font-semibold">
+                                    {uploadProgress}%
+                                  </span>
+                                </div>
+                                <Progress
+                                  value={uploadProgress}
+                                  className="h-2"
+                                />
+                                <div className="flex justify-between text-xs text-muted-foreground">
+                                  <span>
+                                    {formatFileSize(
+                                      (uploadProgress / 100) * mediaFile.size
+                                    )}
+                                  </span>
+                                  <span>{formatFileSize(mediaFile.size)}</span>
+                                </div>
+                              </div>
+                            )}
+
                             {mediaPreview &&
+                              !isUploading &&
                               (mediaFile.type.startsWith("image/") ? (
                                 <Image
                                   src={mediaPreview}
@@ -265,6 +322,7 @@ export const UpdateTestimonialMediaForm = ({
                                   controls
                                   src={mediaPreview}
                                   className="mt-4 rounded-md max-h-60 mx-auto"
+                                  controlsList="nodownload"
                                 />
                               ))}
                           </div>
@@ -285,20 +343,29 @@ export const UpdateTestimonialMediaForm = ({
                   type="button"
                   variant="outline"
                   onClick={onCancel}
-                  disabled={updateMediaMutation.isPending}
+                  disabled={updateMediaMutation.isPending || isUploading}
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
-                  disabled={updateMediaMutation.isPending || !mediaFile}
+                  disabled={
+                    updateMediaMutation.isPending || !mediaFile || isUploading
+                  }
                 >
-                  {updateMediaMutation.isPending && (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                  {isUploading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Uploading... ({uploadProgress}%)
+                    </>
+                  ) : updateMediaMutation.isPending ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Updating...
+                    </>
+                  ) : (
+                    "Update Media"
                   )}
-                  {updateMediaMutation.isPending
-                    ? "Updating..."
-                    : "Update Media"}
                 </Button>
               </div>
             </form>
