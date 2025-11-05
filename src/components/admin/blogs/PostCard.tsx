@@ -11,16 +11,23 @@ import {
 import { IPost } from "@/interfaces/blog.interface";
 import { deletePost } from "@/lib/api/blog";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { Edit, Loader2, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-import { toast } from "sonner";
 import BlogForm from "./BlogForm";
+import { FeedbackDialog } from "@/components/shared/FeedbackDialog";
 
 const PostCard = ({ post }: { post: IPost }) => {
   const queryClient = useQueryClient();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [postToDelete, setPostToDelete] = useState<string | null>(null);
+  const [dialog, setDialog] = useState({
+    open: false,
+    type: "success" as "success" | "error",
+    title: "",
+    message: "",
+  });
 
   const handleDeleteClick = (postId: string) => {
     setPostToDelete(postId);
@@ -29,13 +36,25 @@ const PostCard = ({ post }: { post: IPost }) => {
 
   const deletePostMutation = useMutation({
     mutationFn: deletePost,
-    onSuccess: () => {
-      toast.success("Post deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["allPosts"] });
+    onSuccess: (data) => {
+      setDialog({
+        open: true,
+        type: "success",
+        title: "Success",
+        message: data?.message || "Post deleted successfully",
+      });
       setShowDeleteDialog(false);
     },
-    onError: (error) => {
-      toast.error("Failed to delete post");
+    onError: (error: AxiosError<{ message: string }>) => {
+      setDialog({
+        open: true,
+        type: "error",
+        title: "Delete Failed",
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Failed to delete post",
+      });
       console.error("Delete error:", error);
     },
   });
@@ -106,7 +125,7 @@ const PostCard = ({ post }: { post: IPost }) => {
             >
               {deletePostMutation.isPending ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Deleting...
                 </>
               ) : (
@@ -116,6 +135,25 @@ const PostCard = ({ post }: { post: IPost }) => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <FeedbackDialog
+        open={dialog.open}
+        type={dialog.type}
+        title={dialog.title}
+        message={dialog.message}
+        onClose={() => setDialog((prev) => ({ ...prev, open: false }))}
+        actionLabel={dialog.type === "success" ? "Continue" : "Try Again"}
+        onAction={() => {
+          if (dialog.type === "success") {
+            queryClient.invalidateQueries({ queryKey: ["allPosts"] });
+            setDialog((prev) => ({ ...prev, open: false }));
+          } else {
+            setDialog((prev) => ({ ...prev, open: false }));
+          }
+        }}
+        allowOutsideInteraction={false}
+        hideCloseButton
+      />
     </>
   );
 };

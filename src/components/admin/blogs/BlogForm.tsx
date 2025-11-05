@@ -1,4 +1,5 @@
 "use client";
+import { FeedbackDialog } from "@/components/shared/FeedbackDialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -80,6 +81,13 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const isMobile = useIsMobile();
 
+  const [dialog, setDialog] = useState({
+    open: false,
+    type: "success" as "success" | "error",
+    title: "",
+    message: "",
+  });
+
   const form = useForm<BlogFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -135,13 +143,25 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
   const createPostMutation = useMutation({
     mutationFn: (data: FormData) => createPost(data),
     onSuccess: async (data) => {
-      toast.success(data?.message || "Post created successfully!");
-      queryClient.invalidateQueries({ queryKey: ["allPosts"] });
+      setDialog({
+        open: true,
+        type: "success",
+        title: "Success",
+        message: data?.message || "Post created successfully",
+      });
       handleClose();
     },
     onError: (error: AxiosError<{ message: string }>) => {
       console.error("Error creating post:", error);
-      toast.error(error?.response?.data?.message || "Failed to create post");
+      setDialog({
+        open: true,
+        type: "error",
+        title: "Error",
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Failed to create post",
+      });
     },
   });
 
@@ -149,13 +169,25 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
     mutationFn: (data: FormData) =>
       updatePost(initialValues?._id as string, data),
     onSuccess: async (data) => {
-      toast.success(data?.message || "Post updated successfully!");
-      queryClient.invalidateQueries({ queryKey: ["allPosts"] });
+      setDialog({
+        open: true,
+        type: "success",
+        title: "Success",
+        message: data?.message || "Post updated successfully.",
+      });
       handleClose();
     },
     onError: (error: AxiosError<{ message: string }>) => {
       console.error("Error updating post:", error);
-      toast.error(error?.response?.data?.message || "Failed to update post");
+      setDialog({
+        open: true,
+        type: "error",
+        title: "Error",
+        message:
+          error.message ||
+          error?.response?.data?.message ||
+          "Failed to update post.",
+      });
     },
   });
 
@@ -291,7 +323,7 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
               )}
             >
               <input {...getInputProps()} />
-              <div className="flex flex-col items-center justify-center gap-2">
+              <div className="flex flex-col items-center justify-center gap-2 py-8">
                 <ImagePlus className="h-8 w-8 text-gray-400" />
                 {isDragActive ? (
                   <p className="text-sm text-primary font-medium">
@@ -489,46 +521,88 @@ const BlogForm = ({ initialValues, children }: BlogFormProps) => {
 
   if (isMobile) {
     return (
-      <Sheet open={open} onOpenChange={handleOpenChange}>
-        <SheetTrigger asChild>{children}</SheetTrigger>
-        <SheetContent
-          className="w-full sm:max-w-lg"
-          onInteractOutside={(e) => e.preventDefault()}
-        >
-          <SheetHeader className="border-b">
-            <SheetTitle className="text-xl">
-              {initialValues?._id ? "Edit Post" : "Create New Post"}
-            </SheetTitle>
-          </SheetHeader>
-          <ScrollArea className="flex-1 min-h-[calc(100dvh-180px)]">
-            {renderFormContent()}
-          </ScrollArea>
-          <SheetFooter className="flex flex-row justify-end gap-2 pt-4">
-            {renderFooter()}
-          </SheetFooter>
-        </SheetContent>
-      </Sheet>
+      <>
+        <Sheet open={open} onOpenChange={handleOpenChange}>
+          <SheetTrigger asChild>{children}</SheetTrigger>
+          <SheetContent
+            className="w-full sm:max-w-lg"
+            onInteractOutside={(e) => e.preventDefault()}
+          >
+            <SheetHeader className="border-b">
+              <SheetTitle className="text-xl">
+                {initialValues?._id ? "Edit Post" : "Create New Post"}
+              </SheetTitle>
+            </SheetHeader>
+            <ScrollArea className="flex-1 min-h-[calc(100dvh-180px)]">
+              {renderFormContent()}
+            </ScrollArea>
+            <SheetFooter className="flex flex-row justify-end gap-2 pt-4">
+              {renderFooter()}
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
+
+        <FeedbackDialog
+          open={dialog.open}
+          type={dialog.type}
+          title={dialog.title}
+          message={dialog.message}
+          onClose={() => setDialog((prev) => ({ ...prev, open: false }))}
+          actionLabel={dialog.type === "success" ? "Continue" : "Try Again"}
+          onAction={() => {
+            if (dialog.type === "success") {
+              queryClient.invalidateQueries({ queryKey: ["allPosts"] });
+              setDialog((prev) => ({ ...prev, open: false }));
+            } else {
+              setDialog((prev) => ({ ...prev, open: false }));
+            }
+          }}
+          allowOutsideInteraction={false}
+          hideCloseButton
+        />
+      </>
     );
   }
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent
-        className="!max-w-4xl w-full h-full lg:h-[calc(100vh-50px)]"
-        onInteractOutside={(e) => e.preventDefault()}
-      >
-        <DialogHeader>
-          <DialogTitle>
-            {initialValues?._id ? "Edit Post" : "Create New Post"}
-          </DialogTitle>
-        </DialogHeader>
-        <ScrollArea className="h-[calc(100vh-200px)]">
-          {renderFormContent()}
-        </ScrollArea>
-        <DialogFooter>{renderFooter()}</DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <>
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogTrigger asChild>{children}</DialogTrigger>
+        <DialogContent
+          className="!max-w-4xl w-full h-full lg:h-[calc(100vh-50px)]"
+          onInteractOutside={(e) => e.preventDefault()}
+        >
+          <DialogHeader>
+            <DialogTitle>
+              {initialValues?._id ? "Edit Post" : "Create New Post"}
+            </DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="h-[calc(100vh-200px)]">
+            {renderFormContent()}
+          </ScrollArea>
+          <DialogFooter>{renderFooter()}</DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <FeedbackDialog
+        open={dialog.open}
+        type={dialog.type}
+        title={dialog.title}
+        message={dialog.message}
+        onClose={() => setDialog((prev) => ({ ...prev, open: false }))}
+        actionLabel={dialog.type === "success" ? "Continue" : "Try Again"}
+        onAction={() => {
+          if (dialog.type === "success") {
+            queryClient.invalidateQueries({ queryKey: ["allPosts"] });
+            setDialog((prev) => ({ ...prev, open: false }));
+          } else {
+            setDialog((prev) => ({ ...prev, open: false }));
+          }
+        }}
+        allowOutsideInteraction={false}
+        hideCloseButton
+      />
+    </>
   );
 };
 
