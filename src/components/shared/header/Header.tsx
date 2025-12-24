@@ -269,15 +269,6 @@ const Header = () => {
                               >
                                 <Link href="/auth/login">Sign In</Link>
                               </Button>
-                              <Button
-                                variant="outline"
-                                className="rounded-[30px] h-[40px]"
-                                onClick={() => setIsMenuOpen(false)}
-                              >
-                                <Link href="/auth/register/user">
-                                  Create Account
-                                </Link>
-                              </Button>
                             </div>
                           )}
                         </DrawerFooter>

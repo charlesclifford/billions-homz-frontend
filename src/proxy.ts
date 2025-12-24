@@ -8,7 +8,7 @@ const realtorRoutes = ["/realtor", "/realtor/*"];
 const privateRoutes = ["/profile"];
 const authRoutes = ["/auth/login", "/auth/register", "/auth/*"];
 
-export default async function middleware(req: NextRequest) {
+export default async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Skip middleware for unauthorized page to prevent redirect loops
