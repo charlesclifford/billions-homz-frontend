@@ -10,6 +10,8 @@ interface RealtorsFilterState {
   sortOrder?: "asc" | "desc";
   startDate?: string;
   endDate?: string;
+  includeDeleted?: boolean;
+  includeWithoutAuth?: boolean;
 }
 
 interface Realtorstate {
@@ -20,7 +22,7 @@ interface Realtorstate {
   error: string | null;
 }
 
-export const SLICE_NAME = "user";
+export const SLICE_NAME = "realtor";
 
 export const initialFilterState: RealtorsFilterState = {
   page: 1,

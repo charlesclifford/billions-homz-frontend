@@ -1,26 +1,32 @@
 "use client";
 
-import { useAppSelector } from "@/store/hooks";
-import { ThemeToggler } from "../ThemeToggler";
-import HeaderUser from "./HeaderUser";
-import { menuList } from "./menu";
-import Link from "next/link";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
-import { Skeleton } from "@/components/ui/skeleton";
-import NavLinks from "./NavLinks";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { HamburgerMenu } from "iconsax-reactjs";
-import { Drawer, DrawerContent } from "@/components/ui/drawer";
-import { AnimatedLink } from "../AnimatedLink";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Drawer, DrawerContent, DrawerFooter } from "@/components/ui/drawer";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useIsMobile } from "@/hooks/use-mobile";
+import useLogout from "@/hooks/useLogout";
+import { useIsTablet } from "@/hooks/useMobile";
+import { cn } from "@/lib/utils";
+import { useAppSelector } from "@/store/hooks";
+import { formatText } from "@/utils/helpers";
+import { HamburgerMenu } from "iconsax-reactjs";
+import Link from "next/link";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { AnimatedLink } from "../AnimatedLink";
+import Logo from "../Logo";
+import { ThemeToggler } from "../ThemeToggler";
+import HeaderUser from "./HeaderUser";
+import { menuList } from "./menu";
+import NavLinks from "./NavLinks";
 
 const SCROLL_THRESHOLD = 150; // Minimum pixels to scroll before hiding header
 
@@ -30,7 +36,10 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const lastScrollY = useRef(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAccountDrawerOpen, setIsAccountDrawerOpen] = useState(false);
   const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+  const { signOut, isLoggingOut } = useLogout();
 
   const handleScroll = useCallback(() => {
     const currentScrollY = window.scrollY;
@@ -70,23 +79,53 @@ const Header = () => {
     return () => window.removeEventListener("scroll", throttledScroll);
   }, [handleScroll]);
 
+  const accountOptions = [
+    { name: "Profile", href: "/profile" },
+    { name: "Favorites", href: "/profile/favorites" },
+    {
+      name: "Dashboard",
+      href: "/admin",
+      roles: ["admin", "super_admin"],
+    },
+    {
+      name: "Dashboard",
+      href: "/realtor/dashboard",
+      roles: ["realtor"],
+    },
+  ];
+
+  const userRole = useMemo(
+    () => (user?.role ? formatText(user.role).toLowerCase() : "unknown role"),
+    [user]
+  );
+
+  const filteredNavMenu = menuList.filter(
+    (nav) =>
+      !nav.roles || (userRole && nav.roles.includes(user?.role as string))
+  );
+
+  const filteredAccountMenu = accountOptions.filter(
+    (nav) =>
+      !nav.roles || (userRole && nav.roles.includes(user?.role as string))
+  );
+
   return (
     <div
       className={cn(
-        "fixed top-0 z-10 w-full transition-transform duration-500 ease-[cubic-bezier(0.33,1,0.68,1)]",
+        "fixed top-0 z-50 w-full transition-transform duration-500 ease-[cubic-bezier(0.33,1,0.68,1)]",
         isVisible ? "translate-y-0" : `-translate-y-[100%]`
       )}
     >
       <div
         className={cn(
           "transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)]",
-          isScrolled ? "px-0" : "px-4"
+          isScrolled ? "px-0" : "px-2 lg:px-4"
         )}
       >
         <div
           className={cn(
             "w-full transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)]",
-            isScrolled ? "py-0" : "py-5"
+            isScrolled ? "py-0" : "py-4"
           )}
         >
           <div
@@ -106,33 +145,9 @@ const Header = () => {
               )}
             >
               {/* Logo */}
-              <div className="col-span-1 transition-transform duration-500 ease-[cubic-bezier(0.33,1,0.68,1)]">
+              <div className="col-span-1 transition-transform duration-500 ease-[cubic-bezier(0.33,1,0.68,1)] pl-2 lg:pl-4">
                 <Link href="/" className="text-xl flex items-center gap-1">
-                  <Avatar
-                    className={cn(
-                      "transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)]",
-                      "size-10",
-                      "group-data-[collapsible=icon]:size-8",
-                      "group-data-[collapsible=icon]:mx-auto",
-                      isScrolled ? "scale-90" : "scale-100"
-                    )}
-                  >
-                    <AvatarFallback className="bg-primary/10 text-primary text-sm">
-                      BH
-                    </AvatarFallback>
-                  </Avatar>
-
-                  <span
-                    className={cn(
-                      "text-lg font-semibold whitespace-nowrap transition-all duration-500 ease-[cubic-bezier(0.33,1,0.68,1)]",
-                      "group-data-[collapsible=icon]:hidden",
-                      isScrolled
-                        ? "opacity-90 scale-95"
-                        : "opacity-100 scale-100"
-                    )}
-                  >
-                    Billions Homz
-                  </span>
+                  <Logo className="h-8" />
                 </Link>
               </div>
 
@@ -144,61 +159,184 @@ const Header = () => {
                   <HamburgerMenu size="24" variant="Outline" />
                 </button>
 
-                {isMobile && (
-                  <Drawer
-                    open={isMenuOpen}
-                    onOpenChange={() => setIsMenuOpen(!isMenuOpen)}
-                  >
-                    <DrawerContent className="px-6 pb-8">
-                      <ul className="pl-2 py-4">
-                        {menuList.map((item, index) => (
-                          <li key={index} className="py-2">
-                            {item.children && item.children.length > 0 ? (
-                              <Accordion type="single" collapsible>
-                                <AccordionItem value={`item-${index}`}>
-                                  <AccordionTrigger className="font-normal text-xl py-2">
+                {(isMobile || isTablet) && (
+                  <>
+                    <Drawer
+                      open={isMenuOpen}
+                      onOpenChange={() => setIsMenuOpen(!isMenuOpen)}
+                    >
+                      <DrawerContent className="px-2 pb-2 h-[95dvh]">
+                        <ScrollArea className="flex-1 overflow-auto">
+                          <ul className="px-4 py-4 space-y-2">
+                            {filteredNavMenu.map((item, index) => (
+                              <li key={index} className="py-2">
+                                {item.children && item.children.length > 0 ? (
+                                  <Accordion type="single" collapsible>
+                                    <AccordionItem value={`item-${index}`}>
+                                      <AccordionTrigger className="font-normal text-lg py-2 hover:no-underline hover:cursor-pointer">
+                                        {item.name}
+                                      </AccordionTrigger>
+                                      <AccordionContent className="py-0">
+                                        <ul className="pl-4">
+                                          {item.children.map(
+                                            (child, childIdx) => (
+                                              <li
+                                                key={childIdx}
+                                                className="py-2"
+                                              >
+                                                <AnimatedLink
+                                                  href={
+                                                    child.disabled
+                                                      ? "#"
+                                                      : child.href
+                                                  }
+                                                  className={cn(
+                                                    "text-lg",
+                                                    child.disabled
+                                                      ? "pointer-events-none opacity-50 relative block"
+                                                      : ""
+                                                  )}
+                                                  onClick={() =>
+                                                    setIsMenuOpen(false)
+                                                  }
+                                                  aria-disabled={child.disabled}
+                                                  tabIndex={
+                                                    child.disabled
+                                                      ? -1
+                                                      : undefined
+                                                  }
+                                                >
+                                                  {child.name}
+                                                  {child.disabled && (
+                                                    <span className="absolute right-0 top-1/2 -translate-y-1/2 text-[10px] font-medium bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                                                      Coming Soon
+                                                    </span>
+                                                  )}
+                                                </AnimatedLink>
+                                              </li>
+                                            )
+                                          )}
+                                        </ul>
+                                      </AccordionContent>
+                                    </AccordionItem>
+                                  </Accordion>
+                                ) : (
+                                  <AnimatedLink
+                                    href={item.href}
+                                    className="text-lg"
+                                    onClick={() => setIsMenuOpen(false)}
+                                  >
                                     {item.name}
-                                  </AccordionTrigger>
-                                  <AccordionContent>
-                                    <ul className="pl-4">
-                                      {item.children.map((child, childIdx) => (
-                                        <li
-                                          key={childIdx}
-                                          className="font-normal text-base py-2"
-                                        >
-                                          <AnimatedLink
-                                            href={child.href}
-                                            className="text-xl"
-                                            onClick={() => setIsMenuOpen(false)}
-                                          >
-                                            {child.name}
-                                          </AnimatedLink>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  </AccordionContent>
-                                </AccordionItem>
-                              </Accordion>
-                            ) : (
-                              <AnimatedLink
-                                href={item.href}
-                                className="text-xl"
+                                  </AnimatedLink>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        </ScrollArea>
+
+                        <Separator className="my-1" />
+
+                        <div className="px-4 py-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg">Theme</span>
+                            <ThemeToggler />
+                          </div>
+                        </div>
+
+                        <DrawerFooter>
+                          {loading ? (
+                            <div className="flex justify-center">
+                              <Skeleton className="h-10 w-full rounded-full" />
+                            </div>
+                          ) : user ? (
+                            <div className="flex flex-col space-y-4">
+                              <Button
+                                variant="outline"
+                                className="w-full rounded-[30px] h-[45px] cursor-pointer"
+                                onClick={() => {
+                                  setIsAccountDrawerOpen(true);
+                                }}
+                              >
+                                My Account
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="flex flex-col space-y-4">
+                              <Button
+                                asChild
+                                className="rounded-[30px] h-[40px]"
                                 onClick={() => setIsMenuOpen(false)}
                               >
-                                {item.name}
-                              </AnimatedLink>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    </DrawerContent>
-                  </Drawer>
+                                <Link href="/auth/login">Sign In</Link>
+                              </Button>
+                            </div>
+                          )}
+                        </DrawerFooter>
+                      </DrawerContent>
+                    </Drawer>
+
+                    {/* Account Options Drawer */}
+                    <Drawer
+                      open={isAccountDrawerOpen}
+                      onOpenChange={setIsAccountDrawerOpen}
+                    >
+                      <DrawerContent className="px-2 pb-2">
+                        <div className="px-4 py-6">
+                          <div className="flex items-center space-x-4 mb-6">
+                            <Avatar className="h-12 w-12">
+                              <AvatarFallback>
+                                {user?.firstName?.charAt(0)}
+                                {user?.lastName?.charAt(0)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <h3 className="font-medium">
+                                {user?.firstName} {user?.lastName}
+                              </h3>
+                              <p className="text-sm text-muted-foreground">
+                                {user?.email}
+                              </p>
+                            </div>
+                          </div>
+
+                          <ul className="space-y-2 pl-2">
+                            {filteredAccountMenu.map((option, i) => (
+                              <li
+                                key={i}
+                                className="py-2"
+                                onClick={() => {
+                                  setIsMenuOpen(false);
+                                  setIsAccountDrawerOpen(false);
+                                }}
+                              >
+                                <AnimatedLink
+                                  href={option.href}
+                                  className="text-lg"
+                                >
+                                  {option.name}
+                                </AnimatedLink>
+                              </li>
+                            ))}
+                            <li className="py-2">
+                              <button
+                                className="text-destructive !text-lg"
+                                disabled={isLoggingOut}
+                                onClick={signOut}
+                              >
+                                Logout
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </DrawerContent>
+                    </Drawer>
+                  </>
                 )}
               </div>
 
               {/* navlinks */}
               <div className="col-span-3 hidden lg:flex justify-center">
-                <NavLinks items={menuList} />
+                <NavLinks items={filteredNavMenu} />
               </div>
 
               <div className="pr-2 col-span-1 hidden lg:flex items-center justify-end gap-2">
@@ -211,14 +349,17 @@ const Header = () => {
                       )}
                     />
                   ) : (
-                    <div className={isScrolled ? "scale-90" : "scale-100"}>
+                    <div className={isScrolled ? "scale-95" : "scale-100"}>
                       {user ? (
                         <HeaderUser />
                       ) : (
                         <div>
-                          <Link href={"/auth/login"}>
-                            <Button>Login</Button>
-                          </Link>
+                          <Button
+                            asChild
+                            className="rounded-[30px] h-[40px] px-6"
+                          >
+                            <Link href={"/auth/login"}>Login</Link>
+                          </Button>
                         </div>
                       )}
                     </div>

@@ -1,7 +1,10 @@
 import AboutSection from "@/components/pages/home/AboutSection";
+import AcademySection from "@/components/pages/home/AcademySection";
 import BlogSection from "@/components/pages/home/BlogSection";
+import BookInspectionSection from "@/components/pages/home/BookInspectionSection";
 import ContactSection from "@/components/pages/home/ContactSection";
 import HeroSection from "@/components/pages/home/HeroSection";
+import PropertiesSection from "@/components/pages/home/PropertiesSection";
 import TestimonialSection from "@/components/pages/home/TestimonialSection";
 import WhatWeOffer from "@/components/pages/home/WhatWeOffer";
 import { Metadata } from "next";
@@ -16,11 +19,21 @@ const Homepage = () => {
   return (
     <div className="min-h-dvh">
       <HeroSection />
-      <AboutSection />
+      <div className="bg-background">
+        <AboutSection />
+      </div>
       <WhatWeOffer />
+      <PropertiesSection />
+      <AcademySection />
       <TestimonialSection />
-      <ContactSection />
-      <BlogSection />
+
+      <BookInspectionSection />
+      <div className="bg-background">
+        <ContactSection />
+      </div>
+      <div className="bg-background">
+        <BlogSection />
+      </div>
     </div>
   );
 };

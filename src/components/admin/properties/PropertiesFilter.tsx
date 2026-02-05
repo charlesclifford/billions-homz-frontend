@@ -26,13 +26,7 @@ import { RefreshCcw, SearchIcon, X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 type ListingTypeFilter = "all" | "sale" | "rent" | "lease";
-type PropertyType =
-  | "apartment"
-  | "house"
-  | "land"
-  | "commercial"
-  | "villa"
-  | "all";
+type PropertyType = "residential" | "commercial" | "all";
 type SortOption =
   | "createdAt:desc"
   | "createdAt:asc"
@@ -192,11 +186,8 @@ const PropertiesFilter = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="apartment">Apartment</SelectItem>
-              <SelectItem value="house">House</SelectItem>
-              <SelectItem value="land">Land</SelectItem>
               <SelectItem value="commercial">Commercial</SelectItem>
-              <SelectItem value="villa">Villa</SelectItem>
+              <SelectItem value="residential">Residential</SelectItem>
             </SelectContent>
           </Select>
 
@@ -235,16 +226,16 @@ const PropertiesFilter = () => {
         }
       >
         <TabsList className="grid w-full grid-cols-4 h-full">
-          <TabsTrigger value="all" className="py-1.5 px-2">
+          <TabsTrigger value="all" className="py-1.5 px-2 cursor-pointer">
             All
           </TabsTrigger>
-          <TabsTrigger value="sale" className="py-1.5 px-2">
+          <TabsTrigger value="sale" className="py-1.5 px-2 cursor-pointer">
             For Sale
           </TabsTrigger>
-          <TabsTrigger value="rent" className="py-1.5 px-2">
+          <TabsTrigger value="rent" className="py-1.5 px-2 cursor-pointer">
             For Rent
           </TabsTrigger>
-          <TabsTrigger value="lease" className="py-1.5 px-2">
+          <TabsTrigger value="lease" className="py-1.5 px-2 cursor-pointer">
             For Lease
           </TabsTrigger>
         </TabsList>

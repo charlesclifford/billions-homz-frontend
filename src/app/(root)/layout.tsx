@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import "../globals.css";
 import Loading from "../loading";
 import Footer from "@/components/shared/footer/Footer";
+import WhatsappBubble from "@/components/shared/WhatsappBubble";
 
 
 
@@ -18,6 +19,7 @@ export default async function RootLayout({
         <Header />
         <main className="w-full min-h-dvh">{children}</main>
         <ScrollToTop />
+        <WhatsappBubble />
         <Footer />
       </Suspense>
     </div>

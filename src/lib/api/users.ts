@@ -3,6 +3,9 @@ import { IUser, UsersFilterInput } from "@/interfaces/user.interface";
 import instance from "@/services/axios";
 import { AxiosRequestConfig } from "axios";
 
+/* ───────────────────────────────
+ * USERS
+ * ─────────────────────────────── */
 export const getAllUsers = async (params?: UsersFilterInput) => {
   const res = await instance.get("/users", { params });
   return res.data;
@@ -23,18 +26,26 @@ export const deleteUser = async (id: string) => {
   return res.data;
 };
 
+/* ───────────────────────────────
+ * REALTORS
+ * ─────────────────────────────── */
 export const getAllRealtors = async (params?: RealtorsFilterInput) => {
   const res = await instance.get("/realtors", { params });
   return res.data;
 };
 
 export const getRealtorById = async (id: string) => {
-  const res = await instance.get(`/realtors/${id}`);
+  const res = await instance.get(`/realtors/single/${id}`);
   return res.data;
 };
 
 export const updateRealtor = async (id: string, data: Partial<IRealtor>) => {
   const res = await instance.put(`/realtors/${id}/update`, data);
+  return res.data;
+};
+
+export const deleteRealtor = async (id: string) => {
+  const res = await instance.delete(`/realtors/${id}/delete`);
   return res.data;
 };
 

@@ -1,69 +1,58 @@
 "use client";
-import { UnsplashPhoto } from "@/interfaces/unsplash.interface";
+import { IGallery } from "@/interfaces/photos.interface";
+import { Loader2, MapPin } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
-import { styled } from "styled-components";
+import { useState } from "react";
 
 const GalleryPhoto = ({
   photo,
   onClick,
 }: {
-  photo: UnsplashPhoto;
+  photo: IGallery;
   onClick: () => void;
 }) => {
-  const { urls, alt_description, height, width } = photo;
-  const [rowSpan, setRowSpan] = useState(1);
-  const imgRef = useRef<HTMLImageElement>(null);
-
-  useEffect(() => {
-    const calculateRowSpan = () => {
-      if (imgRef.current) {
-        const containerWidth = imgRef.current.parentElement?.clientWidth || 250;
-        const aspectRatio =
-          imgRef.current.naturalHeight / imgRef.current.naturalWidth;
-        const calculatedHeight = containerWidth * aspectRatio;
-        const rowGap = 10;
-        const baseRowHeight = 10;
-
-        setRowSpan(
-          Math.ceil((calculatedHeight + rowGap) / (baseRowHeight + rowGap))
-        );
-      }
-    };
-
-    if (imgRef.current) {
-      imgRef.current.onload = calculateRowSpan;
-    }
-  }, []);
+  const [imageLoading, setImageLoading] = useState(true);
 
   return (
-    <PhotoContainer $rowSpan={rowSpan} className="group/card cursor-pointer" onClick={onClick}>
-      <div className="w-full h-full block">
+    <div
+      className={`relative group cursor-pointer border w-full rounded-[30px] overflow-hidden aspect-square`}
+      onClick={onClick}
+    >
+      <div className="bg-card w-full h-full flex items-center justify-center relative">
+        {imageLoading && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        )}
         <Image
-          ref={imgRef}
-          src={urls.regular}
-          alt={alt_description}
-          width={width}
-          height={height}
-          className="object-cover w-full h-full"
+          src={photo.imageUrl}
+          alt={photo.caption || "Property image"}
+          className={`w-full h-full object-cover transition-transform duration-300 group-hover:scale-105 ${
+            imageLoading ? "opacity-0" : "opacity-100"
+          }`}
+          loading="lazy"
+          width={300}
+          height={300}
+          onLoad={() => setImageLoading(false)}
+          onError={() => setImageLoading(false)}
         />
       </div>
-      <div className="absolute bottom-0 left-0 right-0 p-4 opacity-0 flex flex-col justify-end h-1/2 bg-gradient-to-t from-black to-transparent transition-opacity duration-500 ease-in-out group-hover/card:opacity-100">
-        <div className="flex flex-col text-white">
-          <p className="font-semibold text-lg">{photo.user.name}</p>
-          <p className="text-sm">{photo.user.location}</p>
-        </div>
+
+      {/* Caption Overlay */}
+
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        {photo.caption && (
+          <p className="text-white font-medium line-clamp-2">{photo.caption}</p>
+        )}
+        {photo.location && (
+          <p className="text-white/90 text-sm flex items-center">
+            <MapPin className="h-3 w-3 mr-1" />
+            {photo.location}
+          </p>
+        )}
       </div>
-    </PhotoContainer>
+    </div>
   );
 };
 
 export default GalleryPhoto;
-
-const PhotoContainer = styled.div<{ $rowSpan: number }>`
-  position: relative;
-  border-radius: 30px;
-  overflow: hidden;
-  grid-row-end: span ${(props) => props.$rowSpan};
-  height: auto;
-`;

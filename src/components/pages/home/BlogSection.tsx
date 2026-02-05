@@ -1,12 +1,65 @@
 "use client";
+import usePosts from "@/hooks/usePosts";
+import { PostFilterInput } from "@/interfaces/blog.interface";
+import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-import SmallTitle from "../../shared/SmallTitle";
-import BlogCard from "./BlogCard";
 import { useState } from "react";
-import { PostFilterInput } from "@/interfaces/blog.interface";
-import usePosts from "@/hooks/usePosts";
+import SmallTitle from "../../shared/SmallTitle";
 import BlogCardSkeleton from "../blogs/BlogCardSkeleton";
+import BlogCard from "./BlogCard";
+
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const titleVariants = {
+  hidden: { y: 30, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.7,
+      ease: "easeOut",
+    },
+  },
+};
+
+const buttonVariants = {
+  hidden: { scale: 0.9, opacity: 0 },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 200,
+      damping: 15,
+      duration: 0.5,
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { y: 50, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      damping: 15,
+      stiffness: 100,
+      duration: 0.7,
+    },
+  },
+};
 
 const BlogSection = () => {
   const [featuredFilter] = useState<PostFilterInput>({
@@ -25,9 +78,15 @@ const BlogSection = () => {
 
   return (
     <div className="about-section w-full container mx-auto px-4">
-      <div className="w-full max-w-[min(100%,1290px)] mx-auto py-[150px] flex flex-col">
-        <div className="grid grid-cols-1 lg:grid-cols-2">
-          <div>
+      <div className="w-full max-w-[min(100%,1290px)] mx-auto py-16 lg:py-28 flex flex-col">
+        <motion.div
+          className="grid grid-cols-1 lg:grid-cols-2"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={containerVariants}
+        >
+          <motion.div variants={titleVariants}>
             <SmallTitle
               text="Articles & insights"
               className="mx-auto lg:mx-0"
@@ -38,11 +97,15 @@ const BlogSection = () => {
                 Discover inspiration and trends
               </h2>
             </div>
-          </div>
-          <div className="flex items-center lg:items-end justify-center lg:justify-end pb-2.5 pt-[30px]">
+          </motion.div>
+
+          <motion.div
+            className="flex items-center lg:items-end justify-center lg:justify-end pb-2.5 pt-[30px]"
+            variants={buttonVariants}
+          >
             <Link
               href={"/blogs"}
-              className="p-[5px] pl-[30px] border rounded-[30px] text-sm font-bold capitalize inline-grid relative group transition duration-300 dark:bg-white"
+              className="p-[5px] pl-[30px] border rounded-[30px] text-sm font-bold capitalize inline-grid relative group transition duration-300 dark:bg-white overflow-hidden"
             >
               <span className="flex gap-2.5 items-center flex-row-reverse justify-center">
                 <span className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-primary text-white">
@@ -61,30 +124,51 @@ const BlogSection = () => {
                 <span className="inline-block text-black">view All Posts</span>
               </span>
             </Link>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        <div className="mt-[60px] relative">
+        <motion.div
+          className="mt-[60px] relative"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.7 }}
+          viewport={{ once: true }}
+        >
           {isFeaturedPending ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {[...Array(3)].map((_, index) => (
-                <BlogCardSkeleton key={`featured-skeleton-${index}`} />
+                <motion.div
+                  key={`featured-skeleton-${index}`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <BlogCardSkeleton />
+                </motion.div>
               ))}
             </div>
           ) : (
             featuredPosts.length > 0 && (
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-[30px]">
-                {featuredPosts.map((post) => (
-                  <BlogCard
+              <motion.div
+                className="grid grid-cols-1 lg:grid-cols-3 gap-[30px]"
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, margin: "-50px" }}
+              >
+                {featuredPosts.map((post, index) => (
+                  <motion.div
                     key={post._id}
-                    post={post}
-                    containerClassName="mb-2.5"
-                  />
+                    variants={cardVariants}
+                    custom={index}
+                  >
+                    <BlogCard post={post} containerClassName="mb-2.5" />
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             )
           )}
-        </div>
+        </motion.div>
       </div>
     </div>
   );

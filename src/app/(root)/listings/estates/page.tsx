@@ -1,12 +1,25 @@
-import React from 'react'
+import EstateListFilter from "@/components/pages/property/EstateListFilter";
+import EstatesList from "@/components/pages/property/EstatesList";
+import PageHeader from "@/components/shared/PageHeader";
+import { Separator } from "@/components/ui/separator";
+import React from "react";
+import bgImg from "../../../../../public/images/bg/land-plot-with-nature-landscape-location-pin.jpg";
 
-const EstatesPage
- = () => {
+const EstatesPage = () => {
   return (
-    <div>EstatesPage
-      
-    </div>
-  )
-}
+    <div className="w-full">
+      <PageHeader title="Our Estates" bgImage={bgImg} />
 
-export default EstatesPage
+      <div className="container max-w-[min(100%,1290px)] mx-auto px-4 mt-10">
+        <EstateListFilter />
+        <Separator />
+
+        <div className="py-10">
+          <EstatesList />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default EstatesPage;

@@ -7,31 +7,57 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { UnsplashPhoto } from "@/interfaces/unsplash.interface";
-import { GalleryThumbnailsIcon, XIcon } from "lucide-react";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import GalleryPhoto from "./GalleryPhoto";
+import { Skeleton } from "@/components/ui/skeleton";
+import useGallery from "@/hooks/useGallery";
 import { cn } from "@/lib/utils";
-
-const API_KEY = "PPt7y6rFoNU-S3o3VPJ-NRrNI--28s8BL0g_Lm55GnA";
+import { GalleryThumbnailsIcon, MapPin, XIcon } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import GalleryPhoto from "./GalleryPhoto";
 
 const GalleryGrid = () => {
-  const [photos, setPhotos] = useState<UnsplashPhoto[]>([]);
-  const [loading, setLoading] = useState(true);
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState<number | null>(
     null
   );
   const [api, setApi] = useState<CarouselApi>();
   const [thumbsApi, setThumbsApi] = useState<CarouselApi>();
   const [showThumbnails, setShowThumbnails] = useState(true);
+  const loaderRef = useRef<HTMLDivElement>(null);
+
+  const {
+    infiniteQuery: { photos, isLoadingInfinite, isFetchingNextPage },
+    hasMore,
+    loadMore,
+  } = useGallery({ page: 1, limit: 20 });
 
   const openModal = (index: number) => setSelectedPhotoIndex(index);
   const closeModal = () => setSelectedPhotoIndex(null);
-
   const toggleThumbnail = () => {
     setShowThumbnails(!showThumbnails);
   };
+
+  // Infinite scroll observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !isFetchingNextPage) {
+          loadMore();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentLoader = loaderRef.current;
+    if (currentLoader) {
+      observer.observe(currentLoader);
+    }
+
+    return () => {
+      if (currentLoader) {
+        observer.unobserve(currentLoader);
+      }
+    };
+  }, [hasMore, isFetchingNextPage, loadMore]);
 
   // Sync main carousel and thumbnails
   useEffect(() => {
@@ -50,50 +76,78 @@ const GalleryGrid = () => {
     });
   }, [api, thumbsApi]);
 
-  useEffect(() => {
-    const fetchPhotos = async () => {
-      try {
-        const response = await fetch("https://api.unsplash.com/photos", {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Client-ID ${API_KEY}`,
-          },
-        });
-        const data = await response.json();
-        setPhotos(data);
-      } catch (error) {
-        console.error("Error fetching photos:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPhotos();
-  }, []);
-
-  if (loading) return <div>Loading...</div>;
-
   return (
     <div className="w-full relative">
-      {/* Main Gallery Grid */}
-      <div className="gallery-grid">
-        {photos.map((photo, i) => (
-          <GalleryPhoto
-            key={photo.id}
-            photo={photo}
-            onClick={() => openModal(i)}
-          />
-        ))}
-      </div>
+      {isLoadingInfinite && photos.length === 0 ? (
+        <div className="w-full grid gap-3 md:gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-8">
+          {[...Array(12)].map((_, i) => (
+            <div
+              key={i}
+              className="relative border w-full rounded-[30px] overflow-hidden aspect-square"
+            >
+              <Skeleton className="w-full h-full rounded-[30px]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent flex flex-col justify-end p-4">
+                {/* <Skeleton className="h-6 w-3/4 mb-2 bg-white/30" />
+                <Skeleton className="h-4 w-1/2 bg-white/30" /> */}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : photos.length > 0 ? (
+        <div>
+          {/* Masonry Grid */}
+          <div className="w-full grid gap-3 md:gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-8">
+            {photos.map((photo, i) => {
+              return (
+                <GalleryPhoto
+                  key={photo._id}
+                  photo={photo}
+                  onClick={() => openModal(i)}
+                />
+              );
+            })}
+
+            {isFetchingNextPage && (
+              <>
+                {[...Array(4)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="relative border w-full rounded-[30px] overflow-hidden aspect-square"
+                  >
+                    <Skeleton className="w-full h-full rounded-[30px]" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent flex flex-col justify-end p-4">
+                      {/* <Skeleton className="h-6 w-3/4 mb-2 bg-white/30" />
+                      <Skeleton className="h-4 w-1/2 bg-white/30" /> */}
+                    </div>
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+
+          {/* Infinite scroll trigger */}
+          <div ref={loaderRef} className="h-10 w-full" />
+        </div>
+      ) : (
+        <div className="flex justify-center items-center h-40 text-muted-foreground">
+          No photos yet.
+        </div>
+      )}
 
       {/* Image Modal with Carousel */}
       {selectedPhotoIndex !== null && (
-        <div className="fixed inset-0 bg-black/85 flex flex-col items-center z-50">
-          <header className="w-full flex items-center justify-between px-5 h-20 absolute top-0 right-0 z-10">
+        <div className="fixed inset-0 bg-black/90 flex flex-col items-center z-50">
+          <header className="w-full flex items-center justify-between px-5 h-20">
             <div>
-              <h4 className="text-white font-semibold text-lg">
-                {photos[selectedPhotoIndex]?.user?.name}
+              <h4 className="text-white font-semibold leading-4">
+                {photos[selectedPhotoIndex]?.caption}
               </h4>
+              {photos[selectedPhotoIndex]?.location && (
+                <span className="text-white/90 text-sm mt-1 flex items-center">
+                  <MapPin className="h-4 w-4 mr-1" />
+                  {photos[selectedPhotoIndex]?.location}
+                </span>
+              )}
             </div>
 
             <div className="flex items-center gap-3">
@@ -112,84 +166,89 @@ const GalleryGrid = () => {
             </div>
           </header>
 
-          <Carousel
-            setApi={setApi}
-            opts={{
-              startIndex: selectedPhotoIndex,
-            }}
-          >
-            <CarouselContent
-              className={cn(
-                "w-[calc(100vw-20px)] h-dvh transition-all duration-300",
-                showThumbnails ? "md:h-[calc(100dvh-104px)]" : "h-dvh"
-              )}
-            >
-              {photos.map((photo) => (
-                <CarouselItem
-                  key={photo.id}
-                  className="flex items-center justify-center"
-                >
-                  <div className="relative w-full h-full">
-                    <Image
-                      src={photo.urls.regular}
-                      alt={photo.alt_description || "Unsplash photo"}
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-
-            <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 text-white bg-black/50 p-3 rounded-full hover:bg-black/75 transition-colors z-10 disabled:hidden hidden md:flex border-transparent hover:text-white cursor-pointer size-10" />
-            <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 text-white bg-black/50 p-3 rounded-full hover:bg-black/75 transition-colors z-10 disabled:hidden hidden md:flex border-transparent hover:text-white cursor-pointer size-10" />
-          </Carousel>
-
-          {/* Thumbnail Navigation */}
-          <div
-            className={cn(
-              "w-full max-w-[calc(100vw-40px)] px-2 py-1 transition-all duration-300 overflow-hidden hidden md:flex",
-              showThumbnails ? "h-20 opacity-100" : "h-0 opacity-0",
-              "md:flex items-center justify-center"
-            )}
-          >
+          <div className="">
             <Carousel
-              setApi={setThumbsApi}
+              setApi={setApi}
               opts={{
-                align: "start",
-                dragFree: true,
-                containScroll: "keepSnaps",
+                startIndex: selectedPhotoIndex,
               }}
-              className="w-full"
             >
-              <CarouselContent className="ml-0">
-                {photos.map((photo, index) => (
-                  <CarouselItem key={photo.id} className="basis-20 pl-2">
-                    <div
-                      className={`relative h-16 rounded-md overflow-hidden cursor-pointer transition-all border-2 ${
-                        selectedPhotoIndex === index
-                          ? "border-red-500"
-                          : "border-transparent"
-                      }`}
-                      onClick={() => {
-                        setSelectedPhotoIndex(index);
-                        api?.scrollTo(index);
-                      }}
-                    >
+              <CarouselContent
+                className={cn(
+                  "-ml-0 transition-all duration-300 py-2",
+                  showThumbnails
+                    ? "h-[calc(100dvh-80px)] md:h-[calc(100dvh-160px)]"
+                    : "h-[calc(100dvh-80px)]"
+                )}
+              >
+                {photos.map((photo) => (
+                  <CarouselItem
+                    key={photo._id}
+                    className="flex items-center justify-center px-0"
+                  >
+                    <div className="relative w-full h-full">
                       <Image
-                        src={photo.urls.thumb}
-                        alt=""
-                        fill
-                        className={cn(
-                          "object-cover transition-opacity duration-300",
-                          selectedPhotoIndex === index ? "" : "opacity-50"
-                        )}
+                        src={photo.imageUrl}
+                        alt={photo.caption || "photo"}
+                        width={500}
+                        height={500}
+                        className="w-full h-full object-contain"
                       />
                     </div>
                   </CarouselItem>
                 ))}
               </CarouselContent>
+
+              <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 text-white bg-black/50 p-3 rounded-full hover:bg-black/75 transition-colors z-10 disabled:hidden hidden md:flex border-transparent hover:text-white cursor-pointer size-10" />
+              <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 text-white bg-black/50 p-3 rounded-full hover:bg-black/75 transition-colors z-10 disabled:hidden hidden md:flex border-transparent hover:text-white cursor-pointer size-10" />
             </Carousel>
+
+            {/* Thumbnail Navigation */}
+            <div
+              className={cn(
+                "w-full max-w-[calc(100vw-40px)] px-2 py-1 transition-all duration-300 overflow-hidden hidden md:flex",
+                showThumbnails ? "h-20 opacity-100" : "h-0 opacity-0",
+                "md:flex items-center justify-center"
+              )}
+            >
+              <Carousel
+                setApi={setThumbsApi}
+                opts={{
+                  align: "start",
+                  dragFree: true,
+                  containScroll: "keepSnaps",
+                }}
+                className="w-full"
+              >
+                <CarouselContent className="ml-0">
+                  {photos.map((photo, index) => (
+                    <CarouselItem key={photo._id} className="basis-20 pl-2">
+                      <div
+                        className={`relative h-16 rounded-md overflow-hidden cursor-pointer transition-all border-2 ${
+                          selectedPhotoIndex === index
+                            ? "border-primary"
+                            : "border-transparent"
+                        }`}
+                        onClick={() => {
+                          setSelectedPhotoIndex(index);
+                          api?.scrollTo(index);
+                        }}
+                      >
+                        <Image
+                          src={photo.imageUrl}
+                          alt=""
+                          fill
+                          className={cn(
+                            "object-cover transition-opacity duration-300",
+                            selectedPhotoIndex === index ? "" : "opacity-50"
+                          )}
+                        />
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+            </div>
           </div>
         </div>
       )}

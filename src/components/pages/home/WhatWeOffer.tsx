@@ -1,3 +1,4 @@
+"use client";
 import { cn } from "@/lib/utils";
 import {
   ArrowUpRight,
@@ -11,6 +12,7 @@ import {
 import Link from "next/link";
 import React from "react";
 import SmallTitle from "../../shared/SmallTitle";
+import { motion } from "framer-motion";
 
 export interface IServiceList {
   icon: LucideIcon;
@@ -22,64 +24,142 @@ export interface IServiceList {
 const serviceList: IServiceList[] = [
   {
     icon: Building2,
-    title: "Real Estate Development",
+    title: "Land Sales",
     content:
-      "We engage as early as possible, typically during the conceptual or schematic stage.",
+      "At Billionshomz, we offer verified and strategically located lands with proper documentation, ensuring peace of mind and guaranteed return on investment for our clients and investors.",
     className: "col-span-1 lg:col-span-2",
   },
   {
     icon: Layers3Icon,
     title: "Project Development",
     content:
-      "Our comprehensive estimates also reflect available lower-price options.",
+      "From concept to completion, we develop real estate projects that combine innovation, functionality, and elegance  creating spaces that meet modern lifestyle and investment needs.",
     className: "col-span-1 lg:col-span-2",
   },
   {
     icon: WalletCards,
-    title: "Investment & Capital",
-    content: "We are focused on improving the way capital projects get done",
+    title: "Property Management",
+    content:
+      "We provide professional property management services that protect your investment, maximize rental income, and maintain property value ,giving you a hassle-free ownership experience.",
     className: "col-span-1 lg:col-span-2",
   },
   {
     icon: WrenchIcon,
-    title: "Construction Management",
+    title: "Construction",
     content:
-      "From design to operations, we love to solve complex challenges and exceed expectations",
+      "Our construction team delivers high-quality, durable, and aesthetically pleasing structures tailored to client specifications, ensuring every project stands as a mark of excellence and reliability.",
     className: "col-span-1 lg:col-span-3",
   },
   {
     icon: MessageCircleIcon,
-    title: "Sales & Marketing",
+    title: "Academy",
     content:
-      "Building a real estate development is a complicated task requiring both deep understanding..",
+      "Through the Billions Academy, we empower aspiring real estate consultants and investors with practical knowledge, sales mastery, and leadership skills to succeed and build wealth in the real estate industry.",
     className: "col-span-1 lg:col-span-3",
   },
 ];
 
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.15,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const titleVariants = {
+  hidden: { y: 30, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.7,
+      ease: "easeOut",
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { y: 50, opacity: 0, scale: 0.95 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    scale: 1,
+    transition: {
+      type: "spring",
+      damping: 15,
+      stiffness: 100,
+      duration: 0.8,
+    },
+  },
+};
+
+const iconVariants = {
+  hidden: { scale: 0, rotate: -180 },
+  visible: {
+    scale: 1,
+    rotate: 0,
+    transition: {
+      type: "spring",
+      damping: 12,
+      stiffness: 100,
+      duration: 0.7,
+    },
+  },
+};
+
 const WhatWeOffer = () => {
   return (
     <div className="about-section w-full bg-[#F6F3EC] dark:bg-background">
-      <div className="w-full container max-w-[min(100%,1290px)] mx-auto px-4 py-[150px] flex flex-col ">
-        <SmallTitle text="what we offer" className="mx-auto" />
+      <div className="w-full container max-w-[min(100%,1290px)] mx-auto px-4 py-16 lg:py-28 flex flex-col ">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={titleVariants}
+        >
+          <SmallTitle text="what we offer" className="mx-auto" />
+        </motion.div>
 
-        <div className="max-w-full w-[760px] mx-auto text-center">
+        <motion.div
+          className="max-w-full w-[760px] mx-auto text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={titleVariants}
+        >
           <div className="mt-[30px] mb-[60px]">
             <h2 className="text-[42px] lg:text-[70px] font-bold leading-[1.06em] tracking-[-2px]">
               Take a brief look at some of the services we offer
             </h2>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-6 gap-[30px] mb-[30px] z-[2]">
+        <motion.div
+          className="grid grid-cols-1 lg:grid-cols-6 gap-[30px] mb-[30px] z-[2]"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+        >
           {serviceList.map(({ content, icon, title, className }, i) => {
             const Icon = icon;
             return (
-              <div
+              <motion.div
                 key={i}
                 className={cn(
                   "bg-card rounded-[30px] rounded-tr-none min-h-[370px] p-[40px] flex flex-col relative box-hover overflow-hidden group/card justify-end",
                   className
                 )}
+                variants={cardVariants}
+                whileHover={{
+                  y: -10,
+                  transition: { duration: 0.3 },
+                }}
               >
                 <div className="absolute right-0 top-0 z-[3]">
                   <div className="h-full">
@@ -109,38 +189,56 @@ const WhatWeOffer = () => {
 
                 <div className="mt-[60px] mb-[30px] relative">
                   <div className="">
-                    <Icon
-                      size={64}
-                      strokeWidth={0.75}
-                      className="group-hover/card:text-white transition duration-300"
-                    />
+                    <motion.div
+                      variants={iconVariants}
+                      initial="hidden"
+                      whileInView="visible"
+                      viewport={{ once: true }}
+                    >
+                      <Icon
+                        size={64}
+                        strokeWidth={0.75}
+                        className="group-hover/card:text-white transition duration-300"
+                      />
+                    </motion.div>
                   </div>
                 </div>
 
-                <div className="relative mb-2">
+                <motion.div
+                  className="relative mb-2"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2, duration: 0.5 }}
+                  viewport={{ once: true }}
+                >
                   <div>
                     <h5 className="text-foreground leading-[1] text-[26px] tracking-[0] font-bold group-hover/card:text-white transition duration-300">
                       {title}
                     </h5>
                   </div>
-                </div>
+                </motion.div>
 
-                <div className="relative">
-                  <p className="text-lg leading-[1.55] text-ellipsis line-clamp-3 group-hover/card:text-white dark:group-hover/card:text-white transition duration-300 text-neutral-600 dark:text-neutral-400">
+                <motion.div
+                  className="relative"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.5 }}
+                  viewport={{ once: true }}
+                >
+                  <p className="text-lg leading-[1.55] text-ellipsis line-clamp- group-hover/card:text-white dark:group-hover/card:text-white transition duration-300 ">
                     {content}
                   </p>
-                </div>
+                </motion.div>
 
                 <div className="absolute top-0 right-0 w-[60px] h-[60px] ">
                   <div className="rounded-bl-[30px] w-full h-full bg-[#F6F3EC] dark:bg-background"></div>
                   <div className="border-shape w-[30px] h-[30px] absolute top-0 left-[-29.5px] rotate-180 bg-[#F6F3EC] dark:bg-background"></div>
                   <div className="border-shape w-[30px] h-[30px] absolute right-[-0.5px] bottom-[-30px] rotate-180 bg-[#F6F3EC] dark:bg-background"></div>
                 </div>
-                <div></div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </div>
   );

@@ -79,14 +79,15 @@ const RealtorsFilter = () => {
   // Handle date range changes
   const handleDateRangeChange = (range: DateRange | undefined) => {
     setDateRange(range);
-    dispatch(
-      setFilter({
-        startDate: range?.from
-          ? startOfDay(range.from).toISOString()
-          : undefined,
-        endDate: range?.to ? endOfDay(range.to).toISOString() : undefined,
-      })
-    );
+    // Only dispatch when both from & to are selected
+    if (range?.from && range?.to) {
+      dispatch(
+        setFilter({
+          startDate: startOfDay(range.from).toISOString(),
+          endDate: endOfDay(range.to).toISOString(),
+        })
+      );
+    }
   };
 
   // Reset all filters
@@ -198,13 +199,13 @@ const RealtorsFilter = () => {
           onValueChange={(value) => handleStatusChange(value as StatusFilter)}
         >
           <TabsList className="grid w-full grid-cols-3 h-full">
-            <TabsTrigger value="all" className="py-1.5 px-2">
+            <TabsTrigger value="all" className="py-1.5 px-2 cursor-pointer">
               All Realtors
             </TabsTrigger>
-            <TabsTrigger value="active" className="py-1.5 px-2">
+            <TabsTrigger value="active" className="py-1.5 px-2 cursor-pointer">
               Active Realtors
             </TabsTrigger>
-            <TabsTrigger value="blocked" className="py-1.5 px-2">
+            <TabsTrigger value="blocked" className="py-1.5 px-2 cursor-pointer">
               Blocked Realtors
             </TabsTrigger>
           </TabsList>

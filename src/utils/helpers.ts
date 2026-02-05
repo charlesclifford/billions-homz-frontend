@@ -3,14 +3,15 @@ import { IUser } from "@/interfaces/user.interface";
 export const formatCurrency = (
   amount: number,
   locale = "en-NG",
-  currency = "NGN"
+  currency = "NGN",
+  notation: "standard" | "scientific" | "engineering" | "compact" = "standard"
 ) => {
   return new Intl.NumberFormat(locale, {
     style: "currency",
     currency,
     // maximumFractionDigits: 2,
     minimumFractionDigits: 0,
-    // notation: "compact",
+    notation,
   }).format(amount);
 };
 
@@ -40,7 +41,45 @@ export const isAdminUser = (user: IUser | null): boolean => {
 export const formatUnderscoreText = (text: string) => {
   // Replace underscores with spaces and capitalize each word
   return text
-    .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+};
+
+/**
+ * Formats a commission rate for display
+ * @param rate - The rate as a decimal (e.g., 0.1 for 10%)
+ * @param options - Formatting options
+ * @returns Formatted rate string
+ */
+export const formatRate = (
+  rate: number,
+  options?: {
+    asPercentage?: boolean; // Show as percentage (default true)
+    decimalPlaces?: number; // Number of decimal places (default 1)
+    includeSymbol?: boolean; // Include % symbol (default true)
+  }
+): string => {
+  const {
+    asPercentage = true,
+    decimalPlaces = 1,
+    includeSymbol = true,
+  } = options || {};
+
+  // Convert to percentage if needed
+  const displayValue = asPercentage ? rate * 100 : rate;
+
+  // Format the number
+  let formatted = displayValue.toFixed(decimalPlaces);
+
+  // Add percentage symbol if needed
+  if (asPercentage && includeSymbol) {
+    formatted += "%";
+  }
+
+  return formatted;
+};
+
+export const formatNumberWithCommas = (value: number): string => {
+  return value === 0 ? "" : value.toLocaleString("en-US");
 };

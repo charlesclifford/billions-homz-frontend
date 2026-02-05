@@ -25,6 +25,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { AdminPermission } from "@/interfaces/admin.interface";
 import { inviteAdmin } from "@/lib/api/admin";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -32,17 +33,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2Icon, Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import PhoneInputWithCountrySelect, { isValidPhoneNumber } from "react-phone-number-input";
+import PhoneInputWithCountrySelect, {
+  isValidPhoneNumber,
+} from "react-phone-number-input";
 import { toast } from "sonner";
 import { z } from "zod";
-
-type AdminPermission =
-  | "manage_users"
-  | "manage_properties"
-  | "manage_content"
-  | "manage_settings"
-  | "view_analytics"
-  | "manage_admins";
 
 const formSchema = z.object({
   firstName: z.string().min(1, "First name is required"),
@@ -51,6 +46,9 @@ const formSchema = z.object({
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
   role: z.enum(["admin", "super_admin"]),
   permissions: z.array(z.string()).optional(),
+  gender: z.enum(["male", "female"], {
+    required_error: "Please select your gender",
+  }),
 });
 
 export type InviteAdminFormValues = z.infer<typeof formSchema>;
@@ -59,8 +57,8 @@ const permissionLabels: Record<AdminPermission, string> = {
   manage_users: "Manage Users",
   manage_properties: "Manage Properties",
   manage_content: "Manage Content",
-  manage_settings: "Manage Settings",
-  view_analytics: "View Analytics",
+  // manage_settings: "Manage Settings",
+  // view_analytics: "View Analytics",
   manage_admins: "Manage Admins",
 };
 
@@ -77,6 +75,7 @@ const InviteAdmin = () => {
       phone: "",
       role: "admin",
       permissions: [],
+      gender: undefined,
     },
   });
 
@@ -123,7 +122,7 @@ const InviteAdmin = () => {
           <SheetTitle className="text-xl">Invite Admin</SheetTitle>
         </SheetHeader>
 
-        <ScrollArea className="overflow-x-hidden overflow-y-auto">
+        <ScrollArea className="flex-1 min-h-[calc(100dvh-170px)]">
           <Form {...form}>
             <form
               id="admin-invite-form"
@@ -226,6 +225,31 @@ const InviteAdmin = () => {
 
                 <FormField
                   control={form.control}
+                  name="gender"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Gender</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="focus-visible:ring-0 shadow-none rounded-sm w-full cursor-pointer">
+                            <SelectValue placeholder="Select gender" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="male">Male</SelectItem>
+                          <SelectItem value="female">Female</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="role"
                   render={({ field }) => (
                     <FormItem>
@@ -235,7 +259,7 @@ const InviteAdmin = () => {
                         value={field.value}
                       >
                         <FormControl>
-                          <SelectTrigger className="focus-visible:ring-0 shadow-none rounded-sm w-full">
+                          <SelectTrigger className="focus-visible:ring-0 shadow-none rounded-sm w-full cursor-pointer">
                             <SelectValue placeholder="Select role" />
                           </SelectTrigger>
                         </FormControl>

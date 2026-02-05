@@ -1,5 +1,4 @@
-import { IProperty } from "./property.interface";
-import { IImage } from "./user.interface";
+import { IImage, UserRole } from "./user.interface";
 
 export interface IRealtor {
   _id: string;
@@ -14,25 +13,32 @@ export interface IRealtor {
   country?: string;
   licenseNumber: string;
   bio?: string;
-  experienceYears: number;
-  personalCode: string;
-  propertiesSold: [];
-  totalEarnings: number;
-  pendingCommissions: number;
-  paidCommissions: number;
-  commissionPayments: ICommissionPayment[];
+  gender: "male" | "female";
+
+  isVerified: boolean;
+  isBlocked: boolean;
+  isFirstLogin: boolean;
+  role?: UserRole;
+
   createdAt: string;
   updatedAt: string;
   isActive: boolean;
   lastLogin?: Date;
+
+  bankDetails?: BankDetails;
+  uplineDetails?: UplineDetails;
+  isProfileComplete: boolean;
 }
 
-interface ICommissionPayment {
-  amount: number;
-  paymentDate: Date;
-  property: IProperty;
-  // recordedBy: IAdmin
-  note: string;
+export interface BankDetails {
+  bankName: string;
+  accountName: string;
+  accountNumber: string;
+}
+
+export interface UplineDetails extends BankDetails {
+  uplineName: string;
+  uplinePhone: string;
 }
 
 export interface RealtorsFilterInput {
@@ -44,4 +50,38 @@ export interface RealtorsFilterInput {
   sortBy?: string;
   sortOrder?: "asc" | "desc";
   status?: string;
+  includeDeleted?: boolean;
+  includeWithoutAuth?: boolean;
+}
+
+export interface IRealtorStats {
+  availablePropertiesCount: number;
+  pendingCommissions: number;
+  soldPropertiesCount: number;
+  totalEarnings: number;
+}
+
+export interface IRealtorSalesPerformance {
+  year: number; // The year this data represents
+  monthlyData: MonthlySalesData[]; // Array of monthly data
+  topEstates: TopEstate[];
+}
+
+interface MonthlySalesData {
+  month: number; // 1-12 representing January-December
+  name: string; // Short month name (e.g., "Jan", "Feb")
+  salesCount: number; // Number of sales in this month
+  salesAmount: number; // Total sales amount in this month
+}
+
+interface TopEstate {
+  estateName: string; // Name of the estate
+  estateId: string; // MongoDB ID of the estate
+  count: number; // Number of sales for this estate
+  totalAmount: number; // Total sales amount for this estate
+}
+
+export interface SalesPerformanceFilter {
+  year: number;
+  type?: string;
 }

@@ -3,6 +3,7 @@ export interface IMenu {
   href: string;
   roles?: string[];
   children?: IMenu[];
+  disabled?: boolean;
 }
 export const menuList: IMenu[] = [
   {
@@ -24,6 +25,7 @@ export const menuList: IMenu[] = [
       {
         name: "Properties",
         href: "/listings/properties",
+        disabled: true,
       },
     ],
   },
@@ -39,9 +41,13 @@ export const menuList: IMenu[] = [
     name: "Contact",
     href: "/contact-us",
   },
+  // {
+  //   name: "Join as Realtor",
+  //   href: "/auth/register/realtor",
+  //   roles: ["user"],
+  // },
   {
-    name: "Realtor's Corner",
-    href: "/#",
-    children: [{ name: "Register as Realtor", href: "#" }],
+    name: "Academy",
+    href: "/academy",
   },
 ];

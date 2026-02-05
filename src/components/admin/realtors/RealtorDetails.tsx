@@ -12,7 +12,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { IUser } from "@/interfaces/user.interface";
 import { getRealtorById, uploadRealtorAvatar } from "@/lib/api/users";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -21,14 +20,31 @@ import moment from "moment";
 import { useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import UserDetailSkeleton from "../users/UserDetailSkeleton";
+import { promoteToAdmin } from "@/lib/api/admin";
+import { useAppSelector } from "@/store/hooks";
+import { IRealtor } from "@/interfaces/realtor.interface";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const RealtorDetails = ({ id }: { id: string }) => {
+  const { user } = useAppSelector((state) => state.auth);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
 
   const {
-    data: user,
+    data: realtor,
     isPending,
     isError,
     error,
@@ -36,7 +52,7 @@ const RealtorDetails = ({ id }: { id: string }) => {
   } = useQuery({
     queryKey: ["getRealtorById", id],
     queryFn: async () => getRealtorById(id),
-    select: (data) => data.data as IUser,
+    select: (data) => data.data as IRealtor,
     enabled: isOpen,
   });
 
@@ -57,6 +73,40 @@ const RealtorDetails = ({ id }: { id: string }) => {
       toast.error(error?.response?.data?.message || error?.message);
     },
   });
+
+  const promoteMutation = useMutation({
+    mutationFn: () =>
+      promoteToAdmin({
+        targetId: id,
+        targetType: "realtor",
+        permissions: selectedPermissions,
+      }),
+    onSuccess: (data) => {
+      toast.success(data.message || "Realtor promoted to admin");
+      queryClient.invalidateQueries({ queryKey: ["allRealtors"] });
+      setConfirmOpen(false);
+      setIsOpen(false);
+      setSelectedPermissions([]);
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      console.log("error>>", error);
+      toast.error(
+        error?.response?.data?.message ||
+          error.message ||
+          "Failed to promote realtor"
+      );
+    },
+  });
+
+  const handlePermissionToggle = (perm: string) => {
+    setSelectedPermissions((prev) =>
+      prev.includes(perm) ? prev.filter((p) => p !== perm) : [...prev, perm]
+    );
+  };
+
+  const handlePromoteConfirm = () => {
+    promoteMutation.mutate();
+  };
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
@@ -87,8 +137,8 @@ const RealtorDetails = ({ id }: { id: string }) => {
   };
 
   const userName = useMemo(
-    () => (user ? `${user.firstName} ${user.lastName}` : "Guest"),
-    [user]
+    () => (realtor ? `${realtor.firstName} ${realtor.lastName}` : "Guest"),
+    [realtor]
   );
 
   return (
@@ -111,11 +161,11 @@ const RealtorDetails = ({ id }: { id: string }) => {
           <ErrorMessage
             message={
               (error as AxiosError<{ message: string }>)?.response?.data
-                .message || "Failed to load user details"
+                .message || "Failed to load realtor details"
             }
             onRetry={refetch}
           />
-        ) : !user ? (
+        ) : !realtor ? (
           <div className="text-center py-8">Realtor not found</div>
         ) : (
           <ScrollArea className="overflow-x-hidden overflow-y-auto">
@@ -126,7 +176,7 @@ const RealtorDetails = ({ id }: { id: string }) => {
                   <div className="relative">
                     <Avatar className="size-32 border-4 border-primary/10">
                       <AvatarImage
-                        src={user?.avatar?.imageUrl}
+                        src={realtor?.avatar?.imageUrl}
                         alt={userName}
                         className={uploadMutation.isPending ? "opacity-50" : ""}
                       />
@@ -163,7 +213,7 @@ const RealtorDetails = ({ id }: { id: string }) => {
                 </div>
                 <div className="text-center space-y-2">
                   <h2 className="text-xl font-bold">{userName}</h2>
-                  <p className="text-muted-foreground">{user?.email}</p>
+                  <p className="text-muted-foreground">{realtor?.email}</p>
                 </div>
               </div>
 
@@ -179,15 +229,15 @@ const RealtorDetails = ({ id }: { id: string }) => {
                       <p className="text-sm text-muted-foreground">
                         First Name
                       </p>
-                      <p className="font-medium">{user?.firstName}</p>
+                      <p className="font-medium">{realtor?.firstName}</p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground">Last Name</p>
-                      <p className="font-medium">{user?.lastName}</p>
+                      <p className="font-medium">{realtor?.lastName}</p>
                     </div>
                     <div className="space-y-1">
                       <p className="text-sm text-muted-foreground">Phone</p>
-                      <p className="font-medium">{user?.phone || "-"}</p>
+                      <p className="font-medium">{realtor?.phone || "-"}</p>
                     </div>
                   </div>
                 </div>
@@ -202,10 +252,12 @@ const RealtorDetails = ({ id }: { id: string }) => {
                       <p className="text-sm text-muted-foreground">Status</p>
                       <div>
                         <Badge
-                          variant={user?.isActive ? "default" : "destructive"}
+                          variant={
+                            realtor?.isActive ? "default" : "destructive"
+                          }
                           className="text-sm"
                         >
-                          {user?.isActive ? "Active" : "Inactive"}
+                          {realtor?.isActive ? "Active" : "Inactive"}
                         </Badge>
                       </div>
                     </div>
@@ -213,10 +265,10 @@ const RealtorDetails = ({ id }: { id: string }) => {
                       <p className="text-sm text-muted-foreground">Verified</p>
                       <div>
                         <Badge
-                          variant={user?.isVerified ? "default" : "outline"}
+                          variant={realtor?.isVerified ? "default" : "outline"}
                           className="text-sm"
                         >
-                          {user?.isVerified ? "Verified" : "Not Verified"}
+                          {realtor?.isVerified ? "Verified" : "Not Verified"}
                         </Badge>
                       </div>
                     </div>
@@ -234,7 +286,7 @@ const RealtorDetails = ({ id }: { id: string }) => {
                         Joined Date
                       </p>
                       <p className="font-medium">
-                        {moment(user?.createdAt).format("MMM DD, YYYY")}
+                        {moment(realtor?.createdAt).format("MMM DD, YYYY")}
                       </p>
                     </div>
                     <div className="space-y-1">
@@ -242,8 +294,8 @@ const RealtorDetails = ({ id }: { id: string }) => {
                         Last Login
                       </p>
                       <p className="font-medium">
-                        {user?.lastLogin
-                          ? moment(user?.lastLogin).format(
+                        {realtor?.lastLogin
+                          ? moment(realtor?.lastLogin).format(
                               "MMM DD, YYYY h:mm A"
                             )
                           : "Never"}
@@ -252,11 +304,99 @@ const RealtorDetails = ({ id }: { id: string }) => {
                   </div>
                 </div>
 
+                {/* Bank Details */}
+                {realtor?.bankDetails && (
+                  <>
+                    <Separator />
+                    <div className="space-y-3">
+                      <h3 className="font-medium text-lg">Bank Details</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">
+                            Bank Name
+                          </p>
+                          <p className="font-medium capitalize">
+                            {realtor.bankDetails.bankName}
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">
+                            Account Name
+                          </p>
+                          <p className="font-medium capitalize">
+                            {realtor.bankDetails.accountName}
+                          </p>
+                        </div>
+                        <div className="space-y-1 md:col-span-2">
+                          <p className="text-sm text-muted-foreground">
+                            Account Number
+                          </p>
+                          <p className="font-medium">
+                            {realtor.bankDetails.accountNumber}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                {/* Upline Details */}
+                {realtor?.uplineDetails && (
+                  <>
+                    <Separator />
+                    <div className="space-y-3">
+                      <h3 className="font-medium text-lg">Upline Details</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">
+                            Upline Name
+                          </p>
+                          <p className="font-medium capitalize">
+                            {realtor.uplineDetails.uplineName}
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">
+                            Upline Phone
+                          </p>
+                          <p className="font-medium">
+                            {realtor.uplineDetails.uplinePhone}
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">
+                            Bank Name
+                          </p>
+                          <p className="font-medium capitalize">
+                            {realtor.uplineDetails.bankName}
+                          </p>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">
+                            Account Name
+                          </p>
+                          <p className="font-medium capitalize">
+                            {realtor.uplineDetails.accountName}
+                          </p>
+                        </div>
+                        <div className="space-y-1 md:col-span-2">
+                          <p className="text-sm text-muted-foreground">
+                            Account Number
+                          </p>
+                          <p className="font-medium">
+                            {realtor.uplineDetails.accountNumber}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+
                 {/* Address Information (if available) */}
-                {(user?.address ||
-                  user?.city ||
-                  user?.state ||
-                  user?.country) && (
+                {(realtor?.address ||
+                  realtor?.city ||
+                  realtor?.state ||
+                  realtor?.country) && (
                   <>
                     <Separator />
                     <div className="space-y-3">
@@ -264,37 +404,37 @@ const RealtorDetails = ({ id }: { id: string }) => {
                         Address Information
                       </h3>
                       <div className="space-y-2">
-                        {user?.address && (
+                        {realtor?.address && (
                           <div className="space-y-1">
                             <p className="text-sm text-muted-foreground">
                               Address
                             </p>
-                            <p className="font-medium">{user.address}</p>
+                            <p className="font-medium">{realtor.address}</p>
                           </div>
                         )}
                         <div className="grid grid-cols-3 gap-4">
-                          {user?.city && (
+                          {realtor?.city && (
                             <div className="space-y-1">
                               <p className="text-sm text-muted-foreground">
                                 City
                               </p>
-                              <p className="font-medium">{user.city}</p>
+                              <p className="font-medium">{realtor.city}</p>
                             </div>
                           )}
-                          {user?.state && (
+                          {realtor?.state && (
                             <div className="space-y-1">
                               <p className="text-sm text-muted-foreground">
                                 State
                               </p>
-                              <p className="font-medium">{user.state}</p>
+                              <p className="font-medium">{realtor.state}</p>
                             </div>
                           )}
-                          {user?.country && (
+                          {realtor?.country && (
                             <div className="space-y-1">
                               <p className="text-sm text-muted-foreground">
                                 Country
                               </p>
-                              <p className="font-medium">{user.country}</p>
+                              <p className="font-medium">{realtor.country}</p>
                             </div>
                           )}
                         </div>
@@ -303,6 +443,85 @@ const RealtorDetails = ({ id }: { id: string }) => {
                   </>
                 )}
               </div>
+
+              {/* PROMOTE BUTTON */}
+              {user?.role === "super_admin" && (
+                <div className="mt-6">
+                  <Separator className="mb-4" />
+                  <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                    <AlertDialogTrigger asChild>
+                      <Button disabled={promoteMutation.isPending}>
+                        Promote to Admin
+                      </Button>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Promote to Admin</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Are you sure you want to promote{" "}
+                          <span className="font-semibold text-foreground">
+                            {realtor?.firstName} {realtor?.lastName}
+                          </span>{" "}
+                          to an Admin? This will grant full administrative
+                          privileges.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+
+                      {/* PERMISSIONS CHECKBOXES */}
+                      <div className="grid grid-cols-2 gap-3 mt-4 mb-6">
+                        {[
+                          "manage_users",
+                          "manage_properties",
+                          "manage_content",
+                          // "manage_settings",
+                          // "view_analytics",
+                          // "manage_transactions",
+                          // "manage_realtors",
+                          // "manage_commissions",
+                          // "manage_banners",
+                          // "view_reports",
+                        ].map((perm) => (
+                          <label
+                            key={perm}
+                            className="flex items-center space-x-2"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={selectedPermissions.includes(perm)}
+                              onChange={() => handlePermissionToggle(perm)}
+                              className="w-4 h-4 accent-primary"
+                            />
+                            <span className="text-sm capitalize">
+                              {perm.replace(/_/g, " ")}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handlePromoteConfirm();
+                          }}
+                          disabled={promoteMutation.isPending}
+                        >
+                          {promoteMutation.isPending ? (
+                            <>
+                              <Loader2 className="w-4 h-4 animate-spin" />{" "}
+                              Promoting...
+                            </>
+                          ) : (
+                            "Yes, Promote"
+                          )}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              )}
             </div>
           </ScrollArea>
         )}

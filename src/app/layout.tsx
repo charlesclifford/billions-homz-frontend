@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     siteName: SITE_NAME,
     images: [
       {
-        url: `/images/IMG_8216.PNG`, // OpenGraph image
+        url: `/images/logos/billions-whatsapp.jpg`, // OpenGraph image
         width: 1200,
         height: 630,
         alt: SITE_NAME,
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
       template: `%s | ${SITE_NAME}`,
     },
     description: SITE_DESCRIPTION,
-    images: ["/images/IMG_8216.PNG"],
+    images: ["/images/logos/billions-whatsapp.jpg"],
     creator: "@onidev",
   },
 };
@@ -82,7 +82,12 @@ export default function RootLayout({
         <Providers>
           <Suspense fallback={<Loading />}>{children}</Suspense>
         </Providers>
-        <Toaster position="top-right" richColors expand={true} closeButton />
+        <Toaster
+          position="top-center"
+          richColors
+          expand={true}
+          swipeDirections={["top", "left", "right"]}
+        />
       </body>
     </html>
   );

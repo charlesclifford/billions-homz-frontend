@@ -1,23 +1,25 @@
 "use client";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+import { useNotifications } from "@/hooks/useNotifications";
+import { INotification } from "@/interfaces/notification.interface";
 import { useAppSelector } from "@/store/hooks";
-import { BellIcon, Calendar, MoonIcon, SunIcon } from "lucide-react";
+import { Calendar, InboxIcon, MoonIcon, SunIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { WiSunrise } from "react-icons/wi";
+import Notifications from "../shared/Notifications";
 import { ThemeToggler } from "../shared/ThemeToggler";
-import { Badge } from "../ui/badge";
 import { SidebarTrigger } from "../ui/sidebar";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { markAllAsRead, markAsRead } from "@/lib/api/notifications";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
 
 const AdminHeader = () => {
   // const isTablet = useIsTablet();
+  const queryClient = useQueryClient();
   const { user } = useAppSelector((state) => state.auth);
   const [currentTime, setCurrentTime] = useState(new Date());
-  const unreadCount = 3; // Mock unread notifications count
+
+  const { notifications, unreadCount } = useNotifications();
 
   // Update time every minute (instead of every second for better performance)
   useEffect(() => {
@@ -65,36 +67,48 @@ const AdminHeader = () => {
       };
     }, [currentTime]);
 
-  // Mock notifications data
-  const notifications = [
-    {
-      id: 1,
-      title: "New booking request",
-      description: "You have a new booking request from John Doe",
-      time: "2 hours ago",
-      read: false,
+  const markAsReadMutation = useMutation({
+    mutationFn: markAsRead,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["notifications-counts"] });
     },
-    {
-      id: 2,
-      title: "Payment received",
-      description: "Payment for booking #1234 has been received",
-      time: "1 day ago",
-      read: true,
+    onError: (error: AxiosError<{ message: string }>) => {
+      console.log("error", error);
+      toast.error(error?.response?.data?.message || error?.message);
     },
-    {
-      id: 3,
-      title: "System update",
-      description: "New system update available",
-      time: "3 days ago",
-      read: false,
+  });
+
+  const markAllMutation = useMutation({
+    mutationFn: markAllAsRead,
+    onSuccess: (data) => {
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["notifications-counts"] });
     },
-  ];
+    onError: (error: AxiosError<{ message: string }>) => {
+      console.log("error", error);
+      toast.error(error?.response?.data?.message || error?.message);
+    },
+  });
+
+  const handleNotificationClick = (notification: INotification) => {
+    if (!notification.isRead) {
+      markAsReadMutation.mutate(notification._id);
+    }
+  };
+
+  const handleMarkAllAsRead = () => {
+    if (unreadCount > 0) {
+      markAllMutation.mutate();
+    }
+  };
 
   return (
     <header className="sticky top-0 right-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b ">
       <div className="w-full flex h-16 items-center justify-between px-4 box-border">
         <div className="mr-2">
-          <SidebarTrigger />
+          <SidebarTrigger className="cursor-pointer" />
         </div>
 
         <div className="flex items-center space-x-4">
@@ -117,49 +131,23 @@ const AdminHeader = () => {
             </div>
 
             {/* Notifications Dropdown */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <button className="relative p-2 rounded-full hover:bg-accent">
-                  <BellIcon size={18} className="text-muted-foreground" />
-                  {unreadCount > 0 && (
-                    <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center">
-                      {unreadCount}
-                    </Badge>
-                  )}
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80 p-0" align="end">
-                <div className="p-2 border-b">
-                  <h3 className="font-medium px-2 py-1">Notifications</h3>
+            <Notifications
+              notifications={notifications as INotification[]}
+              unreadCount={unreadCount}
+              onMarkAllAsRead={handleMarkAllAsRead}
+              onNotificationClick={handleNotificationClick}
+              emptyState={
+                <div className="p-6 py-10 text-center">
+                  <InboxIcon className="mx-auto h-6 w-6 text-muted-foreground" />
+                  <h4 className="mt-2 text-sm font-medium ">
+                    No notifications
+                  </h4>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    You&apos;re all caught up!
+                  </p>
                 </div>
-                <div className="max-h-[400px] overflow-y-auto">
-                  {notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className={cn(
-                        "p-3 border-b hover:bg-accent cursor-pointer",
-                        !notification.read && "bg-primary/5"
-                      )}
-                    >
-                      <div className="flex justify-between items-start">
-                        <h4 className="font-medium">{notification.title}</h4>
-                        <span className="text-xs text-muted-foreground">
-                          {notification.time}
-                        </span>
-                      </div>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {notification.description}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-                <div className="p-2 border-t text-center">
-                  <button className="text-sm text-primary hover:underline">
-                    View all notifications
-                  </button>
-                </div>
-              </PopoverContent>
-            </Popover>
+              }
+            />
 
             <ThemeToggler />
           </nav>

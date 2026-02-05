@@ -54,6 +54,7 @@ const BlockAction = ({ user }: { user: IAdmin }) => {
   const queryClient = useQueryClient();
   const [showDialog, setShowDialog] = useState(false);
   const [intendedStatus, setIntendedStatus] = useState<boolean | null>(null);
+  const { user: authUser } = useAppSelector((state) => state.auth);
 
   const blockUserMutation = useMutation({
     mutationFn: (block: boolean) => blockUser(user._id, block),
@@ -86,58 +87,60 @@ const BlockAction = ({ user }: { user: IAdmin }) => {
 
   return (
     <div className="flex items-center gap-2">
-      <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogTrigger asChild>
-          <div className="flex items-center gap-2">
-            {blockUserMutation.isPending && (
-              <Loader2Icon className="h-3 w-3 animate-spin" />
-            )}
-            <Switch
-              checked={user.isActive}
-              onCheckedChange={handleSwitchToggle}
-              disabled={blockUserMutation.isPending}
-              className="data-[state=checked]:bg-green-500"
-            />
-          </div>
-        </DialogTrigger>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {intendedStatus ? "Activate User" : "Block User"}
-            </DialogTitle>
-            <DialogDescription>
-              {intendedStatus
-                ? `Are you sure you want to activate ${user.firstName} ${user.lastName}?`
-                : `Are you sure you want to block ${user.firstName} ${user.lastName}? Blocked admins won't be able to access the system.`}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowDialog(false)}
-              disabled={blockUserMutation.isPending}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant={intendedStatus ? "default" : "destructive"}
-              onClick={confirmStatusChange}
-              disabled={blockUserMutation.isPending}
-            >
-              {blockUserMutation.isPending ? (
-                <>
-                  <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-                  {intendedStatus ? "Activating..." : "Blocking..."}
-                </>
-              ) : intendedStatus ? (
-                "Activate"
-              ) : (
-                "Block"
+      {authUser?._id !== user._id && (
+        <Dialog open={showDialog} onOpenChange={setShowDialog}>
+          <DialogTrigger asChild>
+            <div className="flex items-center gap-2">
+              {blockUserMutation.isPending && (
+                <Loader2Icon className="h-3 w-3 animate-spin" />
               )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+              <Switch
+                checked={user.isActive}
+                onCheckedChange={handleSwitchToggle}
+                disabled={blockUserMutation.isPending}
+                className="data-[state=checked]:bg-green-500"
+              />
+            </div>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>
+                {intendedStatus ? "Activate User" : "Block User"}
+              </DialogTitle>
+              <DialogDescription>
+                {intendedStatus
+                  ? `Are you sure you want to activate ${user.firstName} ${user.lastName}?`
+                  : `Are you sure you want to block ${user.firstName} ${user.lastName}? Blocked admins won't be able to access the system.`}
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => setShowDialog(false)}
+                disabled={blockUserMutation.isPending}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant={intendedStatus ? "default" : "destructive"}
+                onClick={confirmStatusChange}
+                disabled={blockUserMutation.isPending}
+              >
+                {blockUserMutation.isPending ? (
+                  <>
+                    <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                    {intendedStatus ? "Activating..." : "Blocking..."}
+                  </>
+                ) : intendedStatus ? (
+                  "Activate"
+                ) : (
+                  "Block"
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
 
       <Badge variant={user.isActive ? "default" : "destructive"}>
         {blockUserMutation.isPending
@@ -208,7 +211,7 @@ const MembersTable = () => {
       cell: ({ row }) => {
         return (
           <span>
-            {moment(row.original?.createdAt).format("MMM DD, YYYY HH:mm A")}
+            {moment(row.original?.createdAt).format("MMM DD, YYYY hh:mm A")}
           </span>
         );
       },
@@ -219,7 +222,7 @@ const MembersTable = () => {
       cell: ({ row }) => {
         return row.original?.lastLogin ? (
           <span>
-            {moment(row.original?.lastLogin).format("MMM DD, YYYY HH:mm A")}
+            {moment(row.original?.lastLogin).format("MMM DD, YYYY hh:mm A")}
           </span>
         ) : (
           <span className="text-muted-foreground">Never</span>

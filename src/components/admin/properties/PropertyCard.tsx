@@ -10,7 +10,7 @@ const PropertyCard = ({ property }: { property: IProperty }) => {
     <div className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow">
       <div className="relative aspect-video">
         <Image
-          src={property.images[0] || "/placeholder-property.jpg"}
+          src={property.images[0].imageUrl || "/placeholder-property.jpg"}
           alt={property.title}
           fill
           className="object-cover"
@@ -34,7 +34,7 @@ const PropertyCard = ({ property }: { property: IProperty }) => {
           {/* {property?.address} */}
         </p>
         <Button asChild variant="outline" className="w-full mt-2">
-          <Link href={`/properties/${property._id}`}>View Details</Link>
+          <Link href={`/admin/properties/${property._id}`}>View Details</Link>
         </Button>
       </div>
     </div>

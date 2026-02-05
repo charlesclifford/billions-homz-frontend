@@ -1,7 +1,10 @@
-import React, { ReactNode } from "react";
+"use client";
+import { ReactNode } from "react";
 import ServiceCard from "../../services/ServiceCard";
-import { ArrowUpRight } from "lucide-react";
-import Link from "next/link";
+import Image from "next/image";
+import { useIsMobile } from "@/hooks/use-mobile";
+import HeroBg from "../../../../public/images/bg/land-plot-with-nature-landscape-location-pin.jpg";
+import { motion } from "framer-motion";
 
 export interface IServiceList {
   icon: ReactNode;
@@ -24,9 +27,9 @@ const serviceList: IServiceList[] = [
         <path d="M20.266 24.001c0-2.057 1.674-3.734 3.734-3.734s3.734 1.674 3.734 3.734c0 2.060-1.674 3.734-3.734 3.734s-3.734-1.677-3.734-3.734zM15.999 24.001c0 4.418 3.581 7.999 7.999 7.999s7.999-3.581 7.999-7.999c0-4.418-3.581-7.999-7.999-7.999s-7.999 3.581-7.999 7.999z"></path>
       </svg>
     ),
-    title: "High quality products",
+    title: "Lands at strategic location",
     content:
-      "The luxurious and exquisite design harmonious with the surrounding architecture provide the best living.",
+      "Our lands are located at prime areas , your investment is 100% safe and return on investment sure.",
   },
   {
     icon: (
@@ -44,7 +47,7 @@ const serviceList: IServiceList[] = [
     ),
     title: "Professional services",
     content:
-      "The customer service center is ready to serve 24/7, support the residents to provide information.",
+      "We are here for you right from when you buy from us till you move into your dream home. We are are just one call or text message away.",
   },
   {
     icon: (
@@ -58,79 +61,113 @@ const serviceList: IServiceList[] = [
         <path d="M15.999 7.466c-4.117 0-7.466-3.348-7.466-7.466h-8.533c0 8.837 7.162 15.999 15.999 15.999s16.001-7.162 16.001-15.999h-8.533c0 4.117-3.351 7.466-7.468 7.466z"></path>
       </svg>
     ),
-    title: "Real partnership",
+    title: "Partnership",
     content:
-      "We work with both investors and developers to create landmarks that make an impact.",
+      "At billionshomz ,we believe true success comes from collaboration .we work hand in hand with investors,developers to create landmarks that define luxury and provide satisfaction.",
   },
 ];
 
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.3,
+    },
+  },
+};
+
+const titleVariants = {
+  hidden: { y: 30, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.8,
+      ease: "easeOut",
+    },
+  },
+};
+
+const subtitleVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut",
+      delay: 0.4,
+    },
+  },
+};
+
 const HeroSection = () => {
+  const isMobile = useIsMobile();
+
   return (
-    <div className="h-full w-full bg-[url(/images/bg/h1_bg.jpg)] bg-no-repeat bg-cover bg-center relative before:content-[''] before:absolute before:bg-black/40 before:top-0 before:left-0 before:w-full before:h-full mb-[150px]">
-      <div className="h-[50px] w-full absolute bottom-0 left-0">
-        <div className="bg-background rounded-t-[50px] h-full w-full"></div>
+    <div className="relative min-h-screen overflow-hidden">
+      {/* Fixed background container */}
+      <div className="fixed inset-0 -z-10 h-screen w-full">
+        <Image
+          src={HeroBg}
+          alt="Background landscape"
+          fill
+          priority
+          quality={isMobile ? 70 : 85}
+          sizes="100vw"
+          style={{
+            objectFit: "cover",
+            objectPosition: "top",
+          }}
+          placeholder="blur"
+        />
+        <div className="absolute inset-0 bg-black/40"></div>
       </div>
 
-      <div className="container max-w-[min(100%,1290px)] mx-auto px-4 pt-[150px] lg:pt-[245px] relative">
-        <div className="max-w-full w-[910px] mx-auto text-center self-center">
-          <div className="mb-5">
-            <h1 className="text-white font-bold text-[52px] lg:text-[90px] leading-[1]">
-              Shaping future through excellence
-            </h1>
-          </div>
+      {/* Content container with relative positioning */}
+      <div className="relative z-10 min-h-screen pb-1">
+        <div className="absolute bottom-0 left-0 w-full h-[50px]">
+          <div className="bg-background rounded-t-[50px] h-full w-full"></div>
         </div>
 
-        <div className="max-w-full w-[770px] mx-auto text-center self-center">
-          <div className="mb-[50px] lg:mb-[125px]">
-            <h1 className="text-neutral-300 font-semibold text-[22px] leading-[1]">
-              We are a top 25 builder and developer fully invested in our
-              customers&apos; success and improving the communities we serve.
-            </h1>
-          </div>
-        </div>
+        {/* Content */}
+        <div className="container max-w-[min(100%,1290px)] mx-auto px-4 pt-[200px] lg:pt-[245px]">
+          <motion.div
+            className="max-w-full w-[910px] mx-auto text-center self-center"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <motion.div className="mb-5" variants={titleVariants}>
+              <h1 className="text-white font-bold text-[52px] lg:text-[90px] leading-[1]">
+                Paragon of Luxury and Satisfaction
+              </h1>
+            </motion.div>
+          </motion.div>
 
-        <div className="flex flex-col lg:flex-row justify-between max-w-full border-t border-t-neutral-400 py-[60px] lg:items-end items-center gap-8">
-          <div className="w-[450px] lg:w-[660px] max-w-full">
-            <div>
-              <h4 className="text-white leading-[1] text-[32px] lg:text-4xl font-bold">
-                We developed landmark real estate projects that deliver lasting
-                value to investors and communities.
-              </h4>
+          <motion.div
+            className="max-w-full w-[770px] mx-auto text-center self-center"
+            variants={subtitleVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <div className="mb-[50px] lg:mb-[125px]">
+              <h1 className="text-neutral-300 font-semibold text-[22px] leading-[1.5]">
+                Making Landlords Daily, One Landlord at a Time.
+              </h1>
             </div>
-          </div>
-          <div className="max-w-full">
-            <div className="">
-              <Link
-                href={"/about-us"}
-                className="p-[5px] pl-[30px] bg-white rounded-[30px] text-sm font-bold capitalize inline-grid relative group"
-              >
-                <span className="flex gap-2.5 items-center flex-row-reverse justify-center">
-                  <span className="w-[50px] h-[50px] rounded-full flex items-center justify-center bg-primary text-white">
-                    <span className="flex items-center justify-center w-[18px] h-[18px] overflow-hidden relative">
-                      {/* Top icon – animates out along 45deg */}
-                      <span className="flex absolute items-center justify-center  transition-all duration-500 transform-3d transform-[translate3d(0px,0px,0px)_scale3d(1,1,1)] opacity-100 group-hover:transform-[translate3d(17px,-17px,0px)_scale3d(0.2,0.2,1)] group-hover:opacity-0">
-                        <ArrowUpRight />
-                      </span>
+          </motion.div>
 
-                      {/* Bottom icon – animates in along 45deg */}
-                      <span className="flex absolute items-center justify-center  transition-all duration-500 transform-[translate3d(-17px,17px,0px)_scale3d(0.2,0.2,1)_rotate(-45deg)] opacity-0 group-hover:transform-[translate3d(0px,0px,0px)_scale3d(1,1,1)] group-hover:opacity-100">
-                        <ArrowUpRight />
-                      </span>
-                    </span>
-                  </span>
-                  <span className="inline-block text-black ">
-                    view services
-                  </span>
-                </span>
-              </Link>
-            </div>
-          </div>
-        </div>
+          <div className="py-[60px]"></div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-[30px] z-[2]">
-          {serviceList.map((item, i) => (
-            <ServiceCard key={i} item={item} />
-          ))}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-[30px]">
+            {serviceList.map((item, i) => (
+              <ServiceCard key={i} item={item} index={i} />
+            ))}
+          </div>
         </div>
       </div>
     </div>

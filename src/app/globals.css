@@ -3,6 +3,7 @@
 @import "../styles/footer.css";
 @import "../styles/gallery.css";
 @import "../styles/rich-text-editor.css";
+@import "../styles/map.css";
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -85,38 +86,37 @@
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  /* --primary: oklch(0.922 0 0); */
+  /* Dark theme with greenish tint to complement primary color */
+  --background: oklch(0.18 0.02 160); /* Dark greenish-gray */
+  --foreground: oklch(0.98 0 0);
+  --card: oklch(0.22 0.02 160); /* Slightly lighter greenish-gray for cards */
+  --card-foreground: oklch(0.98 0 0);
+  --popover: oklch(0.22 0.02 160);
+  --popover-foreground: oklch(0.98 0 0);
   --primary: #0b9118;
-  /* --primary-foreground: oklch(0.205 0 0); */
-  --primary-foreground: #fff;
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.25 0.02 160); /* Medium greenish-gray */
+  --secondary-foreground: oklch(0.98 0 0);
+  --muted: oklch(0.25 0.02 160);
+  --muted-foreground: oklch(0.7 0 0);
+  --accent: oklch(29.465% 0.02895 158.283);
+  --accent-foreground: oklch(0.98 0 0);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
+  --border: oklch(42.581% 0.04938 157.502 / 0.3); /* Subtle greenish border */
+  --input: oklch(29.864% 0.02887 158.33);
   --ring: oklch(0.556 0 0);
   --chart-1: 220 70% 50%;
   --chart-5: 160 60% 45%;
   --chart-3: 30 80% 55%;
   --chart-4: 280 65% 60%;
   --chart-2: 340 75% 55%;
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar: oklch(0.22 0.02 160);
+  --sidebar-foreground: oklch(0.98 0 0);
+  --sidebar-primary: #0b9118;
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(29.465% 0.02895 158.283);
+  --sidebar-accent-foreground: oklch(0.98 0 0);
+  --sidebar-border: oklch(0.3 0.02 160 / 30%);
   --sidebar-ring: oklch(0.556 0 0);
 }
 
@@ -126,5 +126,43 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .container {
+    @apply w-full;
+
+    /* Default container max-width */
+    max-width: 100%;
+
+    /* Responsive container widths */
+    @media (min-width: 576px) {
+      max-width: 540px;
+    }
+
+    @media (min-width: 768px) {
+      max-width: 720px;
+    }
+
+    @media (min-width: 992px) {
+      max-width: 960px;
+    }
+
+    /* 👇 New breakpoint for iPad landscape */
+    @media (min-width: 1024px) and (max-width: 1199px) {
+      max-width: 1100px; /* adjust as needed (980–1024px works well) */
+    }
+
+    @media (min-width: 1200px) {
+      max-width: 1140px;
+    }
+
+    @media (min-width: 1400px) {
+      max-width: 1320px;
+    }
+    @media (min-width: 2560px) {
+      max-width: 2000px;
+    }
   }
 }

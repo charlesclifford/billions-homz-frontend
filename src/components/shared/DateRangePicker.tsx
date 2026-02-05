@@ -31,13 +31,24 @@ const DateRangePicker = ({
   }, [dateRange]);
 
   const handleDateChange = (range: DateRange | undefined) => {
-    const newRange = range?.from ? range : undefined;
-    setInternalDateRange(newRange);
-    if (onDateRangeChange) {
-      onDateRangeChange(newRange);
+    let normalizedRange: DateRange | undefined = range;
+
+    // If from and to are the same, treat it as "to = undefined"
+    if (
+      range?.from &&
+      range?.to &&
+      range.from.getTime() === range.to.getTime()
+    ) {
+      normalizedRange = { from: range.from, to: undefined };
     }
-    // Close the popover when both dates are selected
-    if (range?.from && range?.to) {
+
+    setInternalDateRange(normalizedRange);
+
+    if (onDateRangeChange) {
+      onDateRangeChange(normalizedRange);
+    }
+
+    if (normalizedRange?.from && normalizedRange?.to) {
       setOpen(false);
     }
   };
@@ -70,7 +81,7 @@ const DateRangePicker = ({
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
-          initialFocus
+          autoFocus
           mode="range"
           defaultMonth={internalDateRange?.from}
           selected={internalDateRange}

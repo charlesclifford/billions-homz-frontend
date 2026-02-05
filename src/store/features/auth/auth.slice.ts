@@ -6,7 +6,6 @@ interface AuthState {
   user: IUser | null;
   error: string | null;
   loading: boolean;
-  accountType: "user" | "realtor" | null;
 }
 
 export const SLICE_NAME = "auth";
@@ -16,7 +15,6 @@ const initialState: AuthState = {
   user: null,
   error: null,
   loading: false,
-  accountType: null,
 };
 
 const authSlice = createSlice({
@@ -39,7 +37,6 @@ const authSlice = createSlice({
       state.user = null;
       state.error = action.payload;
       state.loading = false;
-      state.accountType = null;
     },
 
     logout(state) {
@@ -47,7 +44,6 @@ const authSlice = createSlice({
       state.user = null;
       state.error = null;
       state.loading = false;
-      state.accountType = null;
     },
 
     clearError(state) {
@@ -58,12 +54,6 @@ const authSlice = createSlice({
       if (state.user) {
         state.user = { ...state.user, ...action.payload };
       }
-    },
-    setAccountType: (
-      state,
-      action: PayloadAction<"user" | "realtor" | null>
-    ) => {
-      state.accountType = action.payload;
     },
   },
 });
@@ -76,7 +66,6 @@ export const {
   logout,
   clearError,
   updateUser,
-  setAccountType
 } = authSlice.actions;
 
 // Export reducer

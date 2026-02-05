@@ -1,5 +1,6 @@
-"use client"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+"use client";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -8,48 +9,44 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-
-const pendingApprovals = [
-  {
-    id: "app-001",
-    type: "property",
-    name: "Beachfront Condo",
-    submittedBy: "John Smith",
-    date: "2023-06-14",
-  },
-  {
-    id: "app-002",
-    type: "realtor",
-    name: "Alex Rodriguez",
-    submittedBy: "System",
-    date: "2023-06-13",
-  },
-  {
-    id: "app-003",
-    type: "property",
-    name: "Historic Townhouse",
-    submittedBy: "Sarah Johnson",
-    date: "2023-06-12",
-  },
-  {
-    id: "app-004",
-    type: "document",
-    name: "Purchase Agreement",
-    submittedBy: "Michael Chen",
-    date: "2023-06-11",
-  },
-];
-
-// const typeVariantMap = {
-//   property: "default",
-//   realtor: "outline",
-//   document: "destructive",
-//   user: "secondary",
-// } as const;
+import useAdminCommissions from "@/hooks/useAdminCommissions";
+import { formatCurrency, formatRate } from "@/utils/helpers";
+import { formatDate } from "date-fns";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import ApproveCommission from "../commissions/ApproveCommission";
 
 export function PendingApprovals() {
+  const router = useRouter();
+  const { commissions, isPending, error } = useAdminCommissions({
+    page: 1,
+    limit: 5,
+    status: "requested",
+  });
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle>Pending Approvals</CardTitle>
+        </CardHeader>
+        <CardContent className="text-center py-8">
+          <p className="text-red-500">Failed to load pending approvals</p>
+          <p className="text-sm text-muted-foreground mt-2">
+            {error.message || "Please try again later"}
+          </p>
+          <Button
+            variant="outline"
+            className="mt-4"
+            onClick={() => router.refresh()}
+          >
+            Retry
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -57,36 +54,72 @@ export function PendingApprovals() {
       </CardHeader>
       <CardContent>
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-sidebar dark:bg-background">
             <TableRow>
-              <TableHead>Type</TableHead>
-              <TableHead>Name</TableHead>
+              <TableHead>Property</TableHead>
               <TableHead>Submitted By</TableHead>
+              <TableHead>Commission Rate</TableHead>
+              <TableHead>Commission Amount</TableHead>
               <TableHead>Date</TableHead>
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>
-            {pendingApprovals.map((approval) => (
-              <TableRow key={approval.id}>
-                <TableCell>
-                  <Badge >
-                    {approval.type}
-                  </Badge>
-                </TableCell>
-                <TableCell className="font-medium">{approval.name}</TableCell>
-                <TableCell>{approval.submittedBy}</TableCell>
-                <TableCell>{approval.date}</TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm">
-                      Review
-                    </Button>
-                    <Button size="sm">Approve</Button>
+            {isPending ? (
+              <TableRow>
+                <TableCell colSpan={6}>
+                  <div className="py-8 flex flex-col gap-2 items-center justify-center">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    <p className="text-sm text-muted-foreground">
+                      Loading pending approvals...
+                    </p>
                   </div>
                 </TableCell>
               </TableRow>
-            ))}
+            ) : commissions.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-8">
+                  <p className="text-muted-foreground">
+                    No pending approvals found
+                  </p>
+                </TableCell>
+              </TableRow>
+            ) : (
+              commissions.map((commission) => (
+                <TableRow key={commission._id}>
+                  <TableCell>
+                    <span className="capitalize">
+                      {commission.sale?.estate?.name || "N/A"}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <span className="capitalize">
+                      {commission.realtor?.firstName}{" "}
+                      {commission.realtor?.lastName}
+                    </span>
+                  </TableCell>
+                  <TableCell>{formatRate(commission.rate)}</TableCell>
+                  <TableCell>{formatCurrency(commission.amount)}</TableCell>
+                  <TableCell>
+                    {commission.paymentRequest.requestedAt
+                      ? formatDate(
+                          commission.paymentRequest.requestedAt,
+                          "MMM dd, yyyy  hh:mm a"
+                        )
+                      : "N/A"}
+                  </TableCell>
+
+                  <TableCell>
+                    <div className="flex gap-2">
+                      {commission.paymentRequest?.status === "requested" && (
+                        <ApproveCommission commission={commission} />
+                      )}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </CardContent>

@@ -1,9 +1,11 @@
+"use client";
 import SmallTitle from "@/components/shared/SmallTitle";
 import { cn } from "@/lib/utils";
 import { ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { motion } from "framer-motion";
 
 export interface IMember {
   name: string;
@@ -50,28 +52,100 @@ const members: IMember[] = [
   },
 ];
 
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const titleVariants = {
+  hidden: { y: 30, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.7,
+      ease: "easeOut",
+    },
+  },
+};
+
+const cardVariants = {
+  hidden: { y: 50, opacity: 0, scale: 0.95 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    scale: 1,
+    transition: {
+      type: "spring",
+      damping: 15,
+      stiffness: 100,
+      duration: 0.7,
+    },
+  },
+};
+
+const infoVariants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut",
+    },
+  },
+};
+
 const TeamSection = () => {
   return (
     <div id="team" className="w-full about-section">
       <div className="w-full container max-w-[min(100%,1290px)] mx-auto px-4 pb-[150px] flex flex-col ">
-        <SmallTitle text="meet the team" className="mx-auto" />
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={titleVariants}
+        >
+          <SmallTitle text="meet the team" className="mx-auto" />
+        </motion.div>
 
-        <div className="max-w-full w-[760px] mx-auto text-center">
+        <motion.div
+          className="max-w-full w-[760px] mx-auto text-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={titleVariants}
+          transition={{ delay: 0.2 }}
+        >
           <div className="mt-[30px] mb-[60px]">
             <h2 className="text-[42px] lg:text-[70px] font-bold leading-[1.06em] tracking-[-2px]">
               Global executive leadership
             </h2>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-[30px] mb-[30px] z-[2]">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[30px] mb-[30px] z-[2]"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+        >
           {members.map(({ name, photo, position }, i) => {
             return (
-              <div
+              <motion.div
                 key={i}
                 className={cn(
-                  "flex flex-col relative overflow-hidden group/card "
+                  "flex flex-col relative overflow-hidden group/card"
                 )}
+                variants={cardVariants}
               >
                 <div className="absolute right-0 top-0 z-[3]">
                   <div className="h-full">
@@ -113,25 +187,28 @@ const TeamSection = () => {
                 </div>
 
                 {/* info */}
-                <div className="flex flex-col items-center justify-center rounded-[20px] backdrop-blur-[30px] bg-black/5 border border-white/10 relative z-[4] mt-[-45px] mx-[45px] p-5">
+                <motion.div
+                  className="flex flex-col items-center justify-center rounded-[20px] backdrop-blur-[30px] bg-black/5 border border-white/10 relative z-[4] mt-[-45px] mx-[45px] p-5"
+                  variants={infoVariants}
+                  transition={{ delay: 0.2 }}
+                >
                   <p className="font-semibold uppercase mb-1.5 leading-[1] text-white text-xs">
                     {position}
                   </p>
-                  <h5 className="text-[26px] tracking-[0] leading-[1.23] font-bold">
+                  <h5 className="text-xl lg:text-[26px] tracking-[0] leading-[1.23] font-bold">
                     {name}
                   </h5>
-                </div>
+                </motion.div>
 
-                <div className="absolute top-0 right-0 w-[60px] h-[60px] ">
+                <div className="absolute top-0 right-0 w-[60px] h-[60px]">
                   <div className="rounded-bl-[30px] w-full h-full bg-background"></div>
                   <div className="border-shape w-[30px] h-[30px] absolute top-0 left-[-29.5px] rotate-180 bg-background"></div>
                   <div className="border-shape w-[30px] h-[30px] absolute right-[-0.5px] bottom-[-30px] rotate-180 bg-background"></div>
                 </div>
-                <div></div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </div>
   );
