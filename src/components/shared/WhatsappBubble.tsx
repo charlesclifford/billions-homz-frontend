@@ -1,6 +1,6 @@
 "use client";
 
-import { FloatingWhatsApp } from "@dxkit-org/react-floating-whatsapp";
+import { FloatingWhatsApp } from "@digicroz/react-floating-whatsapp";
 import { useTheme } from "next-themes";
 
 export default function WhatsappBubble() {
@@ -19,6 +19,7 @@ export default function WhatsappBubble() {
       allowEsc
       notification
       notificationDelay={30}
+      notificationSound={true}
       buttonStyle={{
         backgroundColor: "#25D366",
         bottom: "20px",
