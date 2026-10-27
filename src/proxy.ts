@@ -35,12 +35,12 @@ export default async function proxy(req: NextRequest) {
     }
   }
 
-  console.log("from middleware>>>", {
-    token,
-    user,
-  });
+  // console.log("from middleware>>>", {
+  //   token,
+  //   user,
+  // });
 
-  console.log(`Middleware check - Path: ${pathname}, Role: ${user?.role}`);
+  // console.log(`Middleware check - Path: ${pathname}, Role: ${user?.role}`);
 
   // Redirect authenticated users from auth routes to homepage
   if (authRoutes.some((route) => pathname.startsWith(route))) {
@@ -100,13 +100,13 @@ export default async function proxy(req: NextRequest) {
     }
 
     const isCompleteProfilePage = pathname.startsWith(
-      "/realtor/complete-profile"
+      "/realtor/complete-profile",
     );
 
     // 🚫 Block all realtor routes if profile incomplete
     if (!user?.isProfileComplete && !isCompleteProfilePage) {
       return NextResponse.redirect(
-        new URL("/realtor/complete-profile", req.url)
+        new URL("/realtor/complete-profile", req.url),
       );
     }
 

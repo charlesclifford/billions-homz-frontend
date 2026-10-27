@@ -79,8 +79,9 @@ const LoginForm = () => {
       // Handle first-login password change (admin/super_admin)
       if (data?.requiresPasswordChange) {
         setRedirecting(true);
+        const redirectParam = callbackUrl ? `&redirect=${encodeURIComponent(callbackUrl)}` : "";
         router.push(
-          `/auth/update-password?token=${data?.tempToken}&userId=${data?.userId}`
+          `/auth/update-password?token=${data?.tempToken}&userId=${data?.userId}${redirectParam}`
         );
         return;
       }
