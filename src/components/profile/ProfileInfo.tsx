@@ -84,7 +84,7 @@ const ProfileInfo = () => {
             <div className="flex-1 space-y-4">
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <h1 className="text-3xl font-bold">
+                  <h1 className="text-3xl font-bold capitalize">
                     {user?.firstName} {user?.lastName}
                   </h1>
                   {user?.isVerified && (
