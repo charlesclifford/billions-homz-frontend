@@ -77,15 +77,24 @@ const UpdatePasswordForm = () => {
       cookies.set(TOKEN_NAME, data?.accessToken);
       // Fetch user data after successful login
       try {
-        const { data } = await refetch();
-        cookies.set(USER_DETAILS, JSON.stringify(data?.data));
-        dispatch(loginSuccess({ user: data?.data || data.user }));
+        const userRes = await refetch();
+        const user = userRes?.data?.data || data?.user;
+        cookies.set(USER_DETAILS, JSON.stringify(user));
+        dispatch(loginSuccess({ user }));
+        
+        const targetUrl =
+          callbackUrl && callbackUrl !== "/"
+            ? callbackUrl
+            : ["admin", "super_admin"].includes(user?.role)
+            ? "/admin"
+            : "/";
+        router.push(targetUrl);
       } catch (error) {
         console.log(error);
         // Fallback to the user data from login response if user fetch fails
-        dispatch(loginSuccess({ user: data?.data || data.user }));
+        dispatch(loginSuccess({ user: data?.user }));
+        router.push(callbackUrl);
       }
-      router.push(callbackUrl);
     },
     onError: (error: AxiosError<{ message: string }>) => {
       console.log("error", error?.response?.data?.message);
